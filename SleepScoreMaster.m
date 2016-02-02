@@ -46,9 +46,12 @@ figloc = ['StateScoreFigures/',recordingname];
 
 %possible variable input options
 %'timewin' - only state score a subset of the recording
-%'HPCsites' - site indices for HPC probes
+%'HPCsites' - site indices for HPC probes - will only check these for theta
+%           if applicable
 %'figloc' - secondardy folder to save figures to
 %'spikegroups' - if not in the .xml file
+%'SWChannel', 'ThetaChannel' - can enter manually instead of determining
+%                               algorithmically
 
 %% CALCULATE EMG FROM HIGH-FREQUENCY COHERENCE
 %BW: you have all the code for this
