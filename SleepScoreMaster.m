@@ -34,7 +34,10 @@ figloc = ['StateScoreFigures/',recordingname];
 %% CALCULATE EMG FROM HIGH-FREQUENCY COHERENCE
 %BW: you have all the code for this
 
-%[EMG] = GetEMGCorr();
+%Select channels to use for EMG....
+
+
+%[EMG] = GetEMGCorr(EMGchannels);
 
 
 %% DETERMINE BEST SLOW WAVE AND THETA CHANNELS
