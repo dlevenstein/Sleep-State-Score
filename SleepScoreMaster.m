@@ -1,20 +1,38 @@
 function [stateintervals,episodeintervals] = SleepScoreMaster(datasetfolder,recordingname,varargin)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
+%[stateintervals,episodeintervals] = SleepScoreMaster(datasetfolder,recordingname)
+%This is the master function for sleep state scoring.
 %
+%INPUT
+%   datasetfolder   Top level folder in which the dataset resides. 
+%                   For example
+%                   '/Users/dlevenstein/Dropbox/Research/Datasets/BWData/'
+%   recordingname   Name of the recording, this will be the name of the
+%                   folder in which the .lfp file and other files reside.
+%                   For example, the .lfp file should be:
+%                   'datasetfolder/recordingname/recordingname.lfp'
+%
+%OUTPUT
+%   stateintervals  {Nstates} Cell array of state start and end times, each
+%                   member of the array will be [Nints x 2]
+%   episodeintervals    similar for episodes
 %
 %
 % DLevenstein and BWatson 2015/16
 %% DEV
+% Load the necessary files as needed for development
 datasetfolder = '/Users/dlevenstein/Dropbox/Research/Datasets/BWData/';
 recordingname = 'Dino_061814_mPFC';
 
+%Currently, LFP are held in their own .mats... will make this to extract
+%directly from .lfp files
 load([datasetfolder,recordingname,'/',recordingname,'_LFP.mat'])
 swLFP = LFP;
 load([datasetfolder,recordingname,'/',recordingname,'_ThetaLFP.mat'])
 thLFP = LFP;
 clear LFP
 
+%EMG is already calculated and in it's own .mat, need to add the ability to
+%extract this.
 load([datasetfolder,recordingname,'/',recordingname,'_EMGCorr.mat'])
 EMG = EMGCorr(:,2);
 clear EMGCorr
@@ -30,11 +48,13 @@ figloc = ['StateScoreFigures/',recordingname];
 %'timewin' - only state score a subset of the recording
 %'HPCsites' - site indices for HPC probes
 %'figloc' - secondardy folder to save figures to
+%'spikegroups' - if not in the .xml file
 
 %% CALCULATE EMG FROM HIGH-FREQUENCY COHERENCE
 %BW: you have all the code for this
 
-%Select channels to use for EMG....
+%Select channels to use for EMG.... for now just use one from each spike
+%group? or whatever you did previously
 
 
 %[EMG] = GetEMGCorr(EMGchannels);
