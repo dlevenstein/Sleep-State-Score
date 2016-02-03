@@ -48,12 +48,14 @@ figloc = ['StateScoreFigures/',recordingname];
 EMGpath = fullfile(datasetfolder,recordingname,[recordingname '_EMGCorr.mat']);
 if ~exist(EMGpath,'file')
     EMGCorr = EMGCorrForSleepscore(basepath,basename);%BW modify this to have different dependencies, currently assumes presence of: 
-%     Save ..._EMGCorr file
+%     Save _EMGCorr
 else
     load(EMGpath,'EMGCorr')
+    EMG = EMGCorr(:,2);
+    clear EMGCorr
 end
-EMG = EMGCorr(:,2);
-clear EMGCorr
+
+%[EMG] = GetEMGCorr(EMGchannels);
 
 
 %% DETERMINE BEST SLOW WAVE AND THETA CHANNELS
@@ -69,7 +71,6 @@ if ~exist(thetalfppath,'file')% if no lfp file already, load lfp and make lfp fi
         rawlfppath = fullfile(datasetfolder,recordingname,[recordingname,'.eeg']);
     end
 
-    Par = LoadPar(fullfile(datasetfolder,recordingname,[recordingname,'.xml']));
     %open lfp, 
 %         lfp = readmulti(eegloc, nChannels, xcorr_chs) * bmd.voltsperunit*1000; %read and convert to mV    
 %         or lfp = LoadBinary...
