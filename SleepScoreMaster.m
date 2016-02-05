@@ -38,16 +38,27 @@ figloc = ['StateScoreFigures/',recordingname];
 %'spikegroups' - if not in the .xml file
 %'SWChannel', 'ThetaChannel' - can enter manually instead of determining
 %                               algorithmically
+%'savefiles'    - save the EMG,LFP files to .mats?
+
+%% Database File Management 
+
+%Filenames for EMG, thLFP, and swLFP .mat files in the database.
+EMGpath = fullfile(datasetfolder,recordingname,[recordingname '_EMGCorr.mat']);
+thetalfppath = fullfile(datasetfolder,recordingname,[recordingname,'_ThetaLFP.mat']);
+swlfppath = fullfile(datasetfolder,recordingname,[recordingname,'_SWLFP.mat']);
 
 
 %% CALCULATE EMG FROM HIGH-FREQUENCY COHERENCE
-% Load/Calculate EMG based on cross-shank correlations (high correlation signal = high EMG.  Schomburg E.W. Neuron 84, 470?485. 2014)
+% Load/Calculate EMG based on cross-shank correlations 
+% (high frequency correlation signal = high EMG).  
+% Schomburg E.W. Neuron 84, 470?485. 2014)
 % Do this before lfp load because finding proper lfps will depend on this.
 % If EMG is already calculated and in it's own .mat, then load, otherwise
 % calculate this
-EMGpath = fullfile(datasetfolder,recordingname,[recordingname '_EMGCorr.mat']);
+
 if ~exist(EMGpath,'file')
-    EMGCorr = EMGCorrForSleepscore(basepath,basename);%BW modify this to have different dependencies, currently assumes presence of: 
+    EMGCorr = EMGCorrForSleepscore(basepath,basename);
+    %BW modify this to have different dependencies, currently assumes presence of: 
 %     Save ..._EMGCorr file
 else
     load(EMGpath,'EMGCorr')
@@ -60,8 +71,7 @@ clear EMGCorr
 %Possibility - use multiple channels for concensus, find one good SWChannel
 %from each shank? - could even use all SW for clustering - will improve
 %both time resolution and reliability
-thetalfppath = fullfile(datasetfolder,recordingname,[recordingname,'_ThetaLFP.mat']);
-swlfppath = fullfile(datasetfolder,recordingname,[recordingname,'_SWLFP.mat']);
+
 if ~exist(thetalfppath,'file')% if no lfp file already, load lfp and make lfp file?
     if exist (fullfile(datasetfolder,recordingname,[recordingname,'.lfp']),'file')
         rawlfppath = fullfile(datasetfolder,recordingname,[recordingname,'.lfp']);
