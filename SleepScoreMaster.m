@@ -10,6 +10,9 @@ function [stateintervals,episodeintervals] = SleepScoreMaster(datasetfolder,reco
 %                   folder in which the .lfp file and other files reside.
 %                   For example, the .lfp file should be:
 %                   'datasetfolder/recordingname/recordingname.lfp'
+%                   ... it is also assumed that this serves as the basename
+%                   for the files for instance data will be at
+%                   /datasetfolder/recordingname/recordingname.lfp
 %
 %OUTPUT
 %   stateintervals  {Nstates} Cell array of state start and end times, each
@@ -22,11 +25,12 @@ function [stateintervals,episodeintervals] = SleepScoreMaster(datasetfolder,reco
 % Load the necessary files as needed for development
 datasetfolder = '/Users/dlevenstein/Dropbox/Research/Datasets/BWData/';
 recordingname = 'Dino_061814_mPFC';
+sessionfolder = fullfile(datasetfolder,recordingname);
 
 sf_LFP = 1250;
 sf_EMG = 2;
 
-figloc = ['StateScoreFigures/',recordingname];
+figloc = fullfile('StateScoreFigures',recordingname);
 %% Deal with input options from varargin
 %none yet, but will do this with inputParser when we have input options
 
@@ -47,8 +51,10 @@ figloc = ['StateScoreFigures/',recordingname];
 % calculate this
 EMGpath = fullfile(datasetfolder,recordingname,[recordingname '_EMGCorr.mat']);
 if ~exist(EMGpath,'file')
-    EMGCorr = EMGCorrForSleepscore(basepath,basename);%BW modify this to have different dependencies, currently assumes presence of: 
-%     Save ..._EMGCorr file
+    EMGCorr = EMGCorrForSleepscore(sessionfolder,recordingname);%BW modify this to have different dependencies, currently assumes presence of: 
+    % eeg filename - ok
+    % .xml filename - ok
+    %     Save ..._EMGCorr file
 else
     load(EMGpath,'EMGCorr')
 end
