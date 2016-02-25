@@ -69,10 +69,6 @@ if ~exist(EMGpath,'file')
     %     Save ..._EMGCorr file
 
 
-    EMGCorr = EMGCorrForSleepscore(basepath,basename);
-    %BW modify this to have different dependencies, currently assumes presence of: 
-%     Save ..._EMGCorr file
-
 else
     load(EMGpath,'EMGCorr')
 end
