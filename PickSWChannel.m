@@ -9,12 +9,20 @@ recname = 'DT3_rLS_rCA1_20150927_298um_288um';
 % recname = 'Rat08-20130717';
 filename = [datasetfolder,'/',recname,'/',recname,'.xml'];
 
+%% FMA
+
 SetCurrentSession(filename);
 global DATA
+numchans = DATA.nChannels;
+
+%% Hist/Freqs Parms
+numhistbins = 21;
+numfreqs = 100;
+
 %% Load LFP files from .lfp
 allLFP = GetLFP('all');
 
-%% Downsample
+%% Downsample the LFP to 250Hz
 sf_LFP = 1/(allLFP(2,1)-allLFP(1,1));
 if sf_LFP == 1250
     downsamplefactor = 5;
@@ -24,20 +32,16 @@ else
 end
 allLFP = downsample(allLFP,downsamplefactor);
 sf_LFP = sf_LFP./downsamplefactor;
-%%
-numchans = DATA.nChannels;
-numhistbins = 21;
-numfreqs = 100;
 
+%% For each channel, calculate the PC1 and check it
 pc1hists = zeros(numhistbins,numchans);
 pc1coeff = zeros(numfreqs,numchans);
-
 for cc = 1:numchans;
 channum = cc+1;
     display(['Channel ',num2str(cc),' of ',num2str(numchans)])
 
+    %Calcualte Spectrogram
     freqlist = logspace(0,2,numfreqs);
-    %freqlist = linspace(0.5,55.5,111);
     window = 10;
     noverlap = 9;
     window = window*sf_LFP;
@@ -45,15 +49,11 @@ channum = cc+1;
     [FFTspec,FFTfreqs,t_FFT] = spectrogram(allLFP(:,channum),window,noverlap,freqlist,sf_LFP);
     FFTspec = abs(FFTspec);
 
-
     %% Find TRANSIENTS and set to 0 for PCA
-
     [zFFTspec,mu,sig] = zscore(log10(FFTspec)');
     totz = zscore(abs(sum(zFFTspec')));
-
     badtimes = find(totz>5);
     zFFTspec(badtimes,:) = 0;
-
 
     %% PCA
     smoothfact = 10; %si_FFT
@@ -62,14 +62,20 @@ channum = cc+1;
      SCORE(:,1) = smooth(SCORE(:,1),smoothfact);
     SCORE(:,1) = (SCORE(:,1)-min(SCORE(:,1)))./max(SCORE(:,1)-min(SCORE(:,1)));
 
-    %% PCA hist
-
+    %% Histogram of PC1
     bins = linspace(0,1,numhistbins);
     [pcahist,histbins]= hist(SCORE(:,1),bins);
 
     pc1hists(:,cc) = pcahist;
     pc1coeff(:,cc) = COEFF(:,1);
 end
+
+
+%% Test
+%PC1 histogram for bimodality
+%PC1 coefficients for NREM and proper orientation
+%Theta for bimodality
+%Theta spectrum for isolated peak?
 
 %% PC1 Weights and Coefficients
 figure
