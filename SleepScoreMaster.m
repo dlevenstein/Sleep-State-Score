@@ -62,10 +62,16 @@ swlfppath = fullfile(datasetfolder,recordingname,[recordingname,'_SWLFP.mat']);
 
 if ~exist(EMGpath,'file')
 
+
     EMGCorr = EMGCorrForSleepscore(sessionfolder,recordingname);%BW modify this to have different dependencies, currently assumes presence of: 
     % eeg filename - ok
     % .xml filename - ok
     %     Save ..._EMGCorr file
+
+
+    EMGCorr = EMGCorrForSleepscore(basepath,basename);
+    %BW modify this to have different dependencies, currently assumes presence of: 
+%     Save ..._EMGCorr file
 
 else
     load(EMGpath,'EMGCorr')
