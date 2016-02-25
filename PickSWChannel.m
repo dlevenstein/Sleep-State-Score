@@ -36,6 +36,7 @@ sf_LFP = sf_LFP./downsamplefactor;
 %% For each channel, calculate the PC1 and check it
 pc1hists = zeros(numhistbins,numchans);
 pc1coeff = zeros(numfreqs,numchans);
+dip = zeros(numchans,1);
 for cc = 1:numchans;
 channum = cc+1;
     display(['Channel ',num2str(cc),' of ',num2str(numchans)])
@@ -62,15 +63,23 @@ channum = cc+1;
      SCORE(:,1) = smooth(SCORE(:,1),smoothfact);
     SCORE(:,1) = (SCORE(:,1)-min(SCORE(:,1)))./max(SCORE(:,1)-min(SCORE(:,1)));
 
-    %% Histogram of PC1
+    %% Histogram and diptest of PC1
     bins = linspace(0,1,numhistbins);
     [pcahist,histbins]= hist(SCORE(:,1),bins);
 
     pc1hists(:,cc) = pcahist;
     pc1coeff(:,cc) = COEFF(:,1);
+    
+    dip(cc) = hartigansdiptest(sort(SCORE(:,1)));
 end
 
+%% Sort by dip
+[~,dipsort] = sort(dip);
 
+%% Find Inverted PC1s
+invpc1 = mean(pc1coeff(freqlist<4,:))<0 & mean(pc1coeff(freqlist>50,:))>0;
+pc1coeff(:,invpc1) = -pc1coeff(:,invpc1);
+pc1hists(:,invpc1) = flipud(pc1hists(:,invpc1));
 %% Test
 %PC1 histogram for bimodality
 %PC1 coefficients for NREM and proper orientation
@@ -78,27 +87,35 @@ end
 %Theta spectrum for isolated peak?
 
 %% PC1 Weights and Coefficients
+
+
 figure
     subplot(2,2,1)
-        imagesc(log2(FFTfreqs),1:numchans,pc1coeff')
+        imagesc(log2(FFTfreqs),1:numchans,pc1coeff(:,dipsort)')
         ylabel('Channel #');xlabel('f (Hz)')
         LogScale('x',2)
-        title('PC1 Frequency Coefficients: All Channels')
+        axis xy
+        title('PC1 Frequency Coefficients: All Channels') 
     subplot(2,2,2)
-        imagesc(histbins,1:numchans,pc1hists')
+        imagesc(histbins,1:numchans,pc1hists(:,dipsort)')
         ylabel('Channel #');xlabel('PC1 projection weight')
         title('PC1 Projection Histogram: All Channels')
+        axis xy
     subplot(2,2,3)
-        plot(log2(FFTfreqs),pc1coeff')
-        hold on
+        set(gca,'ColorOrder',RainbowColors(length(dipsort)))
+        hold all
+        plot(log2(FFTfreqs),pc1coeff')     
         plot(log2(FFTfreqs([1 end])),[0 0],'k')
         ylabel('PC1 Coefficient');xlabel('f (Hz)')
         LogScale('x',2)
         title('PC1 Frequency Coefficients: All Channels')
     subplot(2,2,4)
+        set(gca,'ColorOrder',RainbowColors(length(dipsort)))
+        hold all
         plot(histbins,pc1hists')
         ylabel('hist');xlabel('PC1 projection weight')
         title('PC1 Projection Histogram: All Channels')
+
         
 
 %%
