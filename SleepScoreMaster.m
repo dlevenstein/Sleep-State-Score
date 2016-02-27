@@ -62,12 +62,10 @@ swlfppath = fullfile(datasetfolder,recordingname,[recordingname,'_SWLFP.mat']);
 
 if ~exist(EMGpath,'file')
 
-
     EMGCorr = EMGCorrForSleepscore(sessionfolder,recordingname);%BW modify this to have different dependencies, currently assumes presence of: 
     % eeg filename - ok
     % .xml filename - ok
     %     Save ..._EMGCorr file
-
 
 else
     load(EMGpath,'EMGCorr')
@@ -80,6 +78,16 @@ clear EMGCorr
 %Possibility - use multiple channels for concensus, find one good SWChannel
 %from each shank? - could even use all SW for clustering - will improve
 %both time resolution and reliability
+
+%Possbile cases:
+%   -SW,TH channel picked and have .mat
+%   -SW,TH channel picked but need to be loaded from .eeg -> save a .mat
+%   -SW,TH channel not picked
+
+%To Do: get LoadLFP (or other) to load already downsampled LFP....
+%Then return channel and load for .mat and Clustering
+
+
 
 if ~exist(thetalfppath,'file')% if no lfp file already, load lfp and make lfp file?
     if exist (fullfile(datasetfolder,recordingname,[recordingname,'.lfp']),'file')
@@ -102,6 +110,11 @@ else
     load(swlfppath,'swLFP')
     load(thetalfppath,'thLFP')
 end
+
+%If nothing is picked.
+    %Pick channels
+    [SWchannum,THchannum] = PickSWTHChannel(datasetfolder,recname,figfolder);
+    %Load swLFP,thLFP and save to .mats
 
 
 %% CLUSTER STATES BASED ON SLOW WAVE, THETA, EMG
