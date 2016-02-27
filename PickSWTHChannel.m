@@ -1,6 +1,9 @@
-function [SWchannum,THchannum,thLFP,swLFP] = PickSWTHChannel(datasetfolder,recname,figfolder)
+function [SWchannum,THchannum] = PickSWTHChannel(datasetfolder,recname,figfolder)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
+%
+%TO DO
+%   -Change from GetLFP to LoadBinary or readmulti
 %% DEV
 datasetfolder = '/Users/dlevenstein/Dropbox/Research/Datasets/DTData/';
 recname = 'DT3_rLS_rCA1_20150927_298um_288um';
@@ -8,11 +11,12 @@ figfolder = '/Users/dlevenstein/Code Library/SleepScoreDevelopment/StateScoreFig
 
 % datasetfolder = '/Users/dlevenstein/Dropbox/Research/Datasets/GGData/';
 % recname = 'Rat08-20130717';
-filename = [datasetfolder,'/',recname,'/',recname,'.xml'];
+xmlfilename = [datasetfolder,'/',recname,'/',recname,'.xml'];
+eegfilename = [datasetfolder,'/',recname,'/',recname,'.eeg'];
 
 %% FMA
 
-SetCurrentSession(filename);
+SetCurrentSession(xmlfilename);
 global DATA
 numchans = DATA.nChannels;
 
@@ -24,6 +28,9 @@ numfreqs = 100;
 %To do here: catch situations where LFP is bigger than RAM and/or
 %downsample within GetLFP
 allLFP = GetLFP('all');
+
+% Load downsampled LFP
+%allLFP = LoadBinary(eegfilename,'frequency',DATA.rates.lfp,'nchannels',nChannels,'channels',channels,'skip',skip);
 
 %% Downsample the LFP to 250Hz
 sf_LFP = 1/(allLFP(2,1)-allLFP(1,1));

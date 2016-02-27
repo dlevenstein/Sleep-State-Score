@@ -112,7 +112,9 @@ else
 end
 
 %If nothing is picked.
-    [SWchannum,THchannum,thLFP,swLFP] = PickSWTHChannel(datasetfolder,recname,figfolder);
+    %Pick channels
+    [SWchannum,THchannum] = PickSWTHChannel(datasetfolder,recname,figfolder);
+    %Load swLFP,thLFP and save to .mats
 
 
 %% CLUSTER STATES BASED ON SLOW WAVE, THETA, EMG
