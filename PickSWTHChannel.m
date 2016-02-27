@@ -1,4 +1,4 @@
-function [ SWchannum,THchannum,THratio,PC1power] = PickSWTHChannel(datasetfolder,recname,figfolder)
+function [SWchannum,THchannum,thLFP,swLFP] = PickSWTHChannel(datasetfolder,recname,figfolder)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 %% DEV
@@ -112,9 +112,15 @@ end
 
 goodSWidx = dipsortSW(end);
 goodTHidx = dipsortTH(end);
+SWchan = goodSWidx+1;
+THchan = goodTHidx+1;
+
+swLFP = allLFP(:,SWchan);
+thLFP = allLFP(:,THchan);
 
 SWchannum = goodSWidx-2;
 THchannum = goodTHidx-2;
+
 
 
 %% Find Inverted PC1s and flip them
@@ -191,13 +197,15 @@ thfig = figure;
 saveas(thfig,[figfolder,recname,'_FindBestTH'],'jpeg')
 %% Show Channels
 
-SWchan = goodSWidx+1;
-THchan = goodTHidx+1;
 
     %Calculate PC1 for plot/return
     [FFTspec,FFTfreqs,t_FFT] = spectrogram(allLFP(:,SWchan),window,noverlap,freqlist,sf_LFP);
     FFTspec = abs(FFTspec);
     [zFFTspec,mu,sig] = zscore(log10(FFTspec)');
+
+    totz = zscore(abs(sum(zFFTspec')));
+    badtimes = find(totz>5);
+    zFFTspec(badtimes,:) = 0;
     
     smoothfact = 10; %si_FFT
     thsmoothfact = 15;
