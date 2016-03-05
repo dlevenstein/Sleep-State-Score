@@ -2,7 +2,7 @@
 
 
 datafolder = '/Users/dlevenstein/Dropbox/Research/Datasets/BWData/';
-%figfolder = '/Users/dlevenstein/Dropbox/Research/Current Projects/TransitionsAndSpindles/AnalysisFigsMats/Spindle LFP/';
+figfolder = '/Users/dlevenstein/Code Library/SleepScoreDevelopment/StateScoreFigures/';
 %Make List of all Recordings in data folder
 recordings = dir(datafolder);
 recordings(strncmpi('.',{recordings.name},1)) = [];   %Remove entries starting with .,~
@@ -72,3 +72,33 @@ EMG = EMGCorr(:,2); %Entire Recording for all recordings
 
 end
 
+%%
+[~,sortexpvar] = sort(PC1expvar);
+freqlist = logspace(0,2,100);
+
+[heights,centers] = hist(PC1expvar,8);
+barcolors = RedPurpleColors(length(heights));
+
+figure
+    subplot(2,2,1)
+        set(gca,'ColorOrder',RedPurpleColors(length(PC1expvar)))
+        hold all
+        plot(log2(freqlist),PC1weights(sortexpvar,:)','LineWidth',1)
+        plot(get(gca,'xlim'),[0 0],'k--')
+        LogScale('x',2)
+        xlim(log2(freqlist([1 end])))
+        title('PC1 Weights')
+        ylabel('Weight');xlabel('f (Hz)')
+    subplot(2,2,2)
+      %  b = bar(centers,heights);
+      hold on
+        for bb = 1:length(heights)
+            bar(centers(bb),heights(bb),...
+                'FaceColor',barcolors(bb,:),'barwidth',2);
+        end
+        xlabel('% Variance Explained')
+        xlim([10 32])
+        ylabel('# Recordings')
+        title('Spectrogram Variance Explained by PC1')
+ 
+saveas(gcf,[figfolder,'_SWTHChannels'],'jpeg')
