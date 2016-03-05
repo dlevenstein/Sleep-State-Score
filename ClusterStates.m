@@ -1,4 +1,4 @@
-function [ INT, IDX, t_IDX,PC1weights ] = ClusterStates(LFP,thLFP,EMG,sf_LFP,sf_EMG,figloc,WSEpisodes)
+function [ INT, IDX, t_IDX,PC1weights,PC1expvar ] = ClusterStates(LFP,thLFP,EMG,sf_LFP,sf_EMG,figloc,WSEpisodes)
 %StateID(LFP,thLFP,EMG,sf_LFP,sf_EMG,figloc,WSEpisodes)
 %   Detailed explanation goes here
 %
@@ -67,11 +67,12 @@ zFFTspec(badtimes,:) = 0;
 %% PCA
 smoothfact = 10; %si_FFT
 thsmoothfact = 15;
- [COEFF, SCORE, LATENT] = pca(zFFTspec);
+ [COEFF, SCORE, ~, ~, EXPLAINED] = pca(zFFTspec);
  SCORE(:,1) = smooth(SCORE(:,1),smoothfact);
 SCORE(:,1) = (SCORE(:,1)-min(SCORE(:,1)))./max(SCORE(:,1)-min(SCORE(:,1)));
 
 PC1weights = COEFF(:,1);
+PC1expvar = EXPLAINED(1);
  
 %% Calculate theta
 display('FFT Spectrum for Theta')

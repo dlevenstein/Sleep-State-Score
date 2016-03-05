@@ -11,10 +11,15 @@ recordings(strncmpi('~',{recordings.name},1)) = [];
 numrecs = length(recordings);
 
 
+nfreqs = 100;
+PC1weights = zeros(numrecs,nfreqs);
+PC1expvar = zeros(numrecs,1);
+
+
 %%
 for r = 1:numrecs;
  %%
- r = 1;
+%  r = 1;
         close all
 display(['Recording ',num2str(r),' of ',num2str(numrecs)])
 
@@ -60,22 +65,9 @@ thLFP = thLFP(goodtime(1):goodtime(2));
 EMG = EMGCorr(:,2); %Entire Recording for all recordings
 
 %%
-%Save Figure Location
-figloc = ['AllRecsStateID/',recordings(r).name];
 
-[ INT, IDX, t_IDX ] = ClusterStates(LFP,thLFP,EMG,sf_LFP,sf_EMG)
 
-states(states==3)=5;
-states(states==2)=3;
-
-% save([datafolder,recordings(r).name,'/',...
-%     recordings(r).name,'_StateID.mat'],'stateintervals','states')
-% save([datafolder,recordings(r).name,'/',...
-%     recordings(r).name,'_StateIDNoMin.mat'],'stateintervals','states')
-% save(['/Users/dlevenstein/Dropbox/dan&brendon/Sept15IntervalsDraftInf/MinImposed/',...
-%     recordings(r).name,'_StateID.mat'],'stateintervals','states')
-% save(['/Users/dlevenstein/Dropbox/dan&brendon/Sept8IntervalsDraft1/NoMins/',...
-%     recordings(r).name,'_StateID.mat'],'stateintervals','states')
+[~,~,~,PC1weights(r,:),PC1expvar(r)] = ClusterStates(LFP,thLFP,EMG,sf_LFP,sf_EMG);
 
 
 end
