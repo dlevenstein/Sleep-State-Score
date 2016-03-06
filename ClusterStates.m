@@ -478,28 +478,78 @@ end
 
         
 %% 
-% figure
-%     subplot(2,3,1)
-%         scatter(SCORE(:,1),thratio,3,IDX,'filled')
-%         xlabel('Broadband PC1');ylabel('Narrowband Theta')
-%     subplot(2,3,2)
-%         scatter(SCORE(:,1),EMG,3,IDX,'filled')
-%         xlabel('Broadband PC1');ylabel('EMG')
-%     subplot(2,3,3)
-%         scatter(thratio,EMG,3,IDX,'filled')
-%         xlabel('Narrowband Theta');ylabel('EMG')
-% 
-%     subplot(2,3,4)
-%         scatter(SCORE(SWStimes==0,1),thratio(SWStimes==0),3,IDX(SWStimes==0),'filled')
-%         xlabel('Broadband PC1');ylabel('Narrowband Theta')
-%     subplot(2,3,5)
-%         scatter(SCORE(SWStimes==0,1),EMG(SWStimes==0),3,IDX(SWStimes==0),'filled')
-%         xlabel('Broadband PC1');ylabel('EMG')
-%         title('non-nonREM only')
-%     subplot(2,3,6)
-%         scatter(thratio(SWStimes==0,1),EMG(SWStimes==0,1),3,IDX(SWStimes==0),'filled')
-%         xlabel('Narrowband Theta');ylabel('EMG')
+figure
+
+    subplot(2,3,1)
+        scatter(SCORE(:,1),thratio,3,IDX,'filled')
+        xlabel('Broadband PC1');ylabel('Narrowband Theta')
+    subplot(2,3,2)
+        scatter(SCORE(:,1),EMG,3,IDX,'filled')
+        xlabel('Broadband PC1');ylabel('EMG')
+    subplot(2,3,3)
+        scatter(thratio,EMG,3,IDX,'filled')
+        xlabel('Narrowband Theta');ylabel('EMG')
+
+    subplot(2,3,4)
+        scatter(SCORE(SWStimes==0,1),thratio(SWStimes==0),3,IDX(SWStimes==0),'filled')
+        xlabel('Broadband PC1');ylabel('Narrowband Theta')
+    subplot(2,3,5)
+        scatter(SCORE(SWStimes==0,1),EMG(SWStimes==0),3,IDX(SWStimes==0),'filled')
+        xlabel('Broadband PC1');ylabel('EMG')
+        title('non-nonREM only')
+    subplot(2,3,6)
+        %scatter(thratio(SWStimes==0,1),EMG(SWStimes==0,1),3,IDX(SWStimes==0),'filled')
+        plot(thratio(SWStimes==0 & IDX==1,1),EMG(SWStimes==0 & IDX==1,1),'k.')
+        hold on
+        plot(thratio(SWStimes==0 & IDX==3,1),EMG(SWStimes==0 & IDX==3,1),'r.')
+        xlabel('Narrowband Theta');ylabel('EMG')
+
+%% Figure: Split REM/Arousal  
+figure
+	subplot(3,2,1)
+        hold on
+        bar(histbins(histbins>thresh),pcahist(histbins>thresh),'FaceColor','b','barwidth',0.9,'linewidth',1)
+        bar(histbins(histbins<=thresh),pcahist(histbins<=thresh),'FaceColor',0.9*[1 1 1],'barwidth',0.9,'linewidth',1)
+        plot([thresh thresh],[0 max(pcahist)],'r','LineWidth',1)
+        xlabel('PC 1')
+        title('Step 1: PCA for SWS')
         
+
+	subplot(3,2,3)
+        hold on
+        bar(EMGhistbins(EMGhistbins>EMGthresh),EMGhist(EMGhistbins>EMGthresh),'FaceColor','k','barwidth',0.9,'linewidth',1)
+        bar(EMGhistbins(EMGhistbins<=EMGthresh),EMGhist(EMGhistbins<=EMGthresh),'FaceColor',0.9*[1 1 1],'barwidth',0.9,'linewidth',1)
+        plot([EMGthresh EMGthresh],[0 max(EMGhist)],'r','LineWidth',1)
+        xlabel('EMG')
+        title('Step 2: EMG for Muscle Tone')
+	subplot(3,2,5)
+        hold on
+        bar(THhistbins(THhistbins>=THthresh),THhist(THhistbins>=THthresh),'FaceColor','r','barwidth',0.9,'linewidth',1)
+        bar(THhistbins(THhistbins<THthresh),THhist(THhistbins<THthresh),'FaceColor','k','barwidth',0.9,'linewidth',1)
+        plot([THthresh THthresh],[0 max(THhist)],'r','LineWidth',1)
+        xlabel('Theta')
+        title('Step 3: Theta for REM')
+        
+        
+    subplot(2,2,2)
+        plot(SCORE(IDX==2,1),EMG(IDX==2),'b.')
+        hold on
+        plot(SCORE(EMG>EMGthresh & IDX==1,1),EMG(EMG>EMGthresh & IDX==1),'k.')
+        plot(SCORE(EMG<EMGthresh & IDX==1|IDX==3,1),EMG(EMG<EMGthresh & IDX==1|IDX==3),'.','Color',0.8*[1 1 1])
+        plot(thresh*[1 1],get(gca,'ylim'),'r','LineWidth',1)
+        plot(thresh*[0 1],EMGthresh*[1 1],'r','LineWidth',1)
+        xlabel('Broadband PC1');ylabel('EMG')
+	subplot(2,2,4)
+        %scatter(thratio(SWStimes==0,1),EMG(SWStimes==0,1),3,IDX(SWStimes==0),'filled')
+        plot(thratio(SWStimes==0 & IDX==1,1),EMG(SWStimes==0 & IDX==1,1),'k.')
+        hold on
+        plot(thratio(SWStimes==0 & IDX==3,1),EMG(SWStimes==0 & IDX==3,1),'r.')
+        xlabel('Narrowband Theta');ylabel('EMG')
+        plot(THthresh*[1 1],EMGthresh*[0 1],'r','LineWidth',1)
+        plot([0 1],EMGthresh*[1 1],'r','LineWidth',1)
+
+
+saveas(gcf,['/Users/dlevenstein/Code Library/SleepScoreDevelopment/StateScoreFigures/','ThetaEMGExample'],'jpeg')
 %% Figure: Clustering
 colormat = [[0 0 0];[0 0 1];[1 0 0]];
 coloridx = colormat(IDX,:);
@@ -515,25 +565,25 @@ figure
       
 	subplot(3,3,1)
         hold on
-        bar(histbins,pcahist,'FaceColor','none','barwidth',0.9,'linewidth',3)
+        bar(histbins,pcahist,'FaceColor','none','barwidth',0.9,'linewidth',2)
         plot([thresh thresh],[0 max(pcahist)],'r')
         xlabel('PC 1')
         title('Step 1: PCA for SWS')
 	subplot(3,3,4)
         hold on
-        bar(EMGhistbins,EMGhist,'FaceColor','none','barwidth',0.9,'linewidth',3)
+        bar(EMGhistbins,EMGhist,'FaceColor','none','barwidth',0.9,'linewidth',2)
         plot([EMGthresh EMGthresh],[0 max(EMGhist)],'r')
         xlabel('EMG')
         title('Step 2: EMG for Muscle Tone')
 	subplot(3,3,7)
         hold on
-        bar(THhistbins,THhist,'FaceColor','none','barwidth',0.9,'linewidth',3)
+        bar(THhistbins,THhist,'FaceColor','none','barwidth',0.9,'linewidth',2)
         plot([THthresh THthresh],[0 max(THhist)],'r')
         xlabel('Theta')
         title('Step 3: Theta for REM')
         
-	saveas(gcf,[figloc,'_clust'],'jpeg')
-        
+%	saveas(gcf,[figloc,'_clust'],'jpeg')
+saveas(gcf,['/Users/dlevenstein/Code Library/SleepScoreDevelopment/StateScoreFigures/','clust'],'jpeg')    
   %% Figure: Duration Distributions
   Wints = INT{1};
   Wlengths = Wints(:,2)-Wints(:,1);

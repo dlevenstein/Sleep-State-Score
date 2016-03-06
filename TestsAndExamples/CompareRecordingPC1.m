@@ -101,4 +101,4 @@ figure
         ylabel('# Recordings')
         title({'Spectrogram Variance', 'Explained by PC1'})
  
-saveas(gcf,[figfolder,'PC1Weights'],'tiff')
+saveas(gcf,[figfolder,'PC1Weights'],'jpeg')
