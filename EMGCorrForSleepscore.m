@@ -21,7 +21,7 @@ if ~exist('specialshanks')
 end
 
 %% get basics about eeg/lfp file
-if strcmp(basenamepath(end-3:end),'*.lfp') || strcmp(basenamepath(end-4:end),'*.eeg')
+if strcmp(basenamepath(end-3:end),'.lfp') || strcmp(basenamepath(end-3:end),'.eeg')
     eegloc = basenamepath;
     xmlloc = [basenamepath(1:end-4),'.xml'];
     saveloc = [basenamepath(1:end-4),'_EMGCorr.mat'];
