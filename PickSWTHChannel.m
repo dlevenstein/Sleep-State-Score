@@ -5,9 +5,12 @@ function [SWchannum,THchannum] = PickSWTHChannel(datasetfolder,recname,figfolder
 %TO DO
 %   -Change from GetLFP to LoadBinary or readmulti
 %% DEV
-datasetfolder = '/Users/dlevenstein/Dropbox/Research/Datasets/DTData/';
-recname = 'DT3_rLS_rCA1_20150927_298um_288um';
+%datasetfolder = '/Users/dlevenstein/Dropbox/Research/Datasets/DTData/';
+%recname = 'DT3_rLS_rCA1_20150927_298um_288um';
 figfolder = '/Users/dlevenstein/Code Library/SleepScoreDevelopment/StateScoreFigures/';
+
+recname = 'c3po_160202';
+datasetfolder = '/Users/dlevenstein/Dropbox/Share Folders/Recordings/';
 
 % datasetfolder = '/Users/dlevenstein/Dropbox/Research/Datasets/GGData/';
 % recname = 'Rat08-20130717';
@@ -30,6 +33,8 @@ numfreqs = 100;
 allLFP = GetLFP('all');
 
 % Load downsampled LFP
+%skip = ;   %What does skip have to be to load the LFP downsampled by a
+%           factor of 5??
 %allLFP = LoadBinary(eegfilename,'frequency',DATA.rates.lfp,'nchannels',nChannels,'channels',channels,'skip',skip);
 
 %% Downsample the LFP to 250Hz

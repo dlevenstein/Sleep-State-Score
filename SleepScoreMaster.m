@@ -23,8 +23,9 @@ function [stateintervals,episodeintervals] = SleepScoreMaster(datasetfolder,reco
 % DLevenstein and BWatson 2015/16
 %% DEV
 % Load the necessary files as needed for development
-datasetfolder = '/Users/dlevenstein/Dropbox/Research/Datasets/BWData/';
+datasetfolder = '/Users/dlevenstein/Dropbox/Research/Datasets/DTData/';
 recordingname = 'Dino_061814_mPFC';
+recordingname = 'DT2_rPPC_rCCG_362um_218um_20160209_160209_183610';
 sessionfolder = fullfile(datasetfolder,recordingname);
 
 sf_LFP = 1250;
@@ -50,6 +51,7 @@ figloc = fullfile('StateScoreFigures',recordingname);
 EMGpath = fullfile(datasetfolder,recordingname,[recordingname '_EMGCorr.mat']);
 thetalfppath = fullfile(datasetfolder,recordingname,[recordingname,'_ThetaLFP.mat']);
 swlfppath = fullfile(datasetfolder,recordingname,[recordingname,'_SWLFP.mat']);
+
 
 
 %% CALCULATE EMG FROM HIGH-FREQUENCY COHERENCE
