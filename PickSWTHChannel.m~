@@ -128,13 +128,15 @@ SWchan = goodSWidx+1;
 THchan = goodTHidx+1;
 
 
+%%
+% swLFP = allLFP(:,SWchan);
+% thLFP = allLFP(:,THchan);
+
 SWchannum = goodSWidx-2;
 THchannum = goodTHidx-2;
 
 swthLFP = GetLFP([SWchan,THchan]);
 
-swLFP = swthLFP(:,2);
-thLFP = swthLFP(:,3);
 %% Find Inverted PC1s and flip them
 invpc1 = mean(pc1coeff(freqlist<4,:))<0 & mean(pc1coeff(freqlist>50,:))>0;
 pc1coeff(:,invpc1) = -pc1coeff(:,invpc1);

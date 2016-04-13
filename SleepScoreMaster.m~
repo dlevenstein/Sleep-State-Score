@@ -52,6 +52,8 @@ EMGpath = fullfile(datasetfolder,recordingname,[recordingname '_EMGCorr.mat']);
 thetalfppath = fullfile(datasetfolder,recordingname,[recordingname,'_ThetaLFP.mat']);
 swlfppath = fullfile(datasetfolder,recordingname,[recordingname,'_SWLFP.mat']);
 
+sleepstatepath = fullfile(datasetfolder,recordingname,[recordingname,'_SleepScore.mat']);
+
 if exist (fullfile(datasetfolder,recordingname,[recordingname,'.lfp']),'file')
     rawlfppath = fullfile(datasetfolder,recordingname,[recordingname,'.lfp']);
 elseif exist (fullfile(datasetfolder,recordingname,[recordingname,'.eeg']),'file')
@@ -105,7 +107,8 @@ if ~exist(thetalfppath,'file') & ~exist(swlfppath,'file') % if no lfp file alrea
 %     end
 
 %     Par = LoadPar(fullfile(datasetfolder,recordingname,[recordingname,'.xml']));
-    [SWchannum,THchannum,] = PickSWTHChannel(datasetfolder,recordingname,figloc);
+    [SWchannum,THchannum,swLFP,thLFP] = PickSWTHChannel(datasetfolder,recordingname,figloc);
+    
     %open lfp, 
 %         lfp = readmulti(eegloc, nChannels, xcorr_chs) * bmd.voltsperunit*1000; %read and convert to mV    
 %         or lfp = LoadBinary...
@@ -115,6 +118,11 @@ if ~exist(thetalfppath,'file') & ~exist(swlfppath,'file') % if no lfp file alrea
     %thLFP = lfp(ThetaChannel);
     %store _ThetaLFP.mat
     %store _SWLFP.mat
+    if savebool
+    % save...
+        save(swlfppath,'swLFP');
+        save(thetalfppath,'thLFP');
+    end
 else
     load(swlfppath,'swLFP')
     load(thetalfppath,'thLFP')
@@ -155,5 +163,15 @@ minREMdur = 20;
 
 % BW: I added some other code, have to look at this too
 
+%% Save
+StateIntervals.SWSstate = SWSints;
+StateIntervals.REMstate = REMints;
+StateIntervals.WAKEstate = WAKEints;
+StateIntervals.SWSepisode = episodeintervals{2};
+StateIntervals.REMepisode = episodeintervals{3};
+StateIntervals.WAKEeposode = episodeintervals{1};
+StateIntervals.SWSpacket = episodeintervals{1};
+
+save(sleepstatepath,'stateintervals','episodeintervals');
 end
 
