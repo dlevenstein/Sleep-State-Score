@@ -170,8 +170,8 @@ StateIntervals.WAKEstate = WAKEints;
 StateIntervals.SWSepisode = episodeintervals{2};
 StateIntervals.REMepisode = episodeintervals{3};
 StateIntervals.WAKEeposode = episodeintervals{1};
-StateIntervals.SWSpacket = packetintervals;
+StateIntervals.SWSpacket = episodeintervals{1};
 
-save(sleepstatepath,'stateintervals','episodeintervals','StateIntervals');
+save(sleepstatepath,'stateintervals','episodeintervals');
 end
 

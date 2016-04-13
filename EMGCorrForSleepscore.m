@@ -1,4 +1,4 @@
-function EMGCorrData = EMGCorrForSleepscore(basenamepath,specialchannels,specialshanks)
+function EMGCorr = EMGCorrForSleepscore(basenamepath,specialchannels,specialshanks)
 % Based on Erik Schomburg's work and code.  Grabs channels and calculates
 % their correlations in the 300-600Hz band over sliding windows of 0.5sec.
 % Channels are automatically selected and are a combination first channels
@@ -21,7 +21,7 @@ if ~exist('specialshanks')
 end
 
 %% get basics about eeg/lfp file
-if strcmp(basenamepath(end-3:end),'*.lfp') || strcmp(basenamepath(end-4:end),'*.eeg')
+if strcmp(basenamepath(end-3:end),'.lfp') || strcmp(basenamepath(end-3:end),'.eeg')
     eegloc = basenamepath;
     xmlloc = [basenamepath(1:end-4),'.xml'];
     saveloc = [basenamepath(1:end-4),'_EMGCorr.mat'];
@@ -157,7 +157,7 @@ ChannelsCompared = xcorr_chs;
 EMGCorrData = v2struct(EMGCorr,ChannelsCompared);
 if savebool
     % save...
-    save(saveloc,'EMGCorrData');
+    save(saveloc,'EMGCorrData','EMGCorr');
 end
 
 function [filt_sig, Filt] = filtsig_in(sig, Fs, filtband_or_Filt)
