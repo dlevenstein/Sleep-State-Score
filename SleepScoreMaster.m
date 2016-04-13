@@ -97,14 +97,15 @@ clear EMGCorr
 
 
 
-if ~exist(thetalfppath,'file')% if no lfp file already, load lfp and make lfp file?
-    if exist (fullfile(datasetfolder,recordingname,[recordingname,'.lfp']),'file')
-        rawlfppath = fullfile(datasetfolder,recordingname,[recordingname,'.lfp']);
-    elseif exist (fullfile(datasetfolder,recordingname,[recordingname,'.eeg']),'file')
-        rawlfppath = fullfile(datasetfolder,recordingname,[recordingname,'.eeg']);
-    end
+if ~exist(thetalfppath,'file') & ~exist(swlfppath,'file') % if no lfp file already, load lfp and make lfp file?
+%     if exist (fullfile(datasetfolder,recordingname,[recordingname,'.lfp']),'file')
+%         rawlfppath = fullfile(datasetfolder,recordingname,[recordingname,'.lfp']);
+%     elseif exist (fullfile(datasetfolder,recordingname,[recordingname,'.eeg']),'file')
+%         rawlfppath = fullfile(datasetfolder,recordingname,[recordingname,'.eeg']);
+%     end
 
-    Par = LoadPar(fullfile(datasetfolder,recordingname,[recordingname,'.xml']));
+%     Par = LoadPar(fullfile(datasetfolder,recordingname,[recordingname,'.xml']));
+    [SWchannum,THchannum,] = PickSWTHChannel(datasetfolder,recordingname,figloc);
     %open lfp, 
 %         lfp = readmulti(eegloc, nChannels, xcorr_chs) * bmd.voltsperunit*1000; %read and convert to mV    
 %         or lfp = LoadBinary...
@@ -119,10 +120,6 @@ else
     load(thetalfppath,'thLFP')
 end
 
-%If nothing is picked.
-    %Pick channels
-    [SWchannum,THchannum] = PickSWTHChannel(datasetfolder,recname,figfolder);
-    %Load swLFP,thLFP and save to .mats
 
 
 %% CLUSTER STATES BASED ON SLOW WAVE, THETA, EMG

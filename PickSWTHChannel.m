@@ -7,10 +7,10 @@ function [SWchannum,THchannum] = PickSWTHChannel(datasetfolder,recname,figfolder
 %% DEV
 %datasetfolder = '/Users/dlevenstein/Dropbox/Research/Datasets/DTData/';
 %recname = 'DT3_rLS_rCA1_20150927_298um_288um';
-figfolder = '/Users/dlevenstein/Code Library/SleepScoreDevelopment/StateScoreFigures/';
+%figfolder = '/Users/dlevenstein/Code Library/SleepScoreDevelopment/StateScoreFigures/';
 
-recname = 'c3po_160202';
-datasetfolder = '/Users/dlevenstein/Dropbox/Share Folders/Recordings/';
+%recname = 'c3po_160202';
+%datasetfolder = '/Users/dlevenstein/Dropbox/Share Folders/Recordings/';
 
 % datasetfolder = '/Users/dlevenstein/Dropbox/Research/Datasets/GGData/';
 % recname = 'Rat08-20130717';
@@ -127,6 +127,8 @@ goodTHidx = dipsortTH(end);
 SWchan = goodSWidx+1;
 THchan = goodTHidx+1;
 
+swthLFP = GetLFP([SWchan,THchan]);
+%%
 swLFP = allLFP(:,SWchan);
 thLFP = allLFP(:,THchan);
 
