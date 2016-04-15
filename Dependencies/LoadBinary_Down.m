@@ -28,9 +28,11 @@ function data = LoadBinary_Down(filename,varargin)
 %     'precision'   sample precision (default = 'int16')
 %     'skip'        number of bytes to skip after each value is read
 %                   (default = 0)
+%     'downsample'  factor by which to downample by (default = 1)
 %    =========================================================================
 
 % Copyright (C) 2004-2011 by Michaël Zugaro
+%Modified by DLevenstein 2016 to include downsampling
 %
 % This program is free software; you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by

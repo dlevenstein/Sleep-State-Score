@@ -5,8 +5,10 @@ function [SWchannum,THchannum,swLFP,thLFP] = PickSWTHChannel(datasetfolder,recor
 %TO DO
 %   -Change from GetLFP to LoadBinary or readmulti
 %% DEV
-datasetfolder = '/Users/dlevenstein/Dropbox/Research/Datasets/DTData/';
-recordingname = 'DT2_rPPC_rCCG_362um_218um_20160209_160209_183610';
+%datasetfolder = '/Users/dlevenstein/Dropbox/Research/Datasets/DTData/';
+%recordingname = 'DT2_rPPC_rCCG_362um_218um_20160209_160209_183610';
+datasetfolder = '/Users/dlevenstein/Dropbox/Research/Datasets/BWData/~updated/Recordings (1)/';
+recordingname = 'c3po_160202';
 figfolder = '/Users/dlevenstein/Code Library/SleepScoreDevelopment/StateScoreFigures/';
 
 %recname = 'c3po_160202';
@@ -30,7 +32,6 @@ end
 %nChannels = DATA.nChannels;
 
 Par = LoadPar(xmlfilename);
-
 Fs = Par.lfpSampleRate; % Hz, LFP sampling rate
 nChannels = Par.nChannels;
 %% Hist/Freqs Parms
@@ -43,7 +44,7 @@ numfreqs = 100;
 %allLFP = GetLFP('all');
 
 % Load downsampled LFP
-downsamplefactor = 5;
+downsamplefactor = 10;
 allLFP = LoadBinary_Down(rawlfppath,'frequency',Fs,...
     'nchannels',nChannels,'downsample',downsamplefactor);
 Fs = Fs./downsamplefactor;
