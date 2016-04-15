@@ -1,28 +1,38 @@
-function [SWchannum,THchannum,swLFP,thLFP] = PickSWTHChannel(datasetfolder,recname,figfolder)
+function [SWchannum,THchannum,swLFP,thLFP] = PickSWTHChannel(datasetfolder,recordingname,figfolder)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 %
 %TO DO
 %   -Change from GetLFP to LoadBinary or readmulti
 %% DEV
-%datasetfolder = '/Users/dlevenstein/Dropbox/Research/Datasets/DTData/';
-%recname = 'DT3_rLS_rCA1_20150927_298um_288um';
-%figfolder = '/Users/dlevenstein/Code Library/SleepScoreDevelopment/StateScoreFigures/';
+datasetfolder = '/Users/dlevenstein/Dropbox/Research/Datasets/DTData/';
+recordingname = 'DT2_rPPC_rCCG_362um_218um_20160209_160209_183610';
+figfolder = '/Users/dlevenstein/Code Library/SleepScoreDevelopment/StateScoreFigures/';
 
 %recname = 'c3po_160202';
 %datasetfolder = '/Users/dlevenstein/Dropbox/Share Folders/Recordings/';
 
 % datasetfolder = '/Users/dlevenstein/Dropbox/Research/Datasets/GGData/';
 % recname = 'Rat08-20130717';
-xmlfilename = [datasetfolder,'/',recname,'/',recname,'.xml'];
-eegfilename = [datasetfolder,'/',recname,'/',recname,'.eeg'];
+xmlfilename = [datasetfolder,'/',recordingname,'/',recordingname,'.xml'];
+if exist (fullfile(datasetfolder,recordingname,[recordingname,'.lfp']),'file')
+    rawlfppath = fullfile(datasetfolder,recordingname,[recordingname,'.lfp']);
+elseif exist (fullfile(datasetfolder,recordingname,[recordingname,'.eeg']),'file')
+    rawlfppath = fullfile(datasetfolder,recordingname,[recordingname,'.eeg']);
+else 
+    display('No .lfp file')
+end
 
 %% FMA
+% 
+% SetCurrentSession(xmlfilename);
+% global DATA
+%nChannels = DATA.nChannels;
 
-SetCurrentSession(xmlfilename);
-global DATA
-numchans = DATA.nChannels;
+Par = LoadPar(xmlfilename);
 
+Fs = Par.lfpSampleRate; % Hz, LFP sampling rate
+nChannels = Par.nChannels;
 %% Hist/Freqs Parms
 numhistbins = 21;
 numfreqs = 100;
@@ -30,43 +40,46 @@ numfreqs = 100;
 %% Load LFP files from .lfp
 %To do here: catch situations where LFP is bigger than RAM and/or
 %downsample within GetLFP
-allLFP = GetLFP('all');
+%allLFP = GetLFP('all');
 
 % Load downsampled LFP
-%skip = ;   %What does skip have to be to load the LFP downsampled by a
-%           factor of 5??
-%allLFP = LoadBinary(eegfilename,'frequency',DATA.rates.lfp,'nchannels',nChannels,'channels',channels,'skip',skip);
+downsamplefactor = 10;
+allLFP = LoadBinary_Down(rawlfppath,'frequency',Fs,...
+    'nchannels',nChannels,'downsample',downsamplefactor);
+%%
+%allLFP = LoadBinary_Down(rawlfppath,'frequency',Fs,'nchannels',nChannels);
 
 %% Downsample the LFP to 250Hz
-sf_LFP = 1/(allLFP(2,1)-allLFP(1,1));
-if sf_LFP == 1250
-    downsamplefactor = 5;
-else
-    display('sf not 1250... if only you made this able to set its own downsample...')
-    downsamplefactor = 1;
-end
-allLFP = downsample(allLFP,downsamplefactor);
-sf_LFP = sf_LFP./downsamplefactor;
+% sf_LFP = 1/(allLFP(2,1)-allLFP(1,1));
+% if sf_LFP == 1250
+%     downsamplefactor = 5;
+% else
+%     display('sf not 1250... if only you made this able to set its own downsample...')
+%     downsamplefactor = 1;
+% end
+% allLFP = downsample(allLFP,downsamplefactor);
+Fs = Fs./downsamplefactor;
 
 %% For each channel, calculate the PC1 and check it
-pc1hists = zeros(numhistbins,numchans);
-THhist = zeros(numhistbins,numchans);
-pc1coeff = zeros(numfreqs,numchans);
-THmeanspec = zeros(numfreqs,numchans);
-dipSW = zeros(numchans,1);
-dipTH = zeros(numchans,1);
-for cc = 1:numchans;
-%cc = 40;
-channum = cc+1;
-    display(['Channel ',num2str(cc),' of ',num2str(numchans)])
+pc1hists = zeros(numhistbins,nChannels);
+THhist = zeros(numhistbins,nChannels);
+pc1coeff = zeros(numfreqs,nChannels);
+THmeanspec = zeros(numfreqs,nChannels);
+dipSW = zeros(nChannels,1);
+dipTH = zeros(nChannels,1);
+%%
+for cc = 1:nChannels;
+cc = 40;
+channum = cc;
+    display(['Channel ',num2str(cc),' of ',num2str(nChannels)])
 
     %Calcualte Spectrogram
     freqlist = logspace(0,2,numfreqs);
     window = 10;
     noverlap = 9;
-    window = window*sf_LFP;
-    noverlap = noverlap*sf_LFP;
-    [FFTspec,FFTfreqs,t_FFT] = spectrogram(allLFP(:,channum),window,noverlap,freqlist,sf_LFP);
+    window = window*Fs;
+    noverlap = noverlap*Fs;
+    [FFTspec,FFTfreqs,t_FFT] = spectrogram(allLFP(:,channum),window,noverlap,freqlist,Fs);
     FFTspec = abs(FFTspec);
 
     %% Find TRANSIENTS and set to 0 for PCA
@@ -89,6 +102,7 @@ channum = cc+1;
     pc1hists(:,cc) = pcahist;
     pc1coeff(:,cc) = COEFF(:,1);
     
+    pause
     dipSW(cc) = hartigansdiptest(sort(SCORE(:,1)));
     
     
@@ -100,7 +114,7 @@ channum = cc+1;
     f_theta = [5 10];
     thfreqlist = logspace(log10(f_all(1)),log10(f_all(2)),numfreqs);
 
-    [thFFTspec,thFFTfreqs] = spectrogram(allLFP(:,channum),window,noverlap,thfreqlist,sf_LFP);
+    [thFFTspec,thFFTfreqs] = spectrogram(allLFP(:,channum),window,noverlap,thfreqlist,Fs);
     thFFTspec = (abs(thFFTspec));
     allpower = sum(log10(thFFTspec),1);
     %Why log10? Does it matter?  Could not log transform make th stand out?
@@ -150,13 +164,13 @@ pc1hists(:,invpc1) = flipud(pc1hists(:,invpc1));
 
 swfig = figure;
     subplot(2,2,1)
-        imagesc(log2(FFTfreqs),1:numchans,pc1coeff(:,dipsortSW)')
+        imagesc(log2(FFTfreqs),1:nChannels,pc1coeff(:,dipsortSW)')
         ylabel('Channel #');xlabel('f (Hz)')
         LogScale('x',2)
         axis xy
         title('PC1 Frequency Coefficients: All Channels') 
     subplot(2,2,2)
-        imagesc(histbins,1:numchans,pc1hists(:,dipsortSW)')
+        imagesc(histbins,1:nChannels,pc1hists(:,dipsortSW)')
         ylabel('Channel #');xlabel('PC1 projection weight')
         title('PC1 Projection Histogram: All Channels')
         axis xy
@@ -175,19 +189,19 @@ swfig = figure;
         ylabel('hist');xlabel('PC1 projection weight')
         title('PC1 Projection Histogram: All Channels')
         
-saveas(swfig,[figfolder,recname,'_FindBestSW'],'jpeg')
+saveas(swfig,[figfolder,recordingname,'_FindBestSW'],'jpeg')
 
 %% Theta Hist and Coefficients
 
 thfig = figure;
     subplot(2,2,1)
-        imagesc(log2(thFFTfreqs),1:numchans,THmeanspec(:,dipsortTH)')
+        imagesc(log2(thFFTfreqs),1:nChannels,THmeanspec(:,dipsortTH)')
         ylabel('Channel #');xlabel('f (Hz)')
         LogScale('x',2)
         axis xy
         title('Spectrum: All Channels') 
     subplot(2,2,2)
-        imagesc(histbins,1:numchans,THhist(:,dipsortTH)')
+        imagesc(histbins,1:nChannels,THhist(:,dipsortTH)')
         ylabel('Channel #');xlabel('PC1 projection weight')
         title('Theta Ratio Histogram: All Channels')
         axis xy
@@ -206,12 +220,12 @@ thfig = figure;
         ylabel('hist');xlabel('PC1 projection weight')
         title('Theta Ratio Histogram: All Channels') 
         
-saveas(thfig,[figfolder,recname,'_FindBestTH'],'jpeg')
+saveas(thfig,[figfolder,recordingname,'_FindBestTH'],'jpeg')
 %% Show Channels
 
 
     %Calculate PC1 for plot/return
-    [FFTspec,FFTfreqs,t_FFT] = spectrogram(allLFP(:,SWchan),window,noverlap,freqlist,sf_LFP);
+    [FFTspec,FFTfreqs,t_FFT] = spectrogram(allLFP(:,SWchan),window,noverlap,freqlist,Fs);
     FFTspec = abs(FFTspec);
     [zFFTspec,mu,sig] = zscore(log10(FFTspec)');
 
@@ -241,7 +255,7 @@ chanfig =figure;
         xlim(t_FFT([1,end]))
      
     %Calculate Theta ratio for plot/return    
-    [thFFTspec,thFFTfreqs,t_FFT] = spectrogram(allLFP(:,THchan),window,noverlap,thfreqlist,sf_LFP);
+    [thFFTspec,thFFTfreqs,t_FFT] = spectrogram(allLFP(:,THchan),window,noverlap,thfreqlist,Fs);
     thFFTspec = abs(thFFTspec);
     [zFFTspec,mu,sig] = zscore(log10(thFFTspec)');
         
@@ -273,6 +287,6 @@ subplot(5,1,5)
         plot(t_FFT,thratio,'k')
         xlim(t_FFT([1,end]))
         
-saveas(chanfig,[figfolder,recname,'_SWTHChannels'],'jpeg')
+saveas(chanfig,[figfolder,recordingname,'_SWTHChannels'],'jpeg')
 end
 
