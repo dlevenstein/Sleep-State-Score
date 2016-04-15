@@ -89,6 +89,7 @@ for chanidx = 1:nChannels;
     pc1hists(:,chanidx) = pcahist;
     pc1coeff(:,chanidx) = COEFF(:,1);
     
+    pause
     dipSW(chanidx) = hartigansdiptest(sort(SCORE(:,1)));
     
     
@@ -124,15 +125,18 @@ end
 
 goodSWidx = dipsortSW(end);
 goodTHidx = dipsortTH(end);
+SWchan = goodSWidx+1;
+THchan = goodTHidx+1;
+
 
 SWchannum = goodSWidx-1;
 THchannum = goodTHidx-1;
 
-swthLFP = LoadBinary_Down(rawlfppath,'frequency',Fs,...
-    'nchannels',2,'channels',[goodSWidx,goodTHidx]);
+allLFP = LoadBinary_Down(rawlfppath,'frequency',Fs,...
+    'nchannels',2,'channels',[SWchan,THchan]);
 
-swLFP = swthLFP(:,1);
-thLFP = swthLFP(:,2);
+swLFP = swthLFP(:,2);
+thLFP = swthLFP(:,3);
 %% Find Inverted PC1s and flip them
 invpc1 = mean(pc1coeff(freqlist<4,:))<0 & mean(pc1coeff(freqlist>50,:))>0;
 pc1coeff(:,invpc1) = -pc1coeff(:,invpc1);
@@ -239,7 +243,7 @@ chanfig =figure;
         xlim(t_FFT([1,end]))
      
     %Calculate Theta ratio for plot/return    
-    [thFFTspec,thFFTfreqs,t_FFT] = spectrogram(allLFP(:,goodTHidx),window,noverlap,thfreqlist,Fs);
+    [thFFTspec,thFFTfreqs,t_FFT] = spectrogram(allLFP(:,THchan),window,noverlap,thfreqlist,Fs);
     thFFTspec = abs(thFFTspec);
     [zFFTspec,mu,sig] = zscore(log10(thFFTspec)');
         
