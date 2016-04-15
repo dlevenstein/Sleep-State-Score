@@ -43,11 +43,11 @@ numfreqs = 100;
 %allLFP = GetLFP('all');
 
 % Load downsampled LFP
-downsamplefactor = 5;
-skip = downsamplefactor.*nChannels ;
-%skip = downsamplefactor;%What does skip have to be to load the LFP downsampled by a
-%           factor of 5??
-allLFP = LoadBinary(rawlfppath,'frequency',Fs,'nchannels',nChannels,'skip',skip);
+downsamplefactor = 10;
+allLFP = LoadBinary_Down(rawlfppath,'frequency',Fs,...
+    'nchannels',nChannels,'downsample',downsamplefactor);
+%%
+%allLFP = LoadBinary_Down(rawlfppath,'frequency',Fs,'nchannels',nChannels);
 
 %% Downsample the LFP to 250Hz
 % sf_LFP = 1/(allLFP(2,1)-allLFP(1,1));
@@ -67,6 +67,7 @@ pc1coeff = zeros(numfreqs,nChannels);
 THmeanspec = zeros(numfreqs,nChannels);
 dipSW = zeros(nChannels,1);
 dipTH = zeros(nChannels,1);
+%%
 for cc = 1:nChannels;
 cc = 40;
 channum = cc;
