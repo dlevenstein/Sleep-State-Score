@@ -1,4 +1,4 @@
-function Par = LoadPar(FileName, varargin)
+function Par = LoadPar_SleepScore(FileName, varargin)
 % LoadPar(FileName)
 % loads the specified par file and returns a structure with these elements:
 %

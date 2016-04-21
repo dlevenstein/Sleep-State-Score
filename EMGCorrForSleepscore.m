@@ -37,7 +37,7 @@ else
     saveloc = [basenamepath,'_EMGCorr.mat'];
 end
 
-Par = LoadPar(xmlloc);
+Par = LoadPar_SleepScore(xmlloc);
 
 Fs = Par.lfpSampleRate; % Hz, LFP sampling rate
 nChannels = Par.nChannels;

@@ -31,7 +31,7 @@ end
 % global DATA
 %nChannels = DATA.nChannels;
 
-Par = LoadPar(xmlfilename);
+Par = LoadPar_SleepScore(xmlfilename);
 Fs = Par.lfpSampleRate; % Hz, LFP sampling rate
 nChannels = Par.nChannels;
 %% Hist/Freqs Parms
