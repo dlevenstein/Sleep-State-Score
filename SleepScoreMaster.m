@@ -24,8 +24,8 @@ function [stateintervals,episodeintervals] = SleepScoreMaster(datasetfolder,reco
 %% DEV
 % Load the necessary files as needed for development
 % datasetfolder = '/Users/dlevenstein/Dropbox/Research/Datasets/DTData/';
-%datasetfolder = '/Users/dlevenstein/Dropbox/Research/Datasets/BWData/~updated/Recordings (1)/';
-%recordingname = 'c3po_160202';
+datasetfolder = '/Users/dlevenstein/Dropbox/Research/Datasets/BWData/~updated/Recordings (1)/';
+recordingname = 'c3po_160202';
 % recordingname = 'DT2_rPPC_rCCG_362um_218um_20160209_160209_183610';
 sessionfolder = fullfile(datasetfolder,recordingname);
 
@@ -34,7 +34,11 @@ sf_EMG = 2;
 
 savebool = 1;
 
-figloc = fullfile(sessionfolder,'StateScoreFigures',recordingname);
+figloc = [fullfile(sessionfolder,'StateScoreFigures'),'/'];
+
+if ~exist(figloc,'dir')
+    mkdir(figloc)
+end
 %% Deal with input options from varargin
 %none yet, but will do this with inputParser when we have input options
 
