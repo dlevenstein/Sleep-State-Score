@@ -7,9 +7,9 @@ function [SWchannum,THchannum,swLFP,thLFP] = PickSWTHChannel(datasetfolder,recor
 %% DEV
 %datasetfolder = '/Users/dlevenstein/Dropbox/Research/Datasets/DTData/';
 %recordingname = 'DT2_rPPC_rCCG_362um_218um_20160209_160209_183610';
-datasetfolder = '/Users/dlevenstein/Dropbox/Research/Datasets/BWData/~updated/Recordings (1)/';
-recordingname = 'c3po_160202';
-figfolder = '/Users/dlevenstein/Code Library/SleepScoreDevelopment/StateScoreFigures/';
+% datasetfolder = '/Users/dlevenstein/Dropbox/Research/Datasets/BWData/~updated/Recordings (1)/';
+% recordingname = 'c3po_160202';
+% figfolder = '/Users/dlevenstein/Code Library/SleepScoreDevelopment/StateScoreFigures/';
 
 %recname = 'c3po_160202';
 %datasetfolder = '/Users/dlevenstein/Dropbox/Share Folders/Recordings/';
@@ -130,7 +130,7 @@ SWchannum = goodSWidx-1;
 THchannum = goodTHidx-1;
 
 swthLFP = LoadBinary_Down(rawlfppath,'frequency',Fs,...
-    'nchannels',2,'channels',[goodSWidx,goodTHidx]);
+    'nchannels',nChannels,'channels',[goodSWidx,goodTHidx]);
 
 swLFP = swthLFP(:,1);
 thLFP = swthLFP(:,2);

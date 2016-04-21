@@ -23,13 +23,16 @@ function [stateintervals,episodeintervals] = SleepScoreMaster(datasetfolder,reco
 % DLevenstein and BWatson 2015/16
 %% DEV
 % Load the necessary files as needed for development
-datasetfolder = '/Users/dlevenstein/Dropbox/Research/Datasets/DTData/';
-recordingname = 'Dino_061814_mPFC';
-recordingname = 'DT2_rPPC_rCCG_362um_218um_20160209_160209_183610';
+% datasetfolder = '/Users/dlevenstein/Dropbox/Research/Datasets/DTData/';
+datasetfolder = '/Users/dlevenstein/Dropbox/Research/Datasets/BWData/~updated/Recordings (1)/';
+recordingname = 'c3po_160202';
+% recordingname = 'DT2_rPPC_rCCG_362um_218um_20160209_160209_183610';
 sessionfolder = fullfile(datasetfolder,recordingname);
 
 sf_LFP = 1250;
 sf_EMG = 2;
+
+savebool = 1;
 
 figloc = fullfile('StateScoreFigures',recordingname);
 %% Deal with input options from varargin
