@@ -6,10 +6,9 @@ function EMGCorr = EMGCorrForSleepscore(basenamepath,specialchannels,specialshan
 % 2 shanks away.  
 % First channels on "specialshanks" are always used
 % "specialchannels" are also always used
-% Requires .eeg/lfp and .xml.  Assumes each spikegroup in the .xml
-% represents a "shank"
+% Goes into the base folder and gets the .eeg or .lfp file
 % 
-% Mean pairwise correlations are calculated for each time point.
+% Mean pairwise correlations are used for each time point.
 % 
 % Adapted 2015 Brendon Watson
 
@@ -17,10 +16,10 @@ function EMGCorr = EMGCorrForSleepscore(basenamepath,specialchannels,specialshan
 savebool = 1;
 
 %% input handling
-if ~exist('specialchannels','var')
+if ~exist('specialchannels')
     specialchannels = [];
 end
-if ~exist('specialshanks','var')
+if ~exist('specialshanks')
     specialshanks = [];
 end
 
