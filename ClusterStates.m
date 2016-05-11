@@ -396,7 +396,7 @@ figure
         xlim(viewwin)
         xlabel('t (s)')
         
-	saveas(gcf,figloc,'jpeg')
+	saveas(gcf,[figloc,'_ClusterResults'],'jpeg')
         
 %%
 if exist('WSEpisodes','var')
@@ -548,8 +548,8 @@ figure
         plot(THthresh*[1 1],EMGthresh*[0 1],'r','LineWidth',1)
         plot([0 1],EMGthresh*[1 1],'r','LineWidth',1)
 
-
-saveas(gcf,['/Users/dlevenstein/Code Library/SleepScoreDevelopment/StateScoreFigures/','ThetaEMGExample'],'jpeg')
+saveas(gcf,[figloc,'_clust2'],'jpeg')
+%saveas(gcf,['/Users/dlevenstein/Code Library/SleepScoreDevelopment/StateScoreFigures/','ThetaEMGExample'],'jpeg')
 %% Figure: Clustering
 colormat = [[0 0 0];[0 0 1];[1 0 0]];
 coloridx = colormat(IDX,:);
@@ -582,8 +582,8 @@ figure
         xlabel('Theta')
         title('Step 3: Theta for REM')
         
-%	saveas(gcf,[figloc,'_clust'],'jpeg')
-saveas(gcf,['/Users/dlevenstein/Code Library/SleepScoreDevelopment/StateScoreFigures/','clust'],'jpeg')    
+	saveas(gcf,[figloc,'_clust'],'jpeg')
+%saveas(gcf,['/Users/dlevenstein/Code Library/SleepScoreDevelopment/StateScoreFigures/','clust'],'jpeg')    
   %% Figure: Duration Distributions
   Wints = INT{1};
   Wlengths = Wints(:,2)-Wints(:,1);

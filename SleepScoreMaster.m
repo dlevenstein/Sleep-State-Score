@@ -24,8 +24,8 @@ function [stateintervals,episodeintervals] = SleepScoreMaster(datasetfolder,reco
 %% DEV
 % Load the necessary files as needed for development
 % datasetfolder = '/Users/dlevenstein/Dropbox/Research/Datasets/DTData/';
-datasetfolder = '/Users/dlevenstein/Dropbox/Research/Datasets/BWData/~updated/Recordings (1)/';
-recordingname = 'c3po_160202';
+%datasetfolder = '/Users/dlevenstein/Dropbox/Research/Datasets/BWData/~updated/Recordings (1)/';
+%recordingname = 'c3po_160202';
 % recordingname = 'DT2_rPPC_rCCG_362um_218um_20160209_160209_183610';
 sessionfolder = fullfile(datasetfolder,recordingname);
 
@@ -78,13 +78,14 @@ end
 % calculate this
 
 if ~exist(EMGpath,'file')
-
+    display('Calculating EMG')
     EMGCorr = EMGCorrForSleepscore(rawlfppath);%BW modify this to have different dependencies, currently assumes presence of: 
     % eeg filename - ok
     % .xml filename - ok
     %     Save ..._EMGCorr file
 
 else
+    display('EMG aleady calculated: Loading')
     load(EMGpath,'EMGCorr')
 end
 EMG = EMGCorr(:,2);
@@ -114,6 +115,7 @@ if ~exist(thetalfppath,'file') & ~exist(swlfppath,'file') % if no lfp file alrea
 %     end
 
 %     Par = LoadPar(fullfile(datasetfolder,recordingname,[recordingname,'.xml']));
+    display('Picking SW and TH Channels')
     [SWchannum,THchannum,swLFP,thLFP] = PickSWTHChannel(datasetfolder,recordingname,figloc);
     
     %open lfp, 
@@ -131,6 +133,7 @@ if ~exist(thetalfppath,'file') & ~exist(swlfppath,'file') % if no lfp file alrea
         save(thetalfppath,'thLFP');
     end
 else
+    display('SW and TH Channels Already Extracted, Loading...')
     load(swlfppath,'swLFP')
     load(thetalfppath,'thLFP')
 end
@@ -139,6 +142,7 @@ end
 
 %% CLUSTER STATES BASED ON SLOW WAVE, THETA, EMG
 
+display('Clustering States Based on EMG, SW, and TH LFP channels')
 [stateintervals,states] = ClusterStates(swLFP,thLFP,EMG,sf_LFP,sf_EMG,figloc,[]);
 
 
