@@ -36,9 +36,9 @@ thLFP = downsample(thLFP,downsamplefactor);
 sf_LFP = sf_LFP/downsamplefactor;
 
 
-filtbounds = [0.5 120];
-display(['Filtering ',num2str(filtbounds(1)),'-',num2str(filtbounds(2)),' Hz...']);
-LFP = FiltNPhase(LFP, filtbounds, sf_LFP );
+%filtbounds = [0.5 120];
+%display(['Filtering ',num2str(filtbounds(1)),'-',num2str(filtbounds(2)),' Hz...']);
+%LFP = FiltNPhase(LFP, filtbounds, sf_LFP );
 
 
 %% Calculate Spectrogram

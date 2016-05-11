@@ -101,7 +101,7 @@ for i = 1:2:length(varargin),
 			end
 		case 'channels',
 			channels = varargin{i+1};
-			if ~isivector(channels,'>=0'),
+			if ~isivector(channels,'>0'),
 				error('Incorrect value for property ''channels'' (type ''help <a href="matlab:help LoadBinary">LoadBinary</a>'' for details).');
 			end
 		case 'precision',

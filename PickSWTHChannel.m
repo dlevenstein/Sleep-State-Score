@@ -130,7 +130,7 @@ SWchannum = goodSWidx-1;
 THchannum = goodTHidx-1;
 
 swthLFP = LoadBinary_Down(rawlfppath,'frequency',Fs,...
-    'nchannels',nChannels,'channels',[goodSWidx,goodTHidx]);
+    'nchannels',nChannels,'channels',[goodSWidx,goodSWidx]);
 
 swLFP = swthLFP(:,1);
 thLFP = swthLFP(:,2);
@@ -163,7 +163,7 @@ swfig = figure;
         set(gca,'ColorOrder',RainbowColors(length(dipsortSW)))
         hold all
         plot(log2(FFTfreqs),pc1coeff')  
-        plot(log2(FFTfreqs),pc1coeff(:,goodSWidx)','k')
+        plot(log2(FFTfreqs),pc1coeff(:,goodSWidx)','k','LineWidth',1)
         plot(log2(FFTfreqs([1 end])),[0 0],'k')
         ylabel('PC1 Coefficient');xlabel('f (Hz)')
         LogScale('x',2)
@@ -172,7 +172,7 @@ swfig = figure;
         set(gca,'ColorOrder',RainbowColors(length(dipsortSW)))
         hold all
         plot(histbins,pc1hists')
-        plot(histbins,pc1hists(:,goodSWidx)','k')
+        plot(histbins,pc1hists(:,goodSWidx)','k','LineWidth',1)
         ylabel('hist');xlabel('PC1 projection weight')
         title('PC1 Projection Histogram: All Channels')
         
@@ -196,7 +196,7 @@ thfig = figure;
         set(gca,'ColorOrder',RainbowColors(length(dipsortTH)))
         hold all
         plot(log2(thFFTfreqs),THmeanspec')  
-        plot(log2(thFFTfreqs),THmeanspec(:,goodTHidx)','k')
+        plot(log2(thFFTfreqs),THmeanspec(:,goodTHidx)','k','LineWidth',1)
         ylabel('Power');xlabel('f (Hz)')
         LogScale('x',2)
         title('Spectrum: All Channels')
@@ -204,7 +204,7 @@ thfig = figure;
         set(gca,'ColorOrder',RainbowColors(length(dipsortTH)))
         hold all
         plot(histbins,THhist')
-        plot(histbins,THhist(:,goodTHidx)','k')
+        plot(histbins,THhist(:,goodTHidx)','k','LineWidth',1)
         ylabel('hist');xlabel('PC1 projection weight')
         title('Theta Ratio Histogram: All Channels') 
         
