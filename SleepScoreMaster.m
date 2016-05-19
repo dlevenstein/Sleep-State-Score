@@ -51,6 +51,7 @@ switch recordingname
         recordingname = possiblerecordingnames(s);
 end
 
+%If multiple recordings, loop
 numrecs = length(recordingname);
 if numrecs > 1 & iscell(recordingname)
     display(['Multiple Recordings (',num2str(numrecs),')'])
