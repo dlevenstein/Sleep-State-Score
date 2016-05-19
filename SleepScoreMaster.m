@@ -57,6 +57,7 @@ if numrecs > 1 & iscell(recordingname)
     display(['Multiple Recordings (',num2str(numrecs),')'])
     for rr = 1:numrecs
         SleepScoreMaster(datasetfolder,recordingname{rr},varargin)
+        close all
     end
 end
 	
@@ -78,7 +79,8 @@ sf_EMG = 2;
 
 savebool = 1;
 
-figloc = [fullfile(sessionfolder,'StateScoreFigures'),'/'];
+%figloc = [fullfile(sessionfolder,'StateScoreFigures'),'/'];
+figloc = fullfile(sessionfolder,'StateScoreFigures');
 
 if ~exist(figloc,'dir')
     mkdir(figloc)

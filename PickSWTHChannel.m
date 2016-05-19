@@ -41,8 +41,14 @@ numfreqs = 100;
 
 
 %% Pick channels to use
+spkgroupchannels = [SpkGrps.Channels];
+
+%Add reject channels here...
+rejectchannels = [];
 
 
+usechannels = setdiff(spkgroupchannels,rejectchannels);
+numusedchannels = length(usechannels);
 
 %% Load LFP files from .lfp
 %To do here: catch situations where LFP is bigger than RAM and/or
@@ -52,20 +58,20 @@ numfreqs = 100;
 % Load downsampled LFP
 downsamplefactor = 10;
 allLFP = LoadBinary_Down(rawlfppath,'frequency',Fs,...
-    'nchannels',nChannels,'channels',usechannels,'downsample',downsamplefactor);
+    'nchannels',nChannels,'channels',usechannels+1,'downsample',downsamplefactor);
 Fs = Fs./downsamplefactor;
 
 %% For each channel, calculate the PC1 and check it
-pc1hists = zeros(numhistbins,nChannels);
-THhist = zeros(numhistbins,nChannels);
-pc1coeff = zeros(numfreqs,nChannels);
-THmeanspec = zeros(numfreqs,nChannels);
-dipSW = zeros(nChannels,1);
-dipTH = zeros(nChannels,1);
+pc1hists = zeros(numhistbins,numusedchannels);
+THhist = zeros(numhistbins,numusedchannels);
+pc1coeff = zeros(numfreqs,numusedchannels);
+THmeanspec = zeros(numfreqs,numusedchannels);
+dipSW = zeros(numusedchannels,1);
+dipTH = zeros(numusedchannels,1);
 %%
-for chanidx = 1:nChannels;
+for chanidx = 1:numusedchannels;
 %channum = 40;
-    display(['Channel ',num2str(chanidx),' of ',num2str(nChannels)])
+    display(['Channel ',num2str(chanidx),' of ',num2str(numusedchannels)])
 
     %Calcualte Spectrogram
     freqlist = logspace(0,2,numfreqs);
@@ -132,11 +138,11 @@ end
 goodSWidx = dipsortSW(end);
 goodTHidx = dipsortTH(end);
 
-SWchannum = goodSWidx-1;
-THchannum = goodTHidx-1;
+SWchannum = usechannels(goodSWidx);
+THchannum = usechannels(goodTHidx);
 
 swthLFP = LoadBinary_Down(rawlfppath,'frequency',Fs,...
-    'nchannels',nChannels,'channels',[goodSWidx,goodSWidx]);
+    'nchannels',nChannels,'channels',[SWchannum+1,THchannum+1]);
 
 swLFP = swthLFP(:,1);
 thLFP = swthLFP(:,2);
@@ -155,13 +161,13 @@ pc1hists(:,invpc1) = flipud(pc1hists(:,invpc1));
 
 swfig = figure;
     subplot(2,2,1)
-        imagesc(log2(FFTfreqs),1:nChannels,pc1coeff(:,dipsortSW)')
+        imagesc(log2(FFTfreqs),1:numusedchannels,pc1coeff(:,dipsortSW)')
         ylabel('Channel #');xlabel('f (Hz)')
         LogScale('x',2)
         axis xy
         title('PC1 Frequency Coefficients: All Channels') 
     subplot(2,2,2)
-        imagesc(histbins,1:nChannels,pc1hists(:,dipsortSW)')
+        imagesc(histbins,1:numusedchannels,pc1hists(:,dipsortSW)')
         ylabel('Channel #');xlabel('PC1 projection weight')
         title('PC1 Projection Histogram: All Channels')
         axis xy
@@ -188,13 +194,13 @@ saveas(swfig,[figfolder,recordingname,'_FindBestSW'],'jpeg')
 
 thfig = figure;
     subplot(2,2,1)
-        imagesc(log2(thFFTfreqs),1:nChannels,THmeanspec(:,dipsortTH)')
+        imagesc(log2(thFFTfreqs),1:numusedchannels,THmeanspec(:,dipsortTH)')
         ylabel('Channel #');xlabel('f (Hz)')
         LogScale('x',2)
         axis xy
         title('Spectrum: All Channels') 
     subplot(2,2,2)
-        imagesc(histbins,1:nChannels,THhist(:,dipsortTH)')
+        imagesc(histbins,1:numusedchannels,THhist(:,dipsortTH)')
         ylabel('Channel #');xlabel('PC1 projection weight')
         title('Theta Ratio Histogram: All Channels')
         axis xy
@@ -263,7 +269,7 @@ chanfig =figure;
     thratio = (thratio-min(thratio))./max(thratio-min(thratio));
     
 subplot(5,1,4)
-    plot(allLFP(:,1),allLFP(:,goodSWidx),'k')
+ %   plot(allLFP(:,1),allLFP(:,goodSWidx),'k')
     
         imagesc(t_FFT,log2(thFFTfreqs),log10(thFFTspec))
         hold on
