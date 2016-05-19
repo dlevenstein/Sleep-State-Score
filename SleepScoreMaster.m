@@ -26,7 +26,40 @@ function [stateintervals,episodeintervals] = SleepScoreMaster(datasetfolder,reco
 %use uigetfile to pick and get list of filenames
 %if recname is 'all', get all recordings in a folder and
 %then run SleepScoreMaster on each of the filenames'
+%if no input arguements... select uigetfile
 
+
+%Select from no input
+if ~exist('datasetfolder','var')
+    DIRECTORYNAME = uigetdir('',...
+        'Which recording(s) would you like to state score?');
+    [datasetfolder,recordingname] = fileparts(DIRECTORYNAME); 
+    if isequal(DIRECTORYNAME,0) 
+       disp('User pressed cancel...')
+       return
+    end
+
+end
+  
+%Select from dataset folder
+switch recordingname
+    case 'select'
+        foldercontents = dir(datasetfolder);
+        possiblerecordingnames = {foldercontents([foldercontents.isdir]==1).name};
+        [s,v] = listdlg('PromptString','Which recording(s) would you like to state score?',...
+                        'ListString',possiblerecordingnames);
+        recordingname = possiblerecordingnames(s);
+end
+
+numrecs = length(recordingname);
+if numrecs > 1 & iscell(recordingname)
+    display(['Multiple Recordings (',num2str(numrecs),')'])
+    for rr = 1:numrecs
+        SleepScoreMaster(datasetfolder,recordingname{rr},varargin)
+    end
+end
+	
+    
 
 %%
 display(['Scoring Recording: ',recordingname]);
