@@ -79,8 +79,8 @@ sf_EMG = 2;
 
 savebool = 1;
 
-%figloc = [fullfile(sessionfolder,'StateScoreFigures'),'/'];
-figloc = fullfile(sessionfolder,'StateScoreFigures');
+figloc = [fullfile(sessionfolder,'StateScoreFigures'),'/'];
+%figloc = fullfile(sessionfolder,'StateScoreFigures');
 
 if ~exist(figloc,'dir')
     mkdir(figloc)
