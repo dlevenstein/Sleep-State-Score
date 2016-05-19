@@ -21,6 +21,16 @@ function [stateintervals,episodeintervals] = SleepScoreMaster(datasetfolder,reco
 %
 %
 % DLevenstein and BWatson 2015/16
+%% Recording Selection
+%if recname is 'select' or something
+%use uigetfile to pick and get list of filenames
+%if recname is 'all', get all recordings in a folder and
+%then run SleepScoreMaster on each of the filenames'
+
+
+%%
+display(['Scoring Recording: ',recordingname]);
+%
 %% DEV
 % Load the necessary files as needed for development
 % datasetfolder = '/Users/dlevenstein/Dropbox/Research/Datasets/DTData/';

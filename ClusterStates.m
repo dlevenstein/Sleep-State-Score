@@ -124,12 +124,18 @@ t_EMG = t_EMG(t_intersect);
 
 
 %% Divide PC1 for SWS
+numpeaks = 1;
 numbins = 10;
 %numbins = 12; %for Poster...
-[pcahist,histbins]= hist(SCORE(:,1),numbins);
- 
-[PKS,LOCS] = findpeaks(pcahist,'NPeaks',2,'SortStr','descend');
-LOCS = sort(LOCS);
+while numpeaks ~=2
+    [pcahist,histbins]= hist(SCORE(:,1),numbins);
+    
+    [PKS,LOCS] = findpeaks(pcahist,'NPeaks',2,'SortStr','descend');
+    LOCS = sort(LOCS);
+    numbins = numbins+1;
+    numpeaks = length(LOCS);
+end
+
 
 betweenpeaks = histbins(LOCS(1):LOCS(2));
 [dip,diploc] = findpeaks(-pcahist(LOCS(1):LOCS(2)),'NPeaks',1,'SortStr','descend');
@@ -146,7 +152,7 @@ SWStimes = (SCORE(:,1) >thresh);
 
 %% Then Divide EMG
 numpeaks = 1;
-numbins = 12; %for Poster...
+numbins = 10;
 while numpeaks ~=2
     [EMGhist,EMGhistbins]= hist(EMG(SWStimes==0),numbins);
     %[EMGhist,EMGhistbins]= hist(EMG,numbins);
@@ -168,7 +174,6 @@ MOVtimes = (SCORE(:,1)<thresh & EMG>EMGthresh);
 %% Then Divide Theta
 numpeaks = 1;
 numbins = 10;
-numbins = 12; %for Poster...
 while numpeaks ~=2 && numbins <=20
     %[THhist,THhistbins]= hist(thratio(SWStimes==0 & MOVtimes==0),numbins);
     [THhist,THhistbins]= hist(thratio(MOVtimes==0),numbins);
@@ -287,6 +292,10 @@ shortWRidx = INTtoIDX(shortWRints,length(IDX));
 IDX(shortWRidx==1) = 1;
 INT = IDXtoINT(IDX);
 
+% if length(INT) ~= 3
+%     display('Looks like you have no REM... or something is weird in detection')
+%     INT{3} = [];
+% end
 
 
 
