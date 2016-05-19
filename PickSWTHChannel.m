@@ -34,9 +34,15 @@ end
 Par = LoadPar_SleepScore(xmlfilename);
 Fs = Par.lfpSampleRate; % Hz, LFP sampling rate
 nChannels = Par.nChannels;
+SpkGrps = Par.SpkGrps;
 %% Hist/Freqs Parms
 numhistbins = 21;
 numfreqs = 100;
+
+
+%% Pick channels to use
+
+
 
 %% Load LFP files from .lfp
 %To do here: catch situations where LFP is bigger than RAM and/or
@@ -46,7 +52,7 @@ numfreqs = 100;
 % Load downsampled LFP
 downsamplefactor = 10;
 allLFP = LoadBinary_Down(rawlfppath,'frequency',Fs,...
-    'nchannels',nChannels,'downsample',downsamplefactor);
+    'nchannels',nChannels,'channels',usechannels,'downsample',downsamplefactor);
 Fs = Fs./downsamplefactor;
 
 %% For each channel, calculate the PC1 and check it

@@ -96,6 +96,10 @@ end
 %                               algorithmically
 %'savefiles'    - save the EMG,LFP files to .mats?
 
+%Overwrite pickes new and writes over existing ThLFP ans SWLFP
+overwrite = 1;
+
+
 %% Database File Management 
 
 %Filenames for EMG, thLFP, and swLFP .mat files in the database.
@@ -151,7 +155,7 @@ clear EMGCorr
 
 
 
-if ~exist(thetalfppath,'file') & ~exist(swlfppath,'file') % if no lfp file already, load lfp and make lfp file?
+if ~exist(thetalfppath,'file') && ~exist(swlfppath,'file') || overwrite; % if no lfp file already, load lfp and make lfp file?
 %     if exist (fullfile(datasetfolder,recordingname,[recordingname,'.lfp']),'file')
 %         rawlfppath = fullfile(datasetfolder,recordingname,[recordingname,'.lfp']);
 %     elseif exist (fullfile(datasetfolder,recordingname,[recordingname,'.eeg']),'file')
