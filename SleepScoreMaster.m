@@ -59,6 +59,8 @@ if numrecs > 1 & iscell(recordingname)
         SleepScoreMaster(datasetfolder,recordingname{rr},varargin)
         close all
     end
+elseif numrecs == 1 & iscell(recordingname)
+        recordingname = recordingname{1};
 end
 	
     
