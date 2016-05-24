@@ -214,17 +214,20 @@ else
 end
 
 %%
+%OLD:
 %Index Vector: SWS=2, REM=3, MOV=6, NonMOV=1.   
 %(Separate MOV for REM, then join later)
 %IDX = SWStimes+2*REMtimes+5*MOVtimes+1;
-%No separation of MOV and NonMOV WAKE
+
+%NEW: No separation of MOV and NonMOV WAKE
+%Index Vector: NREM=2, REM=3, WAKE=1. 
 IDX = NREMtimes+2*REMtimes+1;
 
 %Start/end offset due to FFT
 
 
 %% Minimum Interuptions
-INT = IDXtoINT(IDX);
+INT = IDXtoINT(IDX,3);
 
 
 %Make the following repeated chunks of code into a single function.
@@ -236,7 +239,7 @@ shortSints = {Sints(find(Slengths<=minSWS),:)};
 shortSidx = INTtoIDX(shortSints,length(IDX));
 %Change Short SWS to Wake
 IDX(shortSidx==1) = 1;   
-INT = IDXtoINT(IDX);
+INT = IDXtoINT(IDX,3);
 
 %NonMOV next to REM   (to REM)
 Wints = INT{1};
@@ -255,7 +258,7 @@ shortWRints = {Wints(shortWRints,:)};
 shortWRidx = INTtoIDX(shortWRints,length(IDX));
 %Convert wake to rem
 IDX(shortWRidx==1) = 3;
-INT = IDXtoINT(IDX);
+INT = IDXtoINT(IDX,3);
 
 
 %NonMOV in REM   (to REM)
@@ -276,7 +279,7 @@ shortWRidx = INTtoIDX(shortWRints,length(IDX));
 %Convert wake to rem
 IDX(shortWRidx==1) = 3;
 IDX(IDX==6) = 1; %Convert NonMOV to WAKE
-INT = IDXtoINT(IDX);
+INT = IDXtoINT(IDX,3);
 
 
 %REM in WAKE   (to WAKE)
@@ -296,7 +299,7 @@ shortWRints = {Rints(shortWRints,:)};
 shortWRidx = INTtoIDX(shortWRints,length(IDX));
 %Convert REM to WAKE
 IDX(shortWRidx==1) = 1;
-INT = IDXtoINT(IDX);
+INT = IDXtoINT(IDX,3);
 
 % if length(INT) ~= 3
 %     display('Looks like you have no REM... or something is weird in detection')
@@ -312,7 +315,7 @@ shortRints = {Rints(find(Rlengths<=minREM),:)};
 shortRidx = INTtoIDX(shortRints,length(IDX));
 
 IDX(shortRidx==1) = 1;
-INT = IDXtoINT(IDX);
+INT = IDXtoINT(IDX,3);
 
 
 %WAKE   (to SWS)     essentiall a minimum MA time
@@ -322,7 +325,7 @@ shortWints = {Wints(find(Wlengths<=minWAKE),:)};
 shortWidx = INTtoIDX(shortWints,length(IDX));
 IDX(shortWidx==1) = 2;
 
-INT = IDXtoINT(IDX);
+INT = IDXtoINT(IDX,3);
 
 %SWS  (to NonMOV)
 Sints = INT{2};
@@ -331,7 +334,7 @@ shortSints = {Sints(find(Slengths<=minSWS),:)};
 shortSidx = INTtoIDX(shortSints,length(IDX));
 %Change Short SWS to Wake
 IDX(shortSidx==1) = 1;   
-INT = IDXtoINT(IDX);
+INT = IDXtoINT(IDX,3);
 
 
 
