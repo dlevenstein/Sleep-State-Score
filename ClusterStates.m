@@ -51,28 +51,34 @@ noverlap = 9;
 window = window*sf_LFP;
 noverlap = noverlap*sf_LFP;
 [FFTspec,FFTfreqs,t_FFT] = spectrogram(LFP,window,noverlap,freqlist,sf_LFP);
-
-
 FFTspec = abs(FFTspec);
-
-%% Find TRANSIENTS and set to 0 for PCA
-
 [zFFTspec,mu,sig] = zscore(log10(FFTspec)');
-totz = zscore(abs(sum(zFFTspec')));
 
+    %% Remove transients before calculating SW histogram
+    %this should be it's own whole section - removing/detecting transients
+totz = zscore(abs(sum(zFFTspec')));
 badtimes = find(totz>5);
 zFFTspec(badtimes,:) = 0;
 
-
-%% PCA
-smoothfact = 10; %si_FFT
-thsmoothfact = 15;
+%% PCA for Broadband Slow Wave
  [COEFF, SCORE, ~, ~, EXPLAINED] = pca(zFFTspec);
- SCORE(:,1) = smooth(SCORE(:,1),smoothfact);
-SCORE(:,1) = (SCORE(:,1)-min(SCORE(:,1)))./max(SCORE(:,1)-min(SCORE(:,1)));
-
+ % broadbandSlowWave = SCORE(:,1);
 PC1weights = COEFF(:,1);
 PC1expvar = EXPLAINED(1);
+ 
+%% Set Broadband filter weights for Slow Wave
+load('SWweights.mat')
+assert(isequal(freqlist,SWfreqlist), 'spectrogram freqs.  are not what they should be...')
+broadbandSlowWave = zFFTspec*SWweights';
+ 
+%% Smooth and 0-1 normalize
+smoothfact = 10; %units of si_FFT
+thsmoothfact = 15;
+
+broadbandSlowWave = smooth(broadbandSlowWave,smoothfact);
+broadbandSlowWave = (broadbandSlowWave-min(broadbandSlowWave))./max(broadbandSlowWave-min(broadbandSlowWave));
+
+
  
 %% Calculate theta
 display('FFT Spectrum for Theta')
@@ -128,7 +134,7 @@ numpeaks = 1;
 numbins = 10;
 %numbins = 12; %for Poster...
 while numpeaks ~=2
-    [pcahist,histbins]= hist(SCORE(:,1),numbins);
+    [pcahist,histbins]= hist(broadbandSlowWave,numbins);
     
     [PKS,LOCS] = findpeaks(pcahist,'NPeaks',2,'SortStr','descend');
     LOCS = sort(LOCS);
@@ -147,14 +153,14 @@ SCORE(badtimes,1)=histbins(LOCS(1));
  
  
 %SWS time points
-SWStimes = (SCORE(:,1) >thresh);
+NREMtimes = (broadbandSlowWave >thresh);
 
 
 %% Then Divide EMG
 numpeaks = 1;
 numbins = 10;
 while numpeaks ~=2
-    [EMGhist,EMGhistbins]= hist(EMG(SWStimes==0),numbins);
+    [EMGhist,EMGhistbins]= hist(EMG(NREMtimes==0),numbins);
     %[EMGhist,EMGhistbins]= hist(EMG,numbins);
 
     [PKS,LOCS] = findpeaks([0 EMGhist],'NPeaks',2);
@@ -168,7 +174,7 @@ betweenpeaks = EMGhistbins(LOCS(1):LOCS(2));
 
 EMGthresh = betweenpeaks(diploc);
 
-MOVtimes = (SCORE(:,1)<thresh & EMG>EMGthresh);
+MOVtimes = (broadbandSlowWave<thresh & EMG>EMGthresh);
 
 
 %% Then Divide Theta
@@ -187,7 +193,7 @@ end
 numbins = 10;
 numbins = 15; %for Poster...
 while numpeaks ~=2 && numbins <=20
-    [THhist,THhistbins]= hist(thratio(SWStimes==0 & MOVtimes==0),numbins);
+    [THhist,THhistbins]= hist(thratio(NREMtimes==0 & MOVtimes==0),numbins);
 
     [PKS,LOCS] = findpeaks(THhist,'NPeaks',2,'SortStr','descend');
     LOCS = sort(LOCS);
@@ -201,10 +207,10 @@ if length(PKS)==2
 
     THthresh = betweenpeaks(diploc);
 
-    REMtimes = (SCORE(:,1)<thresh & EMG<EMGthresh & thratio>THthresh);
+    REMtimes = (broadbandSlowWave<thresh & EMG<EMGthresh & thratio>THthresh);
 else
     THthresh = 0;
-    REMtimes =(SCORE(:,1)<thresh & EMG<EMGthresh);
+    REMtimes =(broadbandSlowWave<thresh & EMG<EMGthresh);
 end
 
 %%
@@ -212,7 +218,7 @@ end
 %(Separate MOV for REM, then join later)
 %IDX = SWStimes+2*REMtimes+5*MOVtimes+1;
 %No separation of MOV and NonMOV WAKE
-IDX = SWStimes+2*REMtimes+1;
+IDX = NREMtimes+2*REMtimes+1;
 
 %Start/end offset due to FFT
 
@@ -382,7 +388,7 @@ figure
         
    	subplot(6,1,4)
         hold on
-        plot(t_FFT,SCORE(:,1),'k')
+        plot(t_FFT,broadbandSlowWave,'k')
         %plot(synchtimes',thresh*ones(size(synchtimes))','r')
         ylabel('PC1')
         xlim([t_FFT(1) t_FFT(end)])
@@ -457,7 +463,7 @@ figure
         
    	subplot(6,1,4)
         hold on
-        plot(t_FFT,SCORE(:,1),'k')
+        plot(t_FFT,broadbandSlowWave,'k')
         %plot(synchtimes',thresh*ones(size(synchtimes))','r')
         ylabel('PC1')
         xlim([t_FFT(1) t_FFT(end)])
@@ -490,27 +496,27 @@ end
 figure
 
     subplot(2,3,1)
-        scatter(SCORE(:,1),thratio,3,IDX,'filled')
+        scatter(broadbandSlowWave,thratio,3,IDX,'filled')
         xlabel('Broadband PC1');ylabel('Narrowband Theta')
     subplot(2,3,2)
-        scatter(SCORE(:,1),EMG,3,IDX,'filled')
+        scatter(broadbandSlowWave,EMG,3,IDX,'filled')
         xlabel('Broadband PC1');ylabel('EMG')
     subplot(2,3,3)
         scatter(thratio,EMG,3,IDX,'filled')
         xlabel('Narrowband Theta');ylabel('EMG')
 
     subplot(2,3,4)
-        scatter(SCORE(SWStimes==0,1),thratio(SWStimes==0),3,IDX(SWStimes==0),'filled')
+        scatter(SCORE(NREMtimes==0,1),thratio(NREMtimes==0),3,IDX(NREMtimes==0),'filled')
         xlabel('Broadband PC1');ylabel('Narrowband Theta')
     subplot(2,3,5)
-        scatter(SCORE(SWStimes==0,1),EMG(SWStimes==0),3,IDX(SWStimes==0),'filled')
+        scatter(SCORE(NREMtimes==0,1),EMG(NREMtimes==0),3,IDX(NREMtimes==0),'filled')
         xlabel('Broadband PC1');ylabel('EMG')
         title('non-nonREM only')
     subplot(2,3,6)
         %scatter(thratio(SWStimes==0,1),EMG(SWStimes==0,1),3,IDX(SWStimes==0),'filled')
-        plot(thratio(SWStimes==0 & IDX==1,1),EMG(SWStimes==0 & IDX==1,1),'k.')
+        plot(thratio(NREMtimes==0 & IDX==1,1),EMG(NREMtimes==0 & IDX==1,1),'k.')
         hold on
-        plot(thratio(SWStimes==0 & IDX==3,1),EMG(SWStimes==0 & IDX==3,1),'r.')
+        plot(thratio(NREMtimes==0 & IDX==3,1),EMG(NREMtimes==0 & IDX==3,1),'r.')
         xlabel('Narrowband Theta');ylabel('EMG')
 
 %% Figure: Split REM/Arousal  
@@ -550,9 +556,9 @@ figure
         xlabel('Broadband PC1');ylabel('EMG')
 	subplot(2,2,4)
         %scatter(thratio(SWStimes==0,1),EMG(SWStimes==0,1),3,IDX(SWStimes==0),'filled')
-        plot(thratio(SWStimes==0 & IDX==1,1),EMG(SWStimes==0 & IDX==1,1),'k.')
+        plot(thratio(NREMtimes==0 & IDX==1,1),EMG(NREMtimes==0 & IDX==1,1),'k.')
         hold on
-        plot(thratio(SWStimes==0 & IDX==3,1),EMG(SWStimes==0 & IDX==3,1),'r.')
+        plot(thratio(NREMtimes==0 & IDX==3,1),EMG(NREMtimes==0 & IDX==3,1),'r.')
         xlabel('Narrowband Theta');ylabel('EMG')
         plot(THthresh*[1 1],EMGthresh*[0 1],'r','LineWidth',1)
         plot([0 1],EMGthresh*[1 1],'r','LineWidth',1)
@@ -566,7 +572,7 @@ coloridx = colormat(IDX,:);
 figure
     subplot(1,3,[2,3])
         hold all
-        scatter3(SCORE(:,1),thratio,EMG,2,coloridx,'filled')
+        scatter3(broadbandSlowWave,thratio,EMG,2,coloridx,'filled')
         %rotate3d
         view(133.7,18.8);
         grid on
