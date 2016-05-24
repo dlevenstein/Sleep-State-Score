@@ -359,8 +359,9 @@ figure
         xlim(viewwin)
         colorbar('east')
         ylim([log2(FFTfreqs(1)) log2(FFTfreqs(end))+0.2])
-        ylabel({'LFP - FFT','f (Hz)'})
-        title(figloc);
+        set(gca,'XTickLabel',{})
+        ylabel({'swLFP','f (Hz)'})
+        title([recordingname,': State Scoring Results']);
 	subplot(8,1,3)
         imagesc(t_FFT,log2(thFFTfreqs),log10(thFFTspec))
         axis xy
@@ -371,7 +372,7 @@ figure
         xlim(viewwin)
         %colorbar('east')
         ylim([log2(thFFTfreqs(1)) log2(thFFTfreqs(end))+0.2])
-        ylabel({'thLFP - FFT','f (Hz)'})
+        ylabel({'thLFP','f (Hz)'})
         set(gca,'XTickLabel',{})
         
     subplot(8,1,4)
@@ -393,6 +394,7 @@ figure
         ylabel('PC1')
         xlim([t_FFT(1) t_FFT(end)])
         xlim(viewwin)
+        set(gca,'XTickLabel',{})
         
    	subplot(6,1,5)
         hold on
@@ -401,6 +403,7 @@ figure
         ylabel('Theta')
         xlim([t_FFT(1) t_FFT(end)])
         xlim(viewwin)
+        set(gca,'XTickLabel',{})
         
    	subplot(6,1,6)
         hold on
@@ -411,7 +414,7 @@ figure
         xlim(viewwin)
         xlabel('t (s)')
         
-	saveas(gcf,[figloc,'_ClusterResults'],'jpeg')
+	saveas(gcf,[figloc,recordingname,'_ClusterResults'],'jpeg')
         
 %%
 if exist('WSEpisodes','var')
@@ -563,7 +566,7 @@ figure
         plot(THthresh*[1 1],EMGthresh*[0 1],'r','LineWidth',1)
         plot([0 1],EMGthresh*[1 1],'r','LineWidth',1)
 
-saveas(gcf,[figloc,'_clust2'],'jpeg')
+saveas(gcf,[figloc,recordingname,'_clust2'],'jpeg')
 %saveas(gcf,['/Users/dlevenstein/Code Library/SleepScoreDevelopment/StateScoreFigures/','ThetaEMGExample'],'jpeg')
 %% Figure: Clustering
 colormat = [[0 0 0];[0 0 1];[1 0 0]];
@@ -597,7 +600,7 @@ figure
         xlabel('Theta')
         title('Step 3: Theta for REM')
         
-	saveas(gcf,[figloc,'_clust'],'jpeg')
+	saveas(gcf,[figloc,recordingname,'_clust'],'jpeg')
 %saveas(gcf,['/Users/dlevenstein/Code Library/SleepScoreDevelopment/StateScoreFigures/','clust'],'jpeg')    
   %% Figure: Duration Distributions
   Wints = INT{1};
@@ -654,7 +657,7 @@ figure
         ylabel('Interval n+1 Duration')
         title('REM Interval Durations')
         
-        saveas(gcf,[figloc,'_intdur'],'jpeg')
+        saveas(gcf,[figloc,recordingname,'_intdur'],'jpeg')
         
     
 
