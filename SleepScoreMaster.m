@@ -201,17 +201,17 @@ display('Clustering States Based on EMG, SW, and TH LFP channels')
 
 %% JOIN STATES INTO EPISODES
 
-SWSints = stateintervals{2};
+NREMints = stateintervals{2};
 REMints = stateintervals{3};
 WAKEints = stateintervals{1};
 
 minPACKdur = 20;
-SWSlengths = SWSints(:,2)-SWSints(:,1);
-packetintervals = SWSints(SWSlengths>=minPACKdur,:);
+SWSlengths = NREMints(:,2)-NREMints(:,1);
+packetintervals = NREMints(SWSlengths>=minPACKdur,:);
 
 minintdur = 40;
 minSWSdur = 20;
-[episodeintervals{2}] = IDStateEpisode(SWSints,minintdur,minSWSdur);
+[episodeintervals{2}] = IDStateEpisode(NREMints,minintdur,minSWSdur);
 
 minintdur = 40;
 minWAKEdur = 20;
@@ -228,13 +228,13 @@ minREMdur = 20;
 % BW: I added some other code, have to look at this too
 
 %% Save
-StateIntervals.SWSstate = SWSints;
+StateIntervals.NREMstate = NREMints;
 StateIntervals.REMstate = REMints;
 StateIntervals.WAKEstate = WAKEints;
-StateIntervals.SWSepisode = episodeintervals{2};
+StateIntervals.NREMepisode = episodeintervals{2};
 StateIntervals.REMepisode = episodeintervals{3};
 StateIntervals.WAKEeposode = episodeintervals{1};
-StateIntervals.SWSpacket = packetintervals;
+StateIntervals.NREMpacket = packetintervals;
 
 save(sleepstatepath,'stateintervals','episodeintervals','StateIntervals');
 end
