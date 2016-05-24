@@ -1,4 +1,4 @@
-function [ INT, IDX, t_IDX,PC1weights,PC1expvar ] = ClusterStates(LFP,thLFP,EMG,sf_LFP,sf_EMG,figloc,WSEpisodes)
+function [ INT, IDX, t_IDX,PC1weights,PC1expvar ] = ClusterStates(LFP,thLFP,EMG,sf_LFP,sf_EMG,figloc,recordingname)
 %StateID(LFP,thLFP,EMG,sf_LFP,sf_EMG,figloc,WSEpisodes)
 %   Detailed explanation goes here
 %
@@ -416,83 +416,6 @@ figure
         
 	saveas(gcf,[figloc,recordingname,'_ClusterResults'],'jpeg')
         
-%%
-if exist('WSEpisodes','var')
-for ep = 1:length(WSEpisodes)
-epstart = Start(WSEpisodes{ep},'s');
-epend = End(WSEpisodes{ep},'s');
-
-viewwin = [epstart(1) epend(2)];
-%  viewwin  =[2150 2200];
-%   viewwin  =[15000 20000];
- 
-figure
-	subplot(8,1,[1:2])
-        imagesc(t_FFT,log2(FFTfreqs),log10(FFTspec))
-        axis xy
-        set(gca,'YTick',(log2([1 2 4 8 16 32 64 128])))
-        set(gca,'YTickLabel',{'1','2','4','8','16','32','64','128'})
-        caxis([3.5 6.5])
-        caxis([min(mu)-2.5*max(sig) max(mu)+2.5*max(sig)])
-        xlim(viewwin)
-        %colorbar('east')
-        ylim([log2(FFTfreqs(1)) log2(FFTfreqs(end))+0.2])
-        ylabel({'LFP - FFT','f (Hz)'})
-        title([figloc,' Wake-Sleep ',num2str(ep)]);
-	subplot(8,1,3)
-        imagesc(t_FFT,log2(thFFTfreqs),log10(thFFTspec))
-        axis xy
-        set(gca,'YTick',(log2([1 2 4 8 16 32 64 128])))
-        set(gca,'YTickLabel',{'1','2','4','8','16','32','64','128'})
-        %caxis([3.5 6.5])
-        caxis([min(mu)-2.5*max(sig) max(mu)+2.5*max(sig)])
-        xlim(viewwin)
-        %colorbar('east')
-        ylim([log2(thFFTfreqs(1)) log2(thFFTfreqs(end))+0.2])
-        ylabel({'thLFP - FFT','f (Hz)'})
-        set(gca,'XTickLabel',{})
-        
-    subplot(8,1,4)
-        %plot(t_FFT,-IDX,'LineWidth',2)
-        hold on
-        plot(INT{1}',-1*ones(size(INT{1}))','k','LineWidth',8)
-        plot(INT{2}',-2*ones(size(INT{2}))','b','LineWidth',8)
-        plot(INT{3}',-3*ones(size(INT{3}))','r','LineWidth',8)
-        xlim(viewwin)
-        ylim([-4 0])
-        set(gca,'YTick',[-3:-1])
-        set(gca,'YTickLabel',{'REM','SWS','Wake/MA'})
-        set(gca,'XTickLabel',{})
-        
-   	subplot(6,1,4)
-        hold on
-        plot(t_FFT,broadbandSlowWave,'k')
-        %plot(synchtimes',thresh*ones(size(synchtimes))','r')
-        ylabel('PC1')
-        xlim([t_FFT(1) t_FFT(end)])
-        xlim(viewwin)
-        
-   	subplot(6,1,5)
-        hold on
-        plot(t_FFT,thratio,'k')
-        %plot(synchtimes',thresh*ones(size(synchtimes))','r')
-        ylabel('Theta')
-        xlim([t_FFT(1) t_FFT(end)])
-        xlim(viewwin)
-        
-   	subplot(6,1,6)
-        hold on
-        plot(t_EMG,EMG,'k')
-        %plot(synchtimes',thresh*ones(size(synchtimes))','r')
-        ylabel('EMG')
-        xlim([t_FFT(1) t_FFT(end)])
-        xlim(viewwin)
-        xlabel('t (s)')
-        
-    saveas(gcf,[figloc,'_WS',num2str(ep)],'jpeg')    
-end        
-end
-
 
         
 %% 

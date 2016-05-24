@@ -202,7 +202,7 @@ end
 %% CLUSTER STATES BASED ON SLOW WAVE, THETA, EMG
 
 display('Clustering States Based on EMG, SW, and TH LFP channels')
-[stateintervals,states] = ClusterStates(swLFP,thLFP,EMG,sf_LFP,sf_EMG,figloc,[]);
+[stateintervals,states] = ClusterStates(swLFP,thLFP,EMG,sf_LFP,sf_EMG,figloc,recordingname);
 
 
 %% JOIN STATES INTO EPISODES
