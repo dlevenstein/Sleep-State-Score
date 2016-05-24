@@ -91,16 +91,15 @@ for chanidx = 1:numusedchannels;
     
     %% PCA for Broadband Slow Wave
     [COEFF, SCORE, LATENT] = pca(zFFTspec);
-    broadbandSlowWave = SCORE(:,1);
+   % broadbandSlowWave = SCORE(:,1);
     
 	%% Set Broadband filter weights for Slow Wave
     load('SWweights.mat')
-    assert(FFTfreqs==SWfreqlist, 'spectrogram freqs.  are not what they should be...')
-    broadbandSlowWave = bsxfun(@(X,Y) X.*Y,zFFTspec,SWweights);
-    
+    assert(isequal(freqlist,SWfreqlist), 'spectrogram freqs.  are not what they should be...')
+    broadbandSlowWave = zFFTspec*SWweights';
     
     %% Smooth and 0-1 normalize
-    smoothfact = 10; %si_FFT
+    smoothfact = 10; %units of si_FFT
     thsmoothfact = 15;
      
     broadbandSlowWave = smooth(broadbandSlowWave,smoothfact);
@@ -162,7 +161,7 @@ swthLFP = LoadBinary_Down(rawlfppath,'frequency',Fs,...
 
 swLFP = swthLFP(:,1);
 thLFP = swthLFP(:,2);
-%% Find Inverted PC1s and flip them
+%% Find Inverted PC1s and flip them for plot
 invpc1 = mean(pc1coeff(freqlist<4,:))<0 & mean(pc1coeff(freqlist>50,:))>0;
 pc1coeff(:,invpc1) = -pc1coeff(:,invpc1);
 pc1hists(:,invpc1) = flipud(pc1hists(:,invpc1));
@@ -249,11 +248,11 @@ saveas(thfig,[figfolder,recordingname,'_FindBestTH'],'jpeg')
     badtimes = find(totz>5);
     zFFTspec(badtimes,:) = 0;
     
-    smoothfact = 10; %si_FFT
-    thsmoothfact = 15;
-     [COEFF, SCORE, LATENT] = pca(zFFTspec);
-     SCORE(:,1) = smooth(SCORE(:,1),smoothfact);
-    PC1power = (SCORE(:,1)-min(SCORE(:,1)))./max(SCORE(:,1)-min(SCORE(:,1)));
+     %[COEFF, SCORE, LATENT] = pca(zFFTspec);
+    %broadbandSlowWave = SCORE(:,1);
+     broadbandSlowWave = zFFTspec*SWweights';
+     broadbandSlowWave = smooth(broadbandSlowWave,smoothfact);
+    broadbandSlowWave = (broadbandSlowWave-min(broadbandSlowWave))./max(broadbandSlowWave-min(broadbandSlowWave));
 
 chanfig =figure;
 	subplot(5,1,1:2)
@@ -267,7 +266,7 @@ chanfig =figure;
         title('SW Channel');
         
     subplot(5,1,3)
-        plot(t_FFT,PC1power,'k')
+        plot(t_FFT,broadbandSlowWave,'k')
         xlim(t_FFT([1,end]))
      
     %Calculate Theta ratio for plot/return    
