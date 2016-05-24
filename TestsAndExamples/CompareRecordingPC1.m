@@ -72,7 +72,15 @@ EMG = EMGCorr(:,2); %Entire Recording for all recordings
 
 end
 
-%%
+
+%% Calculate Mean PC1 weight - use as test SW filter
+
+SWweights = mean(PC1weights,1);
+SWfreqlist = freqlist;
+
+
+
+%% Figure
 [~,sortexpvar] = sort(PC1expvar);
 freqlist = logspace(0,2,100);
 
@@ -84,6 +92,7 @@ figure
         set(gca,'ColorOrder',RedPurpleColors(length(PC1expvar)))
         hold all
         plot(log2(freqlist),PC1weights(sortexpvar,:)','LineWidth',1)
+        plot(log2(freqlist),SWweights,'k','LineWidth',2)
         plot(get(gca,'xlim'),[0 0],'k--')
         LogScale('x',2)
         xlim(log2(freqlist([1 end])))

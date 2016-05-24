@@ -70,10 +70,10 @@ dipSW = zeros(numusedchannels,1);
 dipTH = zeros(numusedchannels,1);
 %%
 for chanidx = 1:numusedchannels;
-%channum = 40;
+%channum = 1;
     display(['Channel ',num2str(chanidx),' of ',num2str(numusedchannels)])
 
-    %Calcualte Spectrogram
+    %Calcualte Z-scored Spectrogram
     freqlist = logspace(0,2,numfreqs);
     window = 10;
     noverlap = 9;
@@ -81,28 +81,39 @@ for chanidx = 1:numusedchannels;
     noverlap = noverlap*Fs;
     [FFTspec,FFTfreqs,t_FFT] = spectrogram(allLFP(:,chanidx),window,noverlap,freqlist,Fs);
     FFTspec = abs(FFTspec);
-
-    %% Find TRANSIENTS and set to 0 for PCA
     [zFFTspec,mu,sig] = zscore(log10(FFTspec)');
+
+    %% Remove transients before calculating SW histogram
+    %this should be it's own whole section - removing/detecting transients
     totz = zscore(abs(sum(zFFTspec')));
     badtimes = find(totz>5);
     zFFTspec(badtimes,:) = 0;
-
-    %% PCA
+    
+    %% PCA for Broadband Slow Wave
+    [COEFF, SCORE, LATENT] = pca(zFFTspec);
+    broadbandSlowWave = SCORE(:,1);
+    
+	%% Set Broadband filter weights for Slow Wave
+    load('SWweights.mat')
+    assert(FFTfreqs==SWfreqlist, 'spectrogram freqs.  are not what they should be...')
+    broadbandSlowWave = bsxfun(@(X,Y) X.*Y,zFFTspec,SWweights);
+    
+    
+    %% Smooth and 0-1 normalize
     smoothfact = 10; %si_FFT
     thsmoothfact = 15;
-     [COEFF, SCORE, LATENT] = pca(zFFTspec);
-     SCORE(:,1) = smooth(SCORE(:,1),smoothfact);
-    SCORE(:,1) = (SCORE(:,1)-min(SCORE(:,1)))./max(SCORE(:,1)-min(SCORE(:,1)));
+     
+    broadbandSlowWave = smooth(broadbandSlowWave,smoothfact);
+    broadbandSlowWave = (broadbandSlowWave-min(broadbandSlowWave))./max(broadbandSlowWave-min(broadbandSlowWave));
 
     %% Histogram and diptest of PC1
     histbins = linspace(0,1,numhistbins);
-    [pcahist]= hist(SCORE(:,1),histbins);
+    [pcahist]= hist(broadbandSlowWave,histbins);
 
     pc1hists(:,chanidx) = pcahist;
     pc1coeff(:,chanidx) = COEFF(:,1);
     
-    dipSW(chanidx) = hartigansdiptest(sort(SCORE(:,1)));
+    dipSW(chanidx) = hartigansdiptest(sort(broadbandSlowWave));
     
     
     %% Calculate theta

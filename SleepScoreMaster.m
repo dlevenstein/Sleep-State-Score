@@ -102,7 +102,7 @@ end
 %'savefiles'    - save the EMG,LFP files to .mats?
 
 %Overwrite pickes new and writes over existing ThLFP ans SWLFP
-overwrite = 0;
+overwrite = 1;
 
 
 %% Database File Management 
