@@ -131,7 +131,7 @@ t_EMG = t_EMG(t_intersect);
 
 %% Divide PC1 for SWS
 numpeaks = 1;
-numbins = 10;
+numbins = 12;
 %numbins = 12; %for Poster...
 while numpeaks ~=2
     [pcahist,histbins]= hist(broadbandSlowWave,numbins);
@@ -158,7 +158,7 @@ NREMtimes = (broadbandSlowWave >thresh);
 
 %% Then Divide EMG
 numpeaks = 1;
-numbins = 10;
+numbins = 12;
 while numpeaks ~=2
     [EMGhist,EMGhistbins]= hist(EMG(NREMtimes==0),numbins);
     %[EMGhist,EMGhistbins]= hist(EMG,numbins);
@@ -179,7 +179,7 @@ MOVtimes = (broadbandSlowWave<thresh & EMG>EMGthresh);
 
 %% Then Divide Theta
 numpeaks = 1;
-numbins = 10;
+numbins = 12;
 while numpeaks ~=2 && numbins <=20
     %[THhist,THhistbins]= hist(thratio(SWStimes==0 & MOVtimes==0),numbins);
     [THhist,THhistbins]= hist(thratio(MOVtimes==0),numbins);
@@ -190,8 +190,8 @@ while numpeaks ~=2 && numbins <=20
     numpeaks = length(LOCS);
 end
 
-numbins = 10;
-numbins = 15; %for Poster...
+numbins = 12;
+%numbins = 15; %for Poster...
 while numpeaks ~=2 && numbins <=20
     [THhist,THhistbins]= hist(thratio(NREMtimes==0 & MOVtimes==0),numbins);
 
