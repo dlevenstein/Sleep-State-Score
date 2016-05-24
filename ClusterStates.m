@@ -149,7 +149,7 @@ betweenpeaks = histbins(LOCS(1):LOCS(2));
 thresh = betweenpeaks(diploc);
 
 %Set transients to wake state
-SCORE(badtimes,1)=histbins(LOCS(1));
+broadbandSlowWave(badtimes,1)=histbins(LOCS(1));
  
  
 %SWS time points
@@ -506,10 +506,10 @@ figure
         xlabel('Narrowband Theta');ylabel('EMG')
 
     subplot(2,3,4)
-        scatter(SCORE(NREMtimes==0,1),thratio(NREMtimes==0),3,IDX(NREMtimes==0),'filled')
+        scatter(broadbandSlowWave(NREMtimes==0,1),thratio(NREMtimes==0),3,IDX(NREMtimes==0),'filled')
         xlabel('Broadband PC1');ylabel('Narrowband Theta')
     subplot(2,3,5)
-        scatter(SCORE(NREMtimes==0,1),EMG(NREMtimes==0),3,IDX(NREMtimes==0),'filled')
+        scatter(broadbandSlowWave(NREMtimes==0,1),EMG(NREMtimes==0),3,IDX(NREMtimes==0),'filled')
         xlabel('Broadband PC1');ylabel('EMG')
         title('non-nonREM only')
     subplot(2,3,6)
@@ -547,10 +547,10 @@ figure
         
         
     subplot(2,2,2)
-        plot(SCORE(IDX==2,1),EMG(IDX==2),'b.')
+        plot(broadbandSlowWave(IDX==2,1),EMG(IDX==2),'b.')
         hold on
-        plot(SCORE(EMG>EMGthresh & IDX==1,1),EMG(EMG>EMGthresh & IDX==1),'k.')
-        plot(SCORE(EMG<EMGthresh & IDX==1|IDX==3,1),EMG(EMG<EMGthresh & IDX==1|IDX==3),'.','Color',0.8*[1 1 1])
+        plot(broadbandSlowWave(EMG>EMGthresh & IDX==1,1),EMG(EMG>EMGthresh & IDX==1),'k.')
+        plot(broadbandSlowWave(EMG<EMGthresh & IDX==1|IDX==3,1),EMG(EMG<EMGthresh & IDX==1|IDX==3),'.','Color',0.8*[1 1 1])
         plot(thresh*[1 1],get(gca,'ylim'),'r','LineWidth',1)
         plot(thresh*[0 1],EMGthresh*[1 1],'r','LineWidth',1)
         xlabel('Broadband PC1');ylabel('EMG')
