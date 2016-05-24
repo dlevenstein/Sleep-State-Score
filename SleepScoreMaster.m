@@ -1,5 +1,5 @@
 function SleepScoreMaster(datasetfolder,recordingname,varargin)
-%[stateintervals,episodeintervals] = SleepScoreMaster(datasetfolder,recordingname)
+%SleepScoreMaster(datasetfolder,recordingname)
 %This is the master function for sleep state scoring.
 %
 %INPUT
