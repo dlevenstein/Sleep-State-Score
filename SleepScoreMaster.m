@@ -15,9 +15,15 @@ function SleepScoreMaster(datasetfolder,recordingname,varargin)
 %                   /datasetfolder/recordingname/recordingname.lfp
 %
 %OUTPUT
-%   stateintervals  {Nstates} Cell array of state start and end times, each
-%                   member of the array will be [Nints x 2]
-%   episodeintervals    similar for episodes
+%   StateIntervals  structure containing start/end times (seconds) of
+%                   NREM, REM, WAKE states and episodes. states is the 
+%                   "raw" state scoring. episodes are joined episodes of 
+%                   extended (40s) time in a given states, allowing for 
+%                   brief interruptions. also contains NREM packets, 
+%                   unitary epochs of NREM as described in Watson et al 2016.
+%                   saved in a .mat file:
+%                   recordingname_SleepScore.mat containing 
+%   
 %
 %
 % DLevenstein and BWatson 2015/16
@@ -236,6 +242,6 @@ StateIntervals.REMepisode = episodeintervals{3};
 StateIntervals.WAKEeposode = episodeintervals{1};
 StateIntervals.NREMpacket = packetintervals;
 
-save(sleepstatepath,'stateintervals','episodeintervals','StateIntervals');
+save(sleepstatepath,'StateIntervals');
 end
 
