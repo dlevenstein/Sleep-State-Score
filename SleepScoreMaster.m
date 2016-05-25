@@ -62,7 +62,7 @@ numrecs = length(recordingname);
 if numrecs > 1 & iscell(recordingname)
     display(['Multiple Recordings (',num2str(numrecs),')'])
     for rr = 1:numrecs
-        SleepScoreMaster(datasetfolder,recordingname{rr},varargin)
+        SleepScoreMaster(datasetfolder,recordingname{rr},varargin{:})
         close all
     end
     return
@@ -86,7 +86,6 @@ sessionfolder = fullfile(datasetfolder,recordingname);
 sf_LFP = 1250;
 sf_EMG = 2;
 
-savebool = 1;
 
 figloc = [fullfile(sessionfolder,'StateScoreFigures'),'/'];
 %figloc = fullfile(sessionfolder,'StateScoreFigures');
@@ -94,6 +93,7 @@ figloc = [fullfile(sessionfolder,'StateScoreFigures'),'/'];
 if ~exist(figloc,'dir')
     mkdir(figloc)
 end
+
 %% Deal with input options from varargin
 %none yet, but will do this with inputParser when we have input options
 
@@ -107,9 +107,24 @@ end
 %                               algorithmically
 %'savefiles'    - save the EMG,LFP files to .mats?
 
-%Overwrite pickes new and writes over existing ThLFP ans SWLFP
-overwrite = 0;
 
+%% inputParse for Optional Inputs and Defaults
+p = inputParser;
+
+defaultOverwrite = 0;    %Pick new and Overwrite existing ThLFP, SWLFP?
+defaultSavebool = 1;    %Save Stuff (EMG, LFP)
+defaultSpindledelta = 1; %Detect spindles/delta?
+
+addParameter(p,'overwrite',defaultOverwrite,@islogical)
+addParameter(p,'savebool',defaultSavebool,@islogical)
+addParameter(p,'spindledelta',defaultSpindledelta,@islogical)
+
+
+parse(p,varargin{:})
+%Clean up this junk...
+overwrite = p.Results.overwrite; 
+savebool = p.Results.savebool;
+spindledelta = p.Results.spindledelta;
 
 %% Database File Management 
 
@@ -248,13 +263,16 @@ save(sleepstatepath,'StateIntervals');
 
 
 %% Find Slow Waves and Spindle Times
-[ pSpindleInts,cycletimemap,deltapeaks ] = FindSpindlesAndSWs(datasetfolder,recordingname,figloc);
+if spindledelta
 
-SleepEvents.Spindles = pSpindleInts;
-SleepEvents.DeltaPeaks = deltapeaks;
-SleepEvents.SpindleCycleTime = cycletimemap;
+    [ pSpindleInts,cycletimemap,deltapeaks ] = FindSpindlesAndSWs(datasetfolder,recordingname,figloc);
+
+    SleepEvents.Spindles = pSpindleInts;
+    SleepEvents.DeltaPeaks = deltapeaks;
+    SleepEvents.SpindleCycleTime = cycletimemap;
 
 
-save(sleepeventpath,'SleepEvents');
+    save(sleepeventpath,'SleepEvents');
+end
 end
 
