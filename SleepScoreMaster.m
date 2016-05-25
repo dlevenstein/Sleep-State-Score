@@ -127,6 +127,7 @@ elseif exist (fullfile(datasetfolder,recordingname,[recordingname,'.eeg']),'file
     rawlfppath = fullfile(datasetfolder,recordingname,[recordingname,'.eeg']);
 else 
     display('No .lfp file')
+    return
 end
 
 %% CALCULATE EMG FROM HIGH-FREQUENCY COHERENCE
