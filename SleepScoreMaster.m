@@ -108,7 +108,7 @@ end
 %'savefiles'    - save the EMG,LFP files to .mats?
 
 %Overwrite pickes new and writes over existing ThLFP ans SWLFP
-overwrite = 1;
+overwrite = 0;
 
 
 %% Database File Management 
@@ -119,6 +119,7 @@ thetalfppath = fullfile(datasetfolder,recordingname,[recordingname,'_ThetaLFP.ma
 swlfppath = fullfile(datasetfolder,recordingname,[recordingname,'_SWLFP.mat']);
 
 sleepstatepath = fullfile(datasetfolder,recordingname,[recordingname,'_SleepScore.mat']);
+sleepeventpath = fullfile(datasetfolder,recordingname,[recordingname,'_SleepEvents.mat']);
 
 if exist (fullfile(datasetfolder,recordingname,[recordingname,'.lfp']),'file')
     rawlfppath = fullfile(datasetfolder,recordingname,[recordingname,'.lfp']);
@@ -243,5 +244,16 @@ StateIntervals.WAKEeposode = episodeintervals{1};
 StateIntervals.NREMpacket = packetintervals;
 
 save(sleepstatepath,'StateIntervals');
+
+
+%% Find Slow Waves and Spindle Times
+[ pSpindleInts,cycletimemap,deltapeaks ] = FindSpindlesAndSWs(datasetfolder,recordingname,figloc);
+
+SleepEvents.Spindles = pSpindleInts;
+SleepEvents.DeltaPeaks = deltapeaks;
+SleepEvents.SpindleCycleTime = cycletimemap;
+
+
+save(sleepeventpath,'SleepEvents');
 end
 
