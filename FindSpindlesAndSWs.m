@@ -48,7 +48,7 @@ numgroups = length(spikegroups);
 numgroups = length(spikegroups);
 
 %% Load the channel map to get the cortical channels
-CTXlabels = {'mPFC','ACC','MotorCtx'};
+CTXlabels = {'mPFC','ACC','MotorCtx','OFC'};
 
 spikegroupanatomyfilename = fullfile(datasetfolder,recname,[recname,'_SpikeGroupAnatomy.csv']);
 spkgroupanatomy=readtable(spikegroupanatomyfilename);
