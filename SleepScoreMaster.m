@@ -265,7 +265,7 @@ save(sleepstatepath,'StateIntervals');
 %% Find Slow Waves and Spindle Times
 if spindledelta
 
-    [ pSpindleInts,cycletimemap,deltapeaks ] = FindSpindlesAndSWs(datasetfolder,recordingname,figloc);
+    [ pSpindleInts,cycletimemap,deltapeaks,SpindleStats ] = FindSpindlesAndSWs(datasetfolder,recordingname,figloc);
 
     SleepEvents.Spindles = pSpindleInts;
     SleepEvents.DeltaPeaks = deltapeaks;
@@ -273,6 +273,9 @@ if spindledelta
 
 
     save(sleepeventpath,'SleepEvents');
+    
+    spindlestatspath = fullfile(datasetfolder,recordingname,[recordingname,'_SpindleStats.mat']);
+    save(spindlestatspath,'SpindleStats')
 end
 end
 

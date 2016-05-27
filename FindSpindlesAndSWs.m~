@@ -1,4 +1,4 @@
-function [ pSpindleInts,cycletimemap,deltapeaks,SpindleStats ] = FindSpindlesAndSWs(datasetfolder,recname,figfolder)
+function [ pSpindleInts,cycletimemap,deltapeaks ] = FindSpindlesAndSWs(datasetfolder,recname,figfolder)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 %
@@ -61,17 +61,16 @@ ctxchannels = [spikegroups{ctxgroups}];
 
 load(fullfile(datasetfolder,recname,[recname,'_SleepScore.mat']));
 
-
+if exist (fullfile(datasetfolder,recname,[recname,'_GoodSleepInterval.mat']),'file')
+   load(fullfile(datasetfolder,recname,[recname,'_GoodSleepInterval.mat']));
+end
 
 
 
 
 NREMint = StateIntervals.NREMstate;
 
-if exist (fullfile(datasetfolder,recname,[recname,'_GoodSleepInterval.mat']),'file')
-   load(fullfile(datasetfolder,recname,[recname,'_GoodSleepInterval.mat']));
-   [NREMint] = RestrictInts(NREMint,GoodSleepInterval); 
-end
+
 
 
 %% Step 2b: Identidy Spindle Intervals by amplitude envelope peak.
@@ -98,7 +97,7 @@ frange = [8 18];
 
 
 %% Characteriation of pSpindle LFP and peaks (add peaks characterization from below)
-[SpindleStats] = SpindleIntLFP(pSpindleInts,cycletimemap,deltapeaks,ctxchannels,NREMint,figfolder,recname)
+SpindleIntLFP(pSpindleInts,cycletimemap,deltapeaks,ctxchannels,NREMint,figfolder,recname)
 
 
 
