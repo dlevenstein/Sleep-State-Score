@@ -61,7 +61,17 @@ ctxchannels = [spikegroups{ctxgroups}];
 
 load(fullfile(datasetfolder,recname,[recname,'_SleepScore.mat']));
 
+
+
+
+
+
 NREMint = StateIntervals.NREMstate;
+
+if exist (fullfile(datasetfolder,recname,[recname,'_GoodSleepInterval.mat']),'file')
+   load(fullfile(datasetfolder,recname,[recname,'_GoodSleepInterval.mat']));
+   [NREMint] = RestrictInts(NREMint,GoodSleepInterval.asVector); 
+end
 
 
 %% Step 2b: Identidy Spindle Intervals by amplitude envelope peak.
