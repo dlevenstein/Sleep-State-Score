@@ -27,7 +27,7 @@ function SleepScoreMaster(datasetfolder,recordingname,varargin)
 %                   brief interruptions. also contains NREM packets, 
 %                   unitary epochs of NREM as described in Watson et al 2016.
 %                   saved in a .mat file:
-%                   recordingname_SleepScore.mat containing 
+%                   recordingname_SleepScore.mat 
 %   
 %
 % DLevenstein and BWatson 2015/16
