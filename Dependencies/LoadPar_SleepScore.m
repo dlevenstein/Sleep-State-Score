@@ -24,7 +24,8 @@ end
 
 
 if FileExists([FileBase '.xml']) %& ~isempty(strfind(FileName,'.xml'))
-    Par = LoadXml(FileBase);
+    Par = LoadXml_SleepScore(FileBase);
+    %Par = loadxml(FileBase);
 elseif FileExists([FileBase '.par'])
 
 
