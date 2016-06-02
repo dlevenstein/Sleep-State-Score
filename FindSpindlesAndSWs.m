@@ -1,4 +1,4 @@
-function [ pSpindleInts,cycletimemap,deltapeaks,SpindleStats ] = FindSpindlesAndSWs(datasetfolder,recname,figfolder)
+function [ pSpindleInts,cycletimemap,deltapeaks,SpindleStats ] = FindSpindlesAndSWs(datasetfolder,recname,figfolder,StateIntervals)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 %
@@ -59,11 +59,9 @@ ctxchannels = [spikegroups{ctxgroups}];
 
 %%
 
-load(fullfile(datasetfolder,recname,[recname,'_SleepScore.mat']));
-
-
-
-
+if ~exist('StateIntervals','var')
+    load(fullfile(datasetfolder,recname,[recname,'_SleepScore.mat']));
+end
 
 
 NREMint = StateIntervals.NREMstate;

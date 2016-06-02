@@ -2,11 +2,16 @@ function SleepScoreMaster(datasetfolder,recordingname,varargin)
 %SleepScoreMaster(datasetfolder,recordingname)
 %This is the master function for sleep state scoring.
 %
-%INPUT
+%INPUT (optional)   If no inputs included, select folder containing .eeg
+%                   and .xml file in prompt.
+%                   
 %   datasetfolder   Top level folder in which the dataset resides. 
-%                   For example
+%                   For example:
 %                   '/Users/dlevenstein/Dropbox/Research/Datasets/BWData/'
-%   recordingname   Name of the recording, this will be the name of the
+%                   -if not included, prompt comes up to
+%                   navigate to the folder holding your recording.
+%   recordingname   (optional)
+%                   Name of the recording, this will be the name of the
 %                   folder in which the .lfp file and other files reside.
 %                   For example, the .lfp file should be:
 %                   'datasetfolder/recordingname/recordingname.lfp'
@@ -24,7 +29,6 @@ function SleepScoreMaster(datasetfolder,recordingname,varargin)
 %                   saved in a .mat file:
 %                   recordingname_SleepScore.mat containing 
 %   
-%
 %
 % DLevenstein and BWatson 2015/16
 %% Recording Selection
@@ -83,16 +87,16 @@ display(['Scoring Recording: ',recordingname]);
 %% inputParse for Optional Inputs and Defaults
 p = inputParser;
 
-defaultOverwrite = 0;    %Pick new and Overwrite existing ThLFP, SWLFP?
-defaultSavebool = 1;    %Save Stuff (EMG, LFP)
-defaultSpindledelta = 1; %Detect spindles/delta?
+defaultOverwrite = false;    %Pick new and Overwrite existing ThLFP, SWLFP?
+defaultSavebool = true;    %Save Stuff (EMG, LFP)
+defaultSpindledelta = false; %Detect spindles/delta?
 
-defaultSavefolder = fullfile(datasetfolder,recordingname);
+defaultSavedir = datasetfolder;
 
 addParameter(p,'overwrite',defaultOverwrite,@islogical)
 addParameter(p,'savebool',defaultSavebool,@islogical)
 addParameter(p,'spindledelta',defaultSpindledelta,@islogical)
-addParameter(p,'savefolder',defaultSavefolder)
+addParameter(p,'savedir',defaultSavedir)
 
 
 parse(p,varargin{:})
@@ -100,9 +104,11 @@ parse(p,varargin{:})
 overwrite = p.Results.overwrite; 
 savebool = p.Results.savebool;
 spindledelta = p.Results.spindledelta;
-savefolder = p.Results.savefolder;
+savedir = p.Results.savedir;
 
 %% Database File Management 
+savefolder = fullfile(savedir,recordingname);
+
 if ~exist(savefolder,'dir')
     mkdir(savefolder)
 end
@@ -183,8 +189,6 @@ if ~exist(thetalfppath,'file') && ~exist(swlfppath,'file') || overwrite; % if no
 %     Par = LoadPar(fullfile(datasetfolder,recordingname,[recordingname,'.xml']));
     display('Picking SW and TH Channels')
     [SWchannum,THchannum,swLFP,thLFP] = PickSWTHChannel(datasetfolder,recordingname,figloc);
-    sf_LFP = 1250;
-    sf_EMG = 2;
     %open lfp, 
 %         lfp = readmulti(eegloc, nChannels, xcorr_chs) * bmd.voltsperunit*1000; %read and convert to mV    
 %         or lfp = LoadBinary...
@@ -205,6 +209,8 @@ else
     load(thetalfppath,'thLFP')
 end
 
+    sf_LFP = 1250;
+    sf_EMG = 2;
 
 
 %% CLUSTER STATES BASED ON SLOW WAVE, THETA, EMG
@@ -256,7 +262,7 @@ save(sleepstatepath,'StateIntervals');
 %% Find Slow Waves and Spindle Times
 if spindledelta
 
-    [ pSpindleInts,cycletimemap,deltapeaks,SpindleStats ] = FindSpindlesAndSWs(datasetfolder,recordingname,figloc);
+    [ pSpindleInts,cycletimemap,deltapeaks,SpindleStats ] = FindSpindlesAndSWs(datasetfolder,recordingname,figloc,StateIntervals);
 
     SleepEvents.Spindles = pSpindleInts;
     SleepEvents.DeltaPeaks = deltapeaks;
