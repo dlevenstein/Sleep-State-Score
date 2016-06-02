@@ -34,17 +34,12 @@ function SleepScoreMaster(datasetfolder,recordingname,varargin)
 %then run SleepScoreMaster on each of the filenames'
 %if no input arguements... select uigetfile
 
-
 %Select from no input
 if ~exist('datasetfolder','var')
     DIRECTORYNAME = uigetdir('',...
         'Which recording(s) would you like to state score?');
+    if isequal(DIRECTORYNAME,0);return;end  
     [datasetfolder,recordingname] = fileparts(DIRECTORYNAME); 
-    if isequal(DIRECTORYNAME,0) 
-       disp('User pressed cancel...')
-       return
-    end
-
 end
   
 %Select from dataset folder
@@ -69,30 +64,8 @@ if numrecs > 1 & iscell(recordingname)
 elseif numrecs == 1 & iscell(recordingname)
         recordingname = recordingname{1};
 end
-	
-    
 
-%%
 display(['Scoring Recording: ',recordingname]);
-%
-%% DEV
-% Load the necessary files as needed for development
-% datasetfolder = '/Users/dlevenstein/Dropbox/Research/Datasets/DTData/';
-%datasetfolder = '/Users/dlevenstein/Dropbox/Research/Datasets/BWData/~updated/Recordings (1)/';
-%recordingname = 'c3po_160202';
-% recordingname = 'DT2_rPPC_rCCG_362um_218um_20160209_160209_183610';
-sessionfolder = fullfile(datasetfolder,recordingname);
-
-sf_LFP = 1250;
-sf_EMG = 2;
-
-
-figloc = [fullfile(sessionfolder,'StateScoreFigures'),'/'];
-%figloc = fullfile(sessionfolder,'StateScoreFigures');
-
-if ~exist(figloc,'dir')
-    mkdir(figloc)
-end
 
 %% Deal with input options from varargin
 %none yet, but will do this with inputParser when we have input options
@@ -107,7 +80,6 @@ end
 %                               algorithmically
 %'savefiles'    - save the EMG,LFP files to .mats?
 
-
 %% inputParse for Optional Inputs and Defaults
 p = inputParser;
 
@@ -115,9 +87,12 @@ defaultOverwrite = 0;    %Pick new and Overwrite existing ThLFP, SWLFP?
 defaultSavebool = 1;    %Save Stuff (EMG, LFP)
 defaultSpindledelta = 1; %Detect spindles/delta?
 
+defaultSavefolder = fullfile(datasetfolder,recordingname);
+
 addParameter(p,'overwrite',defaultOverwrite,@islogical)
 addParameter(p,'savebool',defaultSavebool,@islogical)
 addParameter(p,'spindledelta',defaultSpindledelta,@islogical)
+addParameter(p,'savefolder',defaultSavefolder)
 
 
 parse(p,varargin{:})
@@ -125,17 +100,29 @@ parse(p,varargin{:})
 overwrite = p.Results.overwrite; 
 savebool = p.Results.savebool;
 spindledelta = p.Results.spindledelta;
+savefolder = p.Results.savefolder;
 
 %% Database File Management 
+if ~exist(savefolder,'dir')
+    mkdir(savefolder)
+end
+
+%Figure locations
+figloc = [fullfile(savefolder,'StateScoreFigures'),'/'];
+if ~exist(figloc,'dir')
+    mkdir(figloc)
+end
 
 %Filenames for EMG, thLFP, and swLFP .mat files in the database.
-EMGpath = fullfile(datasetfolder,recordingname,[recordingname '_EMGCorr.mat']);
-thetalfppath = fullfile(datasetfolder,recordingname,[recordingname,'_ThetaLFP.mat']);
-swlfppath = fullfile(datasetfolder,recordingname,[recordingname,'_SWLFP.mat']);
+EMGpath = fullfile(savefolder,[recordingname '_EMGCorr.mat']);
+thetalfppath = fullfile(savefolder,[recordingname,'_ThetaLFP.mat']);
+swlfppath = fullfile(savefolder,[recordingname,'_SWLFP.mat']);
+%Filenames for State and Event .mat files.
+sleepstatepath = fullfile(savefolder,[recordingname,'_SleepScore.mat']);
+sleepeventpath = fullfile(savefolder,[recordingname,'_SleepEvents.mat']);
+spindlestatspath = fullfile(savefolder,[recordingname,'_SpindleStats.mat']);
 
-sleepstatepath = fullfile(datasetfolder,recordingname,[recordingname,'_SleepScore.mat']);
-sleepeventpath = fullfile(datasetfolder,recordingname,[recordingname,'_SleepEvents.mat']);
-
+%Filename for .lfp file
 if exist (fullfile(datasetfolder,recordingname,[recordingname,'.lfp']),'file')
     rawlfppath = fullfile(datasetfolder,recordingname,[recordingname,'.lfp']);
 elseif exist (fullfile(datasetfolder,recordingname,[recordingname,'.eeg']),'file')
@@ -159,6 +146,9 @@ if ~exist(EMGpath,'file')
     % eeg filename - ok
     % .xml filename - ok
     %     Save ..._EMGCorr file
+    if savebool
+        save(EMGpath,'EMGCorr')
+    end
 
 else
     display('EMG aleady calculated: Loading')
@@ -193,7 +183,8 @@ if ~exist(thetalfppath,'file') && ~exist(swlfppath,'file') || overwrite; % if no
 %     Par = LoadPar(fullfile(datasetfolder,recordingname,[recordingname,'.xml']));
     display('Picking SW and TH Channels')
     [SWchannum,THchannum,swLFP,thLFP] = PickSWTHChannel(datasetfolder,recordingname,figloc);
-    
+    sf_LFP = 1250;
+    sf_EMG = 2;
     %open lfp, 
 %         lfp = readmulti(eegloc, nChannels, xcorr_chs) * bmd.voltsperunit*1000; %read and convert to mV    
 %         or lfp = LoadBinary...
@@ -205,8 +196,8 @@ if ~exist(thetalfppath,'file') && ~exist(swlfppath,'file') || overwrite; % if no
     %store _SWLFP.mat
     if savebool
     % save...
-        save(swlfppath,'swLFP');
-        save(thetalfppath,'thLFP');
+        save(swlfppath,'swLFP','SWchannum');
+        save(thetalfppath,'thLFP','THchannum');
     end
 else
     display('SW and TH Channels Already Extracted, Loading...')
@@ -273,8 +264,6 @@ if spindledelta
 
 
     save(sleepeventpath,'SleepEvents');
-    
-    spindlestatspath = fullfile(datasetfolder,recordingname,[recordingname,'_SpindleStats.mat']);
     save(spindlestatspath,'SpindleStats')
 end
 end

@@ -14,7 +14,7 @@ function EMGCorr = EMGCorrForSleepscore(basenamepath,specialchannels,specialshan
 % Adapted 2015 Brendon Watson
 
 %% Parameters
-savebool = 1;
+savebool = 0;
 
 %% input handling
 if ~exist('specialchannels','var')
