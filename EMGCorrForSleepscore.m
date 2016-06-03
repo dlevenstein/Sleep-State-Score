@@ -45,7 +45,16 @@ Par = LoadPar_SleepScore(xmlloc);
 
 Fs = Par.lfpSampleRate; % Hz, LFP sampling rate
 nChannels = Par.nChannels;
-SpkGrps = Par.SpkGrps;
+
+if isfield(Par,'SpkGrps')
+    SpkGrps = Par.SpkGrps;
+elseif isfield(Par,'AnatGrps')
+    SpkGrps = Par.AnatGrps;
+    display('No SpikeGroups, Using AnatomyGroups')
+else
+    display('No SpikeGroups...')
+end
+    
 
 xcorr_halfwindow_s = 0.5;%specified in s
 % downsampleFs = 125;
