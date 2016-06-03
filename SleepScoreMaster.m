@@ -18,10 +18,11 @@ function SleepScoreMaster(datasetfolder,recordingname,varargin)
 %                   ... it is also assumed that this serves as the basename
 %                   for the files for instance data will be at
 %                   /datasetfolder/recordingname/recordingname.lfp
-%   'savedir'
-%   'overwrite'
-%   'savebool'
-%   'spindledelta'
+%   'savedir'       Default: datasetfolder
+%   'overwrite'     Default: false
+%   'savebool'      Default: true
+%   'spindledelta'  Default: false (spindle detector not ready yet...)
+%   'scoretime'     Default: [0 Inf]
 %
 %OUTPUT
 %   StateIntervals  structure containing start/end times (seconds) of
