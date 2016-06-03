@@ -18,6 +18,10 @@ function SleepScoreMaster(datasetfolder,recordingname,varargin)
 %                   ... it is also assumed that this serves as the basename
 %                   for the files for instance data will be at
 %                   /datasetfolder/recordingname/recordingname.lfp
+%   'savedir'
+%   'overwrite'
+%   'savebool'
+%   'spindledelta'
 %
 %OUTPUT
 %   StateIntervals  structure containing start/end times (seconds) of
@@ -82,7 +86,6 @@ display(['Scoring Recording: ',recordingname]);
 %'spikegroups' - if not in the .xml file
 %'SWChannel', 'ThetaChannel' - can enter manually instead of determining
 %                               algorithmically
-%'savefiles'    - save the EMG,LFP files to .mats?
 
 %% inputParse for Optional Inputs and Defaults
 p = inputParser;
