@@ -1,4 +1,4 @@
-function [SWchannum,THchannum,swLFP,thLFP] = PickSWTHChannel(datasetfolder,recordingname,figfolder)
+function [SWchannum,THchannum,swLFP,thLFP,t_LFP] = PickSWTHChannel(datasetfolder,recordingname,figfolder,scoretime)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 %
@@ -58,7 +58,8 @@ numusedchannels = length(usechannels);
 % Load downsampled LFP
 downsamplefactor = 10;
 allLFP = LoadBinary_Down(rawlfppath,'frequency',Fs,...
-    'nchannels',nChannels,'channels',usechannels+1,'downsample',downsamplefactor);
+    'nchannels',nChannels,'channels',usechannels+1,'downsample',downsamplefactor,...
+    'start',scoretime(1),'duration',diff(scoretime));
 Fs = Fs./downsamplefactor;
 
 %% For each channel, calculate the PC1 and check it
@@ -157,10 +158,13 @@ SWchannum = usechannels(goodSWidx);
 THchannum = usechannels(goodTHidx);
 
 swthLFP = LoadBinary_Down(rawlfppath,'frequency',Fs,...
-    'nchannels',nChannels,'channels',[SWchannum+1,THchannum+1]);
+    'nchannels',nChannels,'channels',[SWchannum+1,THchannum+1],...
+    'start',scoretime(1),'duration',diff(scoretime));
 
 swLFP = swthLFP(:,1);
 thLFP = swthLFP(:,2);
+t_LFP = [1:length(swLFP)]./Fs;
+
 %% Find Inverted PC1s and flip them for plot
 invpc1 = mean(pc1coeff(freqlist<4,:))<0 & mean(pc1coeff(freqlist>50,:))>0;
 pc1coeff(:,invpc1) = -pc1coeff(:,invpc1);

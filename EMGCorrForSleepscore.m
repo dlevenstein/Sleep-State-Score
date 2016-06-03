@@ -1,4 +1,4 @@
-function EMGCorr = EMGCorrForSleepscore(basenamepath,specialchannels,specialshanks)
+function EMGCorr = EMGCorrForSleepscore(basenamepath,scoretime,specialchannels,specialshanks)
 % Based on Erik Schomburg's work and code.  Grabs channels and calculates
 % their correlations in the 300-600Hz band over sliding windows of 0.5sec.
 % Channels are automatically selected and are a combination first channels
@@ -91,6 +91,12 @@ xcorr_chs = unique(xcorr_chs);
 eeg = readmulti(eegloc, nChannels, xcorr_chs); %read and convert to mV    
 % Filter first in high frequency band to remove low-freq physiologically
 % correlated LFPs (e.g., theta, delta, SPWs, etc.)
+
+eeg = LoadBinary_Down(eegloc,'frequency',Fs,...
+    'nchannels',nChannels,'channels',xcorr_chs,...
+    'start',scoretime(1),'duration',diff(scoretime));
+
+
 xcorr_freqband = [275 300 600 625]; % Hz
 eeg = filtsig_in(eeg, Fs, xcorr_freqband);
 
