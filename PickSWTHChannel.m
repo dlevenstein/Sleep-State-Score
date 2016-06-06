@@ -166,13 +166,14 @@ goodTHidx = dipsortTH(end);
 SWchannum = usechannels(goodSWidx);
 THchannum = usechannels(goodTHidx);
 
-swthLFP = LoadBinary_Down(rawlfppath,'frequency',Fs,...
+Fs_save = Par.lfpSampleRate;
+swthLFP = LoadBinary_Down(rawlfppath,'frequency',Fs_save,...
     'nchannels',nChannels,'channels',[SWchannum+1,THchannum+1],...
     'start',scoretime(1),'duration',diff(scoretime));
 
 swLFP = swthLFP(:,1);
 thLFP = swthLFP(:,2);
-t_LFP = [1:length(swLFP)]./Fs;
+t_LFP = [1:length(swLFP)]./Fs_save;
 
 %% Find Inverted PC1s and flip them for plot
 invpc1 = mean(pc1coeff(freqlist<4,:))<0 & mean(pc1coeff(freqlist>50,:))>0;

@@ -154,7 +154,7 @@ end
 % If EMG is already calculated and in it's own .mat, then load, otherwise
 % calculate this
 
-if ~exist(EMGpath,'file')
+if ~exist(EMGpath,'file') || overwrite;
     display('Calculating EMG')
     EMGCorr = EMGCorrForSleepscore(rawlfppath,scoretime);%BW modify this to have different dependencies, currently assumes presence of: 
     % eeg filename - ok

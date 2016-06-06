@@ -97,7 +97,7 @@ xcorr_chs = unique(xcorr_chs);
 
 %% Read and filter channel
 % read channel
-eeg = readmulti(eegloc, nChannels, xcorr_chs); %read and convert to mV    
+%eeg = readmulti(eegloc, nChannels, xcorr_chs); %read and convert to mV    
 % Filter first in high frequency band to remove low-freq physiologically
 % correlated LFPs (e.g., theta, delta, SPWs, etc.)
 
