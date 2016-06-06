@@ -34,7 +34,16 @@ end
 Par = LoadPar_SleepScore(xmlfilename);
 Fs = Par.lfpSampleRate; % Hz, LFP sampling rate
 nChannels = Par.nChannels;
-SpkGrps = Par.SpkGrps;
+
+if isfield(Par,'SpkGrps')
+    SpkGrps = Par.SpkGrps;
+elseif isfield(Par,'AnatGrps')
+    SpkGrps = Par.AnatGrps;
+    display('No SpikeGroups, Using AnatomyGroups')
+else
+    display('No SpikeGroups...')
+end
+
 %% Hist/Freqs Parms
 numhistbins = 21;
 numfreqs = 100;
