@@ -14,12 +14,12 @@ function [ INT, IDX, t_IDX,PC1weights,PC1expvar ] = ClusterStates(LFP,thLFP,EMG,
 
 %% Min Win Parameters (s)
 
-minSWS = 2;
-minWnexttoREM = 2;
-minWinREM = 2;       
-minREMinW = 2;
-minREM = 2;
-minWAKE = 2;
+minSWS = 5;
+minWnexttoREM = 5;
+minWinREM = 5;       
+minREMinW = 5;
+minREM = 5;
+minWAKE = 5;
 
 
 %% Downsample and filter

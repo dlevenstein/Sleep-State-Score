@@ -174,14 +174,17 @@ clear EMGCorr
 
 %% DETERMINE BEST SLOW WAVE AND THETA CHANNELS
 
+sf_LFP = 1250;
+sf_EMG = 2;
+
 if ~exist(thetalfppath,'file') && ~exist(swlfppath,'file') || overwrite; % if no lfp file already, load lfp and make lfp file?
 
     display('Picking SW and TH Channels')
     [SWchannum,THchannum,swLFP,thLFP,t_LFP] = PickSWTHChannel(datasetfolder,recordingname,figloc,scoretime);
     
     if savebool
-        save(swlfppath,'swLFP','SWchannum','t_LFP');
-        save(thetalfppath,'thLFP','THchannum','t_LFP');
+        save(swlfppath,'swLFP','SWchannum','t_LFP','sf_LFP');
+        save(thetalfppath,'thLFP','THchannum','t_LFP','sf_LFP');
     end
 else
     display('SW and TH Channels Already Extracted, Loading...')
@@ -189,8 +192,6 @@ else
     load(thetalfppath,'thLFP')
 end
 
-    sf_LFP = 1250;
-    sf_EMG = 2;
 
 
 %% CLUSTER STATES BASED ON SLOW WAVE, THETA, EMG
