@@ -12,14 +12,14 @@ function [ INT, IDX, t_IDX,PC1weights,PC1expvar ] = ClusterStates(LFP,thLFP,EMG,
 
 
 
-%% Min Win Parameters
+%% Min Win Parameters (s)
 
-minSWS = 2;
-minWnexttoREM = 2;
-minWinREM = 2;       
-minREMinW = 2;
-minREM = 2;
-minWAKE = 2;
+minSWS = 5;
+minWnexttoREM = 5;
+minWinREM = 5;       
+minREMinW = 5;
+minREM = 5;
+minWAKE = 5;
 
 
 %% Downsample and filter
@@ -300,13 +300,6 @@ shortWRidx = INTtoIDX(shortWRints,length(IDX));
 %Convert REM to WAKE
 IDX(shortWRidx==1) = 1;
 INT = IDXtoINT(IDX,3);
-
-% if length(INT) ~= 3
-%     display('Looks like you have no REM... or something is weird in detection')
-%     INT{3} = [];
-% end
-
-
 
 %REM (only applies to REM in the middle of SWS)    (to WAKE)
 Rints = INT{3};

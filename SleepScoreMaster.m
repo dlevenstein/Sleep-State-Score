@@ -18,10 +18,11 @@ function SleepScoreMaster(datasetfolder,recordingname,varargin)
 %                   ... it is also assumed that this serves as the basename
 %                   for the files for instance data will be at
 %                   /datasetfolder/recordingname/recordingname.lfp
-%   'savedir'
-%   'overwrite'
-%   'savebool'
-%   'spindledelta'
+%   'savedir'       Default: datasetfolder
+%   'overwrite'     Default: false
+%   'savebool'      Default: true
+%   'spindledelta'  Default: false (spindle detector not ready yet...)
+%   'scoretime'     Default: [0 Inf]
 %
 %OUTPUT
 %   StateIntervals  structure containing start/end times (seconds) of
@@ -96,10 +97,13 @@ defaultSpindledelta = false; %Detect spindles/delta?
 
 defaultSavedir = datasetfolder;
 
+defaultScoretime = [0 Inf];
+
 addParameter(p,'overwrite',defaultOverwrite,@islogical)
 addParameter(p,'savebool',defaultSavebool,@islogical)
 addParameter(p,'spindledelta',defaultSpindledelta,@islogical)
 addParameter(p,'savedir',defaultSavedir)
+addParameter(p,'scoretime',defaultScoretime)
 
 
 parse(p,varargin{:})
@@ -108,6 +112,7 @@ overwrite = p.Results.overwrite;
 savebool = p.Results.savebool;
 spindledelta = p.Results.spindledelta;
 savedir = p.Results.savedir;
+scoretime = p.Results.scoretime;
 
 %% Database File Management 
 savefolder = fullfile(savedir,recordingname);
@@ -151,7 +156,7 @@ end
 
 if ~exist(EMGpath,'file')
     display('Calculating EMG')
-    EMGCorr = EMGCorrForSleepscore(rawlfppath);%BW modify this to have different dependencies, currently assumes presence of: 
+    EMGCorr = EMGCorrForSleepscore(rawlfppath,scoretime);%BW modify this to have different dependencies, currently assumes presence of: 
     % eeg filename - ok
     % .xml filename - ok
     %     Save ..._EMGCorr file
@@ -168,43 +173,18 @@ clear EMGCorr
 
 
 %% DETERMINE BEST SLOW WAVE AND THETA CHANNELS
-%Possibility - use multiple channels for concensus, find one good SWChannel
-%from each shank? - could even use all SW for clustering - will improve
-%both time resolution and reliability
 
-%Possbile cases:
-%   -SW,TH channel picked and have .mat
-%   -SW,TH channel picked but need to be loaded from .eeg -> save a .mat
-%   -SW,TH channel not picked
-
-%To Do: get LoadLFP (or other) to load already downsampled LFP....
-%Then return channel and load for .mat and Clustering
-
-
+sf_LFP = 1250;
+sf_EMG = 2;
 
 if ~exist(thetalfppath,'file') && ~exist(swlfppath,'file') || overwrite; % if no lfp file already, load lfp and make lfp file?
-%     if exist (fullfile(datasetfolder,recordingname,[recordingname,'.lfp']),'file')
-%         rawlfppath = fullfile(datasetfolder,recordingname,[recordingname,'.lfp']);
-%     elseif exist (fullfile(datasetfolder,recordingname,[recordingname,'.eeg']),'file')
-%         rawlfppath = fullfile(datasetfolder,recordingname,[recordingname,'.eeg']);
-%     end
 
-%     Par = LoadPar(fullfile(datasetfolder,recordingname,[recordingname,'.xml']));
     display('Picking SW and TH Channels')
-    [SWchannum,THchannum,swLFP,thLFP] = PickSWTHChannel(datasetfolder,recordingname,figloc);
-    %open lfp, 
-%         lfp = readmulti(eegloc, nChannels, xcorr_chs) * bmd.voltsperunit*1000; %read and convert to mV    
-%         or lfp = LoadBinary...
-    %[SWChannel] = FindSWChannel();
-    %[ThetaChannel] = FindThetaChannel();
-    %swLFP = lfp(SWChannel);
-    %thLFP = lfp(ThetaChannel);
-    %store _ThetaLFP.mat
-    %store _SWLFP.mat
+    [SWchannum,THchannum,swLFP,thLFP,t_LFP] = PickSWTHChannel(datasetfolder,recordingname,figloc,scoretime);
+    
     if savebool
-    % save...
-        save(swlfppath,'swLFP','SWchannum');
-        save(thetalfppath,'thLFP','THchannum');
+        save(swlfppath,'swLFP','SWchannum','t_LFP','sf_LFP');
+        save(thetalfppath,'thLFP','THchannum','t_LFP','sf_LFP');
     end
 else
     display('SW and TH Channels Already Extracted, Loading...')
@@ -212,8 +192,6 @@ else
     load(thetalfppath,'thLFP')
 end
 
-    sf_LFP = 1250;
-    sf_EMG = 2;
 
 
 %% CLUSTER STATES BASED ON SLOW WAVE, THETA, EMG
