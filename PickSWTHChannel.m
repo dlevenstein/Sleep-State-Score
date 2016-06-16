@@ -81,8 +81,10 @@ dipTH = zeros(numusedchannels,1);
 %%
 for chanidx = 1:numusedchannels;
 %channum = 1;
-    display(['Channel ',num2str(chanidx),' of ',num2str(numusedchannels)])
-
+    if mod(chanidx,10) == 1
+        display(['Channel ',num2str(chanidx),' of ',num2str(numusedchannels)])
+    end
+        
     %Calcualte Z-scored Spectrogram
     freqlist = logspace(0,2,numfreqs);
     window = 10;
