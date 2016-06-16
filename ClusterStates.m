@@ -136,7 +136,7 @@ numbins = 12;
 while numpeaks ~=2
     [pcahist,histbins]= hist(broadbandSlowWave,numbins);
     
-    [PKS,LOCS] = findpeaks(pcahist,'NPeaks',2,'SortStr','descend');
+    [PKS,LOCS] = findpeaks_SleepScore(pcahist,'NPeaks',2,'SortStr','descend');
     LOCS = sort(LOCS);
     numbins = numbins+1;
     numpeaks = length(LOCS);
@@ -144,7 +144,7 @@ end
 
 
 betweenpeaks = histbins(LOCS(1):LOCS(2));
-[dip,diploc] = findpeaks(-pcahist(LOCS(1):LOCS(2)),'NPeaks',1,'SortStr','descend');
+[dip,diploc] = findpeaks_SleepScore(-pcahist(LOCS(1):LOCS(2)),'NPeaks',1,'SortStr','descend');
 
 thresh = betweenpeaks(diploc);
 
@@ -163,14 +163,14 @@ while numpeaks ~=2
     [EMGhist,EMGhistbins]= hist(EMG(NREMtimes==0),numbins);
     %[EMGhist,EMGhistbins]= hist(EMG,numbins);
 
-    [PKS,LOCS] = findpeaks([0 EMGhist],'NPeaks',2);
+    [PKS,LOCS] = findpeaks_SleepScore([0 EMGhist],'NPeaks',2);
     LOCS = sort(LOCS)-1;
     numbins = numbins+1;
     numpeaks = length(LOCS);
 end
 
 betweenpeaks = EMGhistbins(LOCS(1):LOCS(2));
-[dip,diploc] = findpeaks(-EMGhist(LOCS(1):LOCS(2)),'NPeaks',1,'SortStr','descend');
+[dip,diploc] = findpeaks_SleepScore(-EMGhist(LOCS(1):LOCS(2)),'NPeaks',1,'SortStr','descend');
 
 EMGthresh = betweenpeaks(diploc);
 
@@ -184,7 +184,7 @@ while numpeaks ~=2 && numbins <=20
     %[THhist,THhistbins]= hist(thratio(SWStimes==0 & MOVtimes==0),numbins);
     [THhist,THhistbins]= hist(thratio(MOVtimes==0),numbins);
 
-    [PKS,LOCS] = findpeaks(THhist,'NPeaks',2,'SortStr','descend');
+    [PKS,LOCS] = findpeaks_SleepScore(THhist,'NPeaks',2,'SortStr','descend');
     LOCS = sort(LOCS);
     numbins = numbins+1;
     numpeaks = length(LOCS);
@@ -195,7 +195,7 @@ numbins = 12;
 while numpeaks ~=2 && numbins <=20
     [THhist,THhistbins]= hist(thratio(NREMtimes==0 & MOVtimes==0),numbins);
 
-    [PKS,LOCS] = findpeaks(THhist,'NPeaks',2,'SortStr','descend');
+    [PKS,LOCS] = findpeaks_SleepScore(THhist,'NPeaks',2,'SortStr','descend');
     LOCS = sort(LOCS);
     numbins = numbins+1;
     numpeaks = length(LOCS);
@@ -203,7 +203,7 @@ end
 
 if length(PKS)==2
     betweenpeaks = THhistbins(LOCS(1):LOCS(2));
-    [dip,diploc] = findpeaks(-THhist(LOCS(1):LOCS(2)),'NPeaks',1,'SortStr','descend');
+    [dip,diploc] = findpeaks_SleepScore(-THhist(LOCS(1):LOCS(2)),'NPeaks',1,'SortStr','descend');
 
     THthresh = betweenpeaks(diploc);
 
