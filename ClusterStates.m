@@ -14,12 +14,12 @@ function [ INT, IDX, t_IDX,PC1weights,PC1expvar,broadbandSlowWave,thratio,t_FFT 
 
 %% Min Win Parameters (s)
 
-minSWS = 5;
-minWnexttoREM = 5;
-minWinREM = 5;       
-minREMinW = 5;
-minREM = 5;
-minWAKE = 5;
+minSWS = 6;
+minWnexttoREM = 6;
+minWinREM = 6;       
+minREMinW = 6;
+minREM = 6;
+minWAKE = 6;
 
 
 %% Downsample and filter
@@ -73,7 +73,7 @@ broadbandSlowWave = zFFTspec*SWweights';
  
 %% Smooth and 0-1 normalize
 smoothfact = 10; %units of si_FFT
-thsmoothfact = 15;
+thsmoothfact = 10; %used to be 15
 
 broadbandSlowWave = smooth(broadbandSlowWave,smoothfact);
 broadbandSlowWave = (broadbandSlowWave-min(broadbandSlowWave))./max(broadbandSlowWave-min(broadbandSlowWave));
@@ -180,7 +180,7 @@ MOVtimes = (broadbandSlowWave<thresh & EMG>EMGthresh);
 %% Then Divide Theta
 numpeaks = 1;
 numbins = 12;
-while numpeaks ~=2 && numbins <=20
+while numpeaks ~=2 && numbins <=25
     %[THhist,THhistbins]= hist(thratio(SWStimes==0 & MOVtimes==0),numbins);
     [THhist,THhistbins]= hist(thratio(MOVtimes==0),numbins);
 
@@ -192,7 +192,7 @@ end
 
 numbins = 12;
 %numbins = 15; %for Poster...
-while numpeaks ~=2 && numbins <=20
+while numpeaks ~=2 && numbins <=25
     [THhist,THhistbins]= hist(thratio(NREMtimes==0 & MOVtimes==0),numbins);
 
     [PKS,LOCS] = findpeaks_SleepScore(THhist,'NPeaks',2,'SortStr','descend');
