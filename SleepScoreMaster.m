@@ -135,6 +135,8 @@ swlfppath = fullfile(savefolder,[recordingname,'_SWLFP.mat']);
 sleepstatepath = fullfile(savefolder,[recordingname,'_SleepScore.mat']);
 sleepeventpath = fullfile(savefolder,[recordingname,'_SleepEvents.mat']);
 spindlestatspath = fullfile(savefolder,[recordingname,'_SpindleStats.mat']);
+%Filenames for StateCluster Metrics (broadband/theta)
+scoremetricspath = fullfile(savefolder,[recordingname,'_StateScoreMetrics.mat']);
 
 %Filename for .lfp file
 if exist (fullfile(datasetfolder,recordingname,[recordingname,'.lfp']),'file')
@@ -197,8 +199,11 @@ end
 %% CLUSTER STATES BASED ON SLOW WAVE, THETA, EMG
 
 display('Clustering States Based on EMG, SW, and TH LFP channels')
-[stateintervals,states] = ClusterStates(swLFP,thLFP,EMG,sf_LFP,sf_EMG,figloc,recordingname);
+[stateintervals,~,~,~,~,broadbandSlowWave,thratio,t_FFT] = ClusterStates(swLFP,thLFP,EMG,sf_LFP,sf_EMG,figloc,recordingname);
 
+    if savebool
+        save(scoremetricspath,'broadbandSlowWave','thratio','t_FFT');
+    end
 
 %% JOIN STATES INTO EPISODES
 

@@ -1,4 +1,4 @@
-function [ INT, IDX, t_IDX,PC1weights,PC1expvar ] = ClusterStates(LFP,thLFP,EMG,sf_LFP,sf_EMG,figloc,recordingname)
+function [ INT, IDX, t_IDX,PC1weights,PC1expvar,broadbandSlowWave,thratio,t_FFT ] = ClusterStates(LFP,thLFP,EMG,sf_LFP,sf_EMG,figloc,recordingname)
 %StateID(LFP,thLFP,EMG,sf_LFP,sf_EMG,figloc,WSEpisodes)
 %   Detailed explanation goes here
 %
