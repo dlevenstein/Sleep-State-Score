@@ -130,9 +130,9 @@ for chanidx = 1:numusedchannels;
     %% Calculate theta
 
     %NarrowbandTheta
-    f_all = [3 16];
-    %f_all = [2 20];
-    f_theta = [5 9];
+    %f_all = [3 16];
+    f_all = [2 20];
+    f_theta = [5.5 9];
     thfreqlist = logspace(log10(f_all(1)),log10(f_all(2)),numfreqs);
 
     [thFFTspec,thFFTfreqs] = spectrogram(allLFP(:,chanidx),window,noverlap,thfreqlist,Fs);

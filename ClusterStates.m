@@ -84,8 +84,8 @@ broadbandSlowWave = (broadbandSlowWave-min(broadbandSlowWave))./max(broadbandSlo
 display('FFT Spectrum for Theta')
 
 % %NarrowbandTheta
-f_all = [3 16];
-f_theta = [5 9];
+f_all = [2 20];
+f_theta = [5.5 9];
 freqlist = logspace(log10(f_all(1)),log10(f_all(2)),100);
 
 %ThetaDelta

@@ -215,7 +215,7 @@ minPACKdur = 30;
 SWSlengths = NREMints(:,2)-NREMints(:,1);
 packetintervals = NREMints(SWSlengths>=minPACKdur,:);
 
-maxMAdur = 100;
+maxMAdur = 120;
 WAKElengths = WAKEints(:,2)-WAKEints(:,1);
 MAntervals = WAKEints(WAKElengths<=maxMAdur,:);
 WAKEntervals = WAKEints(WAKElengths>maxMAdur,:);
