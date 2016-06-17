@@ -199,10 +199,10 @@ end
 %% CLUSTER STATES BASED ON SLOW WAVE, THETA, EMG
 
 display('Clustering States Based on EMG, SW, and TH LFP channels')
-[stateintervals,~,~,~,~,broadbandSlowWave,thratio,t_FFT] = ClusterStates(swLFP,thLFP,EMG,sf_LFP,sf_EMG,figloc,recordingname);
+[stateintervals,~,~,~,~,broadbandSlowWave,thratio,EMG,t_clus] = ClusterStates(swLFP,thLFP,EMG,sf_LFP,sf_EMG,figloc,recordingname);
 
     if savebool
-        save(scoremetricspath,'broadbandSlowWave','thratio','t_FFT');
+        save(scoremetricspath,'broadbandSlowWave','thratio','EMG','t_clus');
     end
 
 %% JOIN STATES INTO EPISODES
@@ -211,9 +211,14 @@ NREMints = stateintervals{2};
 REMints = stateintervals{3};
 WAKEints = stateintervals{1};
 
-minPACKdur = 20;
+minPACKdur = 30;
 SWSlengths = NREMints(:,2)-NREMints(:,1);
 packetintervals = NREMints(SWSlengths>=minPACKdur,:);
+
+maxMAdur = 100;
+WAKElengths = WAKEints(:,2)-WAKEints(:,1);
+MAntervals = WAKEints(WAKElengths<=maxMAdur,:);
+WAKEntervals = WAKEints(WAKElengths>maxMAdur,:);
 
 minintdur = 40;
 minSWSdur = 20;
@@ -236,11 +241,12 @@ minREMdur = 20;
 %% Save
 StateIntervals.NREMstate = NREMints;
 StateIntervals.REMstate = REMints;
-StateIntervals.WAKEstate = WAKEints;
+StateIntervals.WAKEstate = WAKEntervals;
 StateIntervals.NREMepisode = episodeintervals{2};
 StateIntervals.REMepisode = episodeintervals{3};
 StateIntervals.WAKEeposode = episodeintervals{1};
 StateIntervals.NREMpacket = packetintervals;
+StateIntervals.MAstate = MAntervals;
 
 save(sleepstatepath,'StateIntervals');
 

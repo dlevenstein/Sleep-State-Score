@@ -112,7 +112,7 @@ for chanidx = 1:numusedchannels;
     
     %% Smooth and 0-1 normalize
     smoothfact = 10; %units of si_FFT
-    thsmoothfact = 15;
+    thsmoothfact = 10;
      
     broadbandSlowWave = smooth(broadbandSlowWave,smoothfact);
     broadbandSlowWave = (broadbandSlowWave-min(broadbandSlowWave))./max(broadbandSlowWave-min(broadbandSlowWave));
@@ -130,9 +130,9 @@ for chanidx = 1:numusedchannels;
     %% Calculate theta
 
     %NarrowbandTheta
-    f_all = [2 16];
+    f_all = [3 16];
     %f_all = [2 20];
-    f_theta = [5 10];
+    f_theta = [5 9];
     thfreqlist = logspace(log10(f_all(1)),log10(f_all(2)),numfreqs);
 
     [thFFTspec,thFFTfreqs] = spectrogram(allLFP(:,chanidx),window,noverlap,thfreqlist,Fs);

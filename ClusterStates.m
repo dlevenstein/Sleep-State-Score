@@ -1,4 +1,4 @@
-function [ INT, IDX, t_IDX,PC1weights,PC1expvar,broadbandSlowWave,thratio,t_FFT ] = ClusterStates(LFP,thLFP,EMG,sf_LFP,sf_EMG,figloc,recordingname)
+function [ INT, IDX, t_IDX,PC1weights,PC1expvar,broadbandSlowWave,thratio,EMG,t_FFT ] = ClusterStates(LFP,thLFP,EMG,sf_LFP,sf_EMG,figloc,recordingname)
 %StateID(LFP,thLFP,EMG,sf_LFP,sf_EMG,figloc,WSEpisodes)
 %   Detailed explanation goes here
 %
@@ -14,12 +14,12 @@ function [ INT, IDX, t_IDX,PC1weights,PC1expvar,broadbandSlowWave,thratio,t_FFT 
 
 %% Min Win Parameters (s)
 
-minSWS = 6;
-minWnexttoREM = 6;
-minWinREM = 6;       
-minREMinW = 6;
-minREM = 6;
-minWAKE = 6;
+minSWS = 5;
+minWnexttoREM = 5;
+minWinREM = 5;       
+minREMinW = 5;
+minREM = 5;
+minWAKE = 5;
 
 
 %% Downsample and filter
@@ -84,8 +84,8 @@ broadbandSlowWave = (broadbandSlowWave-min(broadbandSlowWave))./max(broadbandSlo
 display('FFT Spectrum for Theta')
 
 % %NarrowbandTheta
-f_all = [2 16];
-f_theta = [5 10];
+f_all = [3 16];
+f_theta = [5 9];
 freqlist = logspace(log10(f_all(1)),log10(f_all(2)),100);
 
 %ThetaDelta
