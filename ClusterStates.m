@@ -14,12 +14,12 @@ function [ INT, IDX, t_IDX,PC1weights,PC1expvar,broadbandSlowWave,thratio,EMG,t_
 
 %% Min Win Parameters (s)
 
-minSWS = 5;
-minWnexttoREM = 5;
-minWinREM = 5;       
-minREMinW = 5;
-minREM = 5;
-minWAKE = 5;
+minSWS = 6;
+minWnexttoREM = 6;
+minWinREM = 6;       
+minREMinW = 6;
+minREM = 6;
+minWAKE = 6;
 
 
 %% Downsample and filter

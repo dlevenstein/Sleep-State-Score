@@ -238,6 +238,10 @@ minREMdur = 20;
 
 % BW: I added some other code, have to look at this too
 
+%Identify MAs within REM
+%  [MA_REM,REMMAints,~] = RestrictInts(MAntervals,episodeintervals{3});
+%  MAntervals(REMMAints,:) = [];
+
 %% Save
 StateIntervals.NREMstate = NREMints;
 StateIntervals.REMstate = REMints;
