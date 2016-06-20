@@ -85,32 +85,18 @@ display('FFT Spectrum for Theta')
 
 % %NarrowbandTheta
 f_all = [2 20];
-f_theta = [5.5 9];
+f_theta = [5 9];
 freqlist = logspace(log10(f_all(1)),log10(f_all(2)),100);
 
-%ThetaDelta
-% f_delta = [0.5 4];
-% f_theta = [5 10];
-% freqlist = linspace((f_delta(1)),(f_theta(2)),50);
 
 [thFFTspec,thFFTfreqs] = spectrogram(thLFP,window,noverlap,freqlist,sf_LFP);
-
-
 thFFTspec = (abs(thFFTspec));
 
-
-allpower = sum(log10(thFFTspec),1);
-
 thfreqs = find(thFFTfreqs>=f_theta(1) & thFFTfreqs<=f_theta(2));
-thpower = sum(log10(thFFTspec(thfreqs,:)),1);
-
-%Delta Power
-% defreqs = find(thFFTfreqs>=f_delta(1) & thFFTfreqs<=f_delta(2));
-% depower = sum(log10(thFFTspec(defreqs,:)),1);
-
+allpower = sum((thFFTspec),1);
+thpower = sum((thFFTspec(thfreqs,:)),1);
 
 thratio = thpower./allpower;    %Narrowband Theta
-%thratio = thpower./depower;    %Theta/Delta
 thratio = smooth(thratio,thsmoothfact);
 thratio = (thratio-min(thratio))./max(thratio-min(thratio));
  
@@ -522,62 +508,62 @@ figure
 	saveas(gcf,[figloc,recordingname,'_clust'],'jpeg')
 %saveas(gcf,['/Users/dlevenstein/Code Library/SleepScoreDevelopment/StateScoreFigures/','clust'],'jpeg')    
   %% Figure: Duration Distributions
-  Wints = INT{1};
-  Wlengths = Wints(:,2)-Wints(:,1);
-  Sints = INT{2};
-  Slengths = Sints(:,2)-Sints(:,1);
-  Rints = INT{3};
-  Rlengths = Rints(:,2)-Rints(:,1);
-  
-  figure
-    subplot(2,3,1)
-        hist(log10(Wlengths),10)
-        set(gca,'XTick',0:3)
-        set(gca,'XTickLabel',10.^[0:3])
-        xlabel('Duration (s)')
-        title('Wake Interval Durations')
-    subplot(2,3,2)
-        hist(log10(Slengths),10)
-        set(gca,'XTick',0:3)
-        set(gca,'XTickLabel',10.^[0:3])
-        xlabel('Duration (s)')
-        title('SWS Interval Durations')
-    subplot(2,3,3)
-        hist(log10(Rlengths),10)
-        set(gca,'XTick',0:3)
-        set(gca,'XTickLabel',10.^[0:3])
-        xlabel('Duration (s)')
-        title('REM Interval Durations')
-    subplot(2,3,4)
-        plot(log10(Wlengths(1:end-1)),log10(Wlengths(2:end)),'.')
-        set(gca,'YTick',0:3)
-        set(gca,'YTickLabel',10.^[0:3])
-        set(gca,'XTick',0:3)
-        set(gca,'XTickLabel',10.^[0:3])
-        xlabel('Interval n Duration')
-        ylabel('Interval n+1 Duration')
-        title('Wake Interval Durations')
-    subplot(2,3,5)
-        plot(log10(Slengths(1:end-1)),log10(Slengths(2:end)),'.')
-        set(gca,'YTick',0:3)
-        set(gca,'YTickLabel',10.^[0:3])
-        set(gca,'XTick',0:3)
-        set(gca,'XTickLabel',10.^[0:3])
-        xlabel('Interval n Duration')
-        ylabel('Interval n+1 Duration')
-        title('SWS Interval Durations')
-    subplot(2,3,6)
-        plot(log10(Rlengths(1:end-1)),log10(Rlengths(2:end)),'.')
-        set(gca,'YTick',0:3)
-        set(gca,'YTickLabel',10.^[0:3])
-        set(gca,'XTick',0:3)
-        set(gca,'XTickLabel',10.^[0:3])
-        xlabel('Interval n Duration')
-        ylabel('Interval n+1 Duration')
-        title('REM Interval Durations')
-        
-        saveas(gcf,[figloc,recordingname,'_intdur'],'jpeg')
-        
+%   Wints = INT{1};
+%   Wlengths = Wints(:,2)-Wints(:,1);
+%   Sints = INT{2};
+%   Slengths = Sints(:,2)-Sints(:,1);
+%   Rints = INT{3};
+%   Rlengths = Rints(:,2)-Rints(:,1);
+%   
+%   figure
+%     subplot(2,3,1)
+%         hist(log10(Wlengths),10)
+%         set(gca,'XTick',0:3)
+%         set(gca,'XTickLabel',10.^[0:3])
+%         xlabel('Duration (s)')
+%         title('Wake Interval Durations')
+%     subplot(2,3,2)
+%         hist(log10(Slengths),10)
+%         set(gca,'XTick',0:3)
+%         set(gca,'XTickLabel',10.^[0:3])
+%         xlabel('Duration (s)')
+%         title('SWS Interval Durations')
+%     subplot(2,3,3)
+%         hist(log10(Rlengths),10)
+%         set(gca,'XTick',0:3)
+%         set(gca,'XTickLabel',10.^[0:3])
+%         xlabel('Duration (s)')
+%         title('REM Interval Durations')
+%     subplot(2,3,4)
+%         plot(log10(Wlengths(1:end-1)),log10(Wlengths(2:end)),'.')
+%         set(gca,'YTick',0:3)
+%         set(gca,'YTickLabel',10.^[0:3])
+%         set(gca,'XTick',0:3)
+%         set(gca,'XTickLabel',10.^[0:3])
+%         xlabel('Interval n Duration')
+%         ylabel('Interval n+1 Duration')
+%         title('Wake Interval Durations')
+%     subplot(2,3,5)
+%         plot(log10(Slengths(1:end-1)),log10(Slengths(2:end)),'.')
+%         set(gca,'YTick',0:3)
+%         set(gca,'YTickLabel',10.^[0:3])
+%         set(gca,'XTick',0:3)
+%         set(gca,'XTickLabel',10.^[0:3])
+%         xlabel('Interval n Duration')
+%         ylabel('Interval n+1 Duration')
+%         title('SWS Interval Durations')
+%     subplot(2,3,6)
+%         plot(log10(Rlengths(1:end-1)),log10(Rlengths(2:end)),'.')
+%         set(gca,'YTick',0:3)
+%         set(gca,'YTickLabel',10.^[0:3])
+%         set(gca,'XTick',0:3)
+%         set(gca,'XTickLabel',10.^[0:3])
+%         xlabel('Interval n Duration')
+%         ylabel('Interval n+1 Duration')
+%         title('REM Interval Durations')
+%         
+%         saveas(gcf,[figloc,recordingname,'_intdur'],'jpeg')
+%         
     
 
  end

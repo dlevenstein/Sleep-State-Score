@@ -77,7 +77,7 @@ THhist = zeros(numhistbins,numusedchannels);
 pc1coeff = zeros(numfreqs,numusedchannels);
 THmeanspec = zeros(numfreqs,numusedchannels);
 dipSW = zeros(numusedchannels,1);
-dipTH = zeros(numusedchannels,1);
+peakTH = zeros(numusedchannels,1);
 %%
 for chanidx = 1:numusedchannels;
 %channum = 1;
@@ -132,15 +132,15 @@ for chanidx = 1:numusedchannels;
     %NarrowbandTheta
     %f_all = [3 16];
     f_all = [2 20];
-    f_theta = [5.5 9];
+    f_theta = [5 9];
     thfreqlist = logspace(log10(f_all(1)),log10(f_all(2)),numfreqs);
 
     [thFFTspec,thFFTfreqs] = spectrogram(allLFP(:,chanidx),window,noverlap,thfreqlist,Fs);
     thFFTspec = (abs(thFFTspec));
-    allpower = sum(log10(thFFTspec),1);
-    %Why log10? Does it matter?  Could not log transform make th stand out?
+
     thfreqs = find(thFFTfreqs>=f_theta(1) & thFFTfreqs<=f_theta(2));
-    thpower = sum(log10(thFFTspec(thfreqs,:)),1);
+    thpower = sum((thFFTspec(thfreqs,:)),1);
+    allpower = sum((thFFTspec),1);
 
     thratio = thpower./allpower;    %Narrowband Theta
     thratio = smooth(thratio,thsmoothfact);
@@ -148,19 +148,18 @@ for chanidx = 1:numusedchannels;
     
     %% Histogram and diptest of Theta
     THhist(:,chanidx) = hist(thratio,histbins);
-
-    
     dipTH(chanidx) = hartigansdiptest(sort(thratio));
     
     %% Theta Peak in mean spectrum
-    THmeanspec(:,chanidx) = mean(thFFTspec,2);
-    meanthratio = sum(log10(THmeanspec(thfreqs,chanidx)))./sum(log10(THmeanspec(:,chanidx)));
-    dipTH(chanidx) = meanthratio;
+    THmeanspec(:,chanidx) = log10(mean(thFFTspec,2));
+    THmeanspec(:,chanidx) = THmeanspec(:,chanidx)-min(THmeanspec(:,chanidx));
+    meanthratio = sum((THmeanspec(thfreqs,chanidx)))./sum((THmeanspec(:,chanidx)));
+    peakTH(chanidx) = meanthratio;
 end
 
 %% Sort by dip and pick channels
 [~,dipsortSW] = sort(dipSW);
-[~,dipsortTH] = sort(dipTH);
+[~,dipsortTH] = sort(peakTH);
 
 goodSWidx = dipsortSW(end);
 goodTHidx = dipsortTH(end);
@@ -240,7 +239,10 @@ thfig = figure;
         hold all
         plot(log2(thFFTfreqs),THmeanspec')  
         plot(log2(thFFTfreqs),THmeanspec(:,goodTHidx)','k','LineWidth',1)
+        plot(log2(f_theta(1))*[1 1],get(gca,'ylim'),'k')
+        plot(log2(f_theta(2))*[1 1],get(gca,'ylim'),'k')
         ylabel('Power');xlabel('f (Hz)')
+        xlim(log2(thFFTfreqs([1 end])))
         LogScale('x',2)
         title('Spectrum: All Channels')
     subplot(2,2,4)
@@ -284,6 +286,7 @@ chanfig =figure;
     subplot(5,1,3)
         plot(t_FFT,broadbandSlowWave,'k')
         xlim(t_FFT([1,end]))
+        set(gca,'XTick',[]);
      
     %Calculate Theta ratio for plot/return    
     [thFFTspec,thFFTfreqs,t_FFT] = spectrogram(allLFP(:,goodTHidx),window,noverlap,thfreqlist,Fs);
@@ -313,10 +316,12 @@ subplot(5,1,4)
         ylabel({'LFP - FFT','f (Hz)'})
         title('Theta Channel');
         xlim(t_FFT([1,end]))
+        set(gca,'XTick',[]);
         
 subplot(5,1,5)
         plot(t_FFT,thratio,'k')
         xlim(t_FFT([1,end]))
+        set(gca,'XTick',[]);
         
 saveas(chanfig,[figfolder,recordingname,'_SWTHChannels'],'jpeg')
 end
