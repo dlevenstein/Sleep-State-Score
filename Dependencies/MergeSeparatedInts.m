@@ -5,6 +5,9 @@ function [ ints ] = MergeSeparatedInts( ints,minseparation )
 %INPUT
 %   ints            (n_ints x 2) matrix of interval start and end times
 %   minseparation   merge ints separated by less than or equal to min
+%
+%DLevenstein 2016
+
 %% Test
 % ints = [0 3;2 4; 6 10; 10.5 13;  20 30; 19 21];
 % minseparation = 0.5;

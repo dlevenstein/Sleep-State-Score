@@ -143,7 +143,9 @@ if exist (fullfile(datasetfolder,recordingname,[recordingname,'.lfp']),'file')
     rawlfppath = fullfile(datasetfolder,recordingname,[recordingname,'.lfp']);
 elseif exist (fullfile(datasetfolder,recordingname,[recordingname,'.eeg']),'file')
     rawlfppath = fullfile(datasetfolder,recordingname,[recordingname,'.eeg']);
-else 
+elseif ~overwrite
+    display('No .lfp file... but using saved files so maybe it''s ok!')
+else
     display('No .lfp file')
     return
 end
@@ -215,7 +217,7 @@ minPACKdur = 30;
 SWSlengths = NREMints(:,2)-NREMints(:,1);
 packetintervals = NREMints(SWSlengths>=minPACKdur,:);
 
-maxMAdur = 120;
+maxMAdur = 60;
 WAKElengths = WAKEints(:,2)-WAKEints(:,1);
 MAntervals = WAKEints(WAKElengths<=maxMAdur,:);
 WAKEntervals = WAKEints(WAKElengths>maxMAdur,:);
@@ -237,6 +239,10 @@ minREMdur = 20;
 % episodeintervals = episodeintervals(2:4);
 
 % BW: I added some other code, have to look at this too
+
+%Identify MAs within REM
+%  [MA_REM,REMMAints,~] = RestrictInts(MAntervals,episodeintervals{3});
+%  MAntervals(REMMAints,:) = [];
 
 %% Save
 StateIntervals.NREMstate = NREMints;
