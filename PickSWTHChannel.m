@@ -54,7 +54,10 @@ spkgroupchannels = [SpkGrps.Channels];
 
 %Add reject channels here...
 rejectchannels = [];
-
+if exist(fullfile(datasetfolder,recordingname,'bad_channels.txt'),'file')%bad channels is an ascii/text file where all lines below the last blank line are assumed to each have a single entry of a number of a bad channel (base 0)
+    t = ReadBadChannels_SleepScore(fullfile(datasetfolder,recordingname));
+    rejectchannels = cat(1,rejectchannels(:),t(:));
+end
 
 usechannels = setdiff(spkgroupchannels,rejectchannels);
 numusedchannels = length(usechannels);
@@ -81,10 +84,8 @@ dipTH = zeros(numusedchannels,1);
 %%
 for chanidx = 1:numusedchannels;
 %channum = 1;
-    if mod(chanidx,10) == 1
-        display(['Channel ',num2str(chanidx),' of ',num2str(numusedchannels)])
-    end
-        
+    display(['Channel ',num2str(chanidx),' of ',num2str(numusedchannels)])
+
     %Calcualte Z-scored Spectrogram
     freqlist = logspace(0,2,numfreqs);
     window = 10;
@@ -112,7 +113,7 @@ for chanidx = 1:numusedchannels;
     
     %% Smooth and 0-1 normalize
     smoothfact = 10; %units of si_FFT
-    thsmoothfact = 10;
+    thsmoothfact = 15;
      
     broadbandSlowWave = smooth(broadbandSlowWave,smoothfact);
     broadbandSlowWave = (broadbandSlowWave-min(broadbandSlowWave))./max(broadbandSlowWave-min(broadbandSlowWave));
@@ -130,9 +131,9 @@ for chanidx = 1:numusedchannels;
     %% Calculate theta
 
     %NarrowbandTheta
-    %f_all = [3 16];
-    f_all = [2 20];
-    f_theta = [5.5 9];
+    f_all = [2 16];
+    %f_all = [2 20];
+    f_theta = [5 10];
     thfreqlist = logspace(log10(f_all(1)),log10(f_all(2)),numfreqs);
 
     [thFFTspec,thFFTfreqs] = spectrogram(allLFP(:,chanidx),window,noverlap,thfreqlist,Fs);
@@ -319,5 +320,6 @@ subplot(5,1,5)
         xlim(t_FFT([1,end]))
         
 saveas(chanfig,[figfolder,recordingname,'_SWTHChannels'],'jpeg')
+saveas(chanfig,[figfolder,recordingname,'_SWTHChannels'],'fig')
 end
 
