@@ -169,7 +169,7 @@ if ~exist(EMGpath,'file') || overwrite;
     end
 
 else
-    display('EMG aleady calculated: Loading')
+    display('EMG aleady calculated: Loading...')
     load(EMGpath,'EMGCorr')
 end
 EMG = EMGCorr(:,2);

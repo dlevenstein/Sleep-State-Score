@@ -84,7 +84,9 @@ peakTH = zeros(numusedchannels,1);
 %%
 for chanidx = 1:numusedchannels;
 %channum = 1;
-    display(['Channel ',num2str(chanidx),' of ',num2str(numusedchannels)])
+    if mod(chanidx,10) == 1
+        display(['Channel ',num2str(chanidx),' of ',num2str(numusedchannels)])
+    end
 
     %Calcualte Z-scored Spectrogram
     freqlist = logspace(0,2,numfreqs);
@@ -113,7 +115,7 @@ for chanidx = 1:numusedchannels;
     
     %% Smooth and 0-1 normalize
     smoothfact = 10; %units of si_FFT
-    thsmoothfact = 15;
+    thsmoothfact = 10;
      
     broadbandSlowWave = smooth(broadbandSlowWave,smoothfact);
     broadbandSlowWave = (broadbandSlowWave-min(broadbandSlowWave))./max(broadbandSlowWave-min(broadbandSlowWave));
@@ -131,15 +133,9 @@ for chanidx = 1:numusedchannels;
     %% Calculate theta
 
     %NarrowbandTheta
-<<<<<<< HEAD
-    f_all = [2 16];
-    %f_all = [2 20];
-    f_theta = [5 10];
-=======
     %f_all = [3 16];
     f_all = [2 20];
     f_theta = [5 9];
->>>>>>> 522c2b1729598dffd752f01e5c422e3dd4f77d30
     thfreqlist = logspace(log10(f_all(1)),log10(f_all(2)),numfreqs);
 
     [thFFTspec,thFFTfreqs] = spectrogram(allLFP(:,chanidx),window,noverlap,thfreqlist,Fs);
