@@ -95,7 +95,7 @@ for a = 1:length(spkgrpstouse)
     if any(lia)
         xcorr_chs(end+1) = SpkGrps(a).Channels(lib)+1;
     else
-        availchans = SpkGrps(a).Channels(chanidx)+1;%correct for base 0/1 difference
+        availchans = SpkGrps(a).Channels+1;%correct for base 0/1 difference
         availchans = setdiff(availchans,rejectchannels);
         xcorr_chs(end+1) = availchans(1);
     end
