@@ -24,6 +24,12 @@ if ~exist('specialshanks','var')
     specialshanks = [];
 end
 
+rejectchannels = [];
+if exist(fullfile(basenamepath,'bad_channels.txt'),'file')%bad channels is an ascii/text file where all lines below the last blank line are assumed to each have a single entry of a number of a bad channel (base 0)
+    t = ReadBadChannels_SleepScore(fullfile(datasetfolder,recordingname));
+    rejectchannels = cat(1,rejectchannels(:),t(:));
+end
+
 %% get basics about eeg/lfp file
 if strcmp(basenamepath(end-3:end),'.lfp') || strcmp(basenamepath(end-3:end),'.eeg')
     eegloc = basenamepath;
@@ -89,7 +95,9 @@ for a = 1:length(spkgrpstouse)
     if any(lia)
         xcorr_chs(end+1) = SpkGrps(a).Channels(lib)+1;
     else
-        xcorr_chs(end+1) = SpkGrps(a).Channels(1)+1;%correct for base 0/1 difference
+        availchans = SpkGrps(a).Channels(chanidx)+1;%correct for base 0/1 difference
+        availchans = setdiff(availchans,rejectchannels);
+        xcorr_chs(end+1) = availchans(1);
     end
 end
 
