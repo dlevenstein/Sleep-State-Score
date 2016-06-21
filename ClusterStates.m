@@ -85,7 +85,7 @@ display('FFT Spectrum for Theta')
 
 % %NarrowbandTheta
 f_all = [2 20];
-f_theta = [5 9];
+f_theta = [5 10];
 freqlist = logspace(log10(f_all(1)),log10(f_all(2)),100);
 
 
