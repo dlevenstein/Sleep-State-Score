@@ -373,7 +373,7 @@ figure
         hold on
         plot(t_FFT,broadbandSlowWave,'k')
         %plot(synchtimes',thresh*ones(size(synchtimes))','r')
-        ylabel('PC1')
+        ylabel('SW')
         xlim([t_FFT(1) t_FFT(end)])
         xlim(viewwin)
         set(gca,'XTickLabel',{})
@@ -405,20 +405,20 @@ figure
 
     subplot(2,3,1)
         scatter(broadbandSlowWave,thratio,3,IDX,'filled')
-        xlabel('Broadband PC1');ylabel('Narrowband Theta')
+        xlabel('Broadband SW');ylabel('Narrowband Theta')
     subplot(2,3,2)
         scatter(broadbandSlowWave,EMG,3,IDX,'filled')
-        xlabel('Broadband PC1');ylabel('EMG')
+        xlabel('Broadband SW');ylabel('EMG')
     subplot(2,3,3)
         scatter(thratio,EMG,3,IDX,'filled')
         xlabel('Narrowband Theta');ylabel('EMG')
 
     subplot(2,3,4)
         scatter(broadbandSlowWave(NREMtimes==0,1),thratio(NREMtimes==0),3,IDX(NREMtimes==0),'filled')
-        xlabel('Broadband PC1');ylabel('Narrowband Theta')
+        xlabel('Broadband SW');ylabel('Narrowband Theta')
     subplot(2,3,5)
         scatter(broadbandSlowWave(NREMtimes==0,1),EMG(NREMtimes==0),3,IDX(NREMtimes==0),'filled')
-        xlabel('Broadband PC1');ylabel('EMG')
+        xlabel('Broadband SW');ylabel('EMG')
         title('non-nonREM only')
     subplot(2,3,6)
         %scatter(thratio(SWStimes==0,1),EMG(SWStimes==0,1),3,IDX(SWStimes==0),'filled')
@@ -435,7 +435,7 @@ figure
         bar(histbins(histbins<=thresh),pcahist(histbins<=thresh),'FaceColor',0.9*[1 1 1],'barwidth',0.9,'linewidth',1)
         plot([thresh thresh],[0 max(pcahist)],'r','LineWidth',1)
         xlabel('PC 1')
-        title('Step 1: PCA for SWS')
+        title('Step 1: Broadband for NREM')
         
 
 	subplot(3,2,3)
@@ -461,7 +461,7 @@ figure
         plot(broadbandSlowWave(EMG<EMGthresh & IDX==1|IDX==3,1),EMG(EMG<EMGthresh & IDX==1|IDX==3),'.','Color',0.8*[1 1 1])
         plot(thresh*[1 1],get(gca,'ylim'),'r','LineWidth',1)
         plot(thresh*[0 1],EMGthresh*[1 1],'r','LineWidth',1)
-        xlabel('Broadband PC1');ylabel('EMG')
+        xlabel('Broadband SW');ylabel('EMG')
 	subplot(2,2,4)
         %scatter(thratio(SWStimes==0,1),EMG(SWStimes==0,1),3,IDX(SWStimes==0),'filled')
         plot(thratio(NREMtimes==0 & IDX==1,1),EMG(NREMtimes==0 & IDX==1,1),'k.')
@@ -484,14 +484,14 @@ figure
         %rotate3d
         view(133.7,18.8);
         grid on
-        xlabel('Broadband PC1');ylabel('Narrowband Theta');zlabel('EMG')
+        xlabel('Broadband SW');ylabel('Narrowband Theta');zlabel('EMG')
       
 	subplot(3,3,1)
         hold on
         bar(histbins,pcahist,'FaceColor','none','barwidth',0.9,'linewidth',2)
         plot([thresh thresh],[0 max(pcahist)],'r')
         xlabel('PC 1')
-        title('Step 1: PCA for SWS')
+        title('Step 1: Broadband for NREM')
 	subplot(3,3,4)
         hold on
         bar(EMGhistbins,EMGhist,'FaceColor','none','barwidth',0.9,'linewidth',2)

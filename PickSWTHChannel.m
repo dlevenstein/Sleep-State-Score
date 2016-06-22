@@ -73,6 +73,7 @@ allLFP = LoadBinary_Down(rawlfppath,'frequency',Fs,...
     'nchannels',nChannels,'channels',usechannels+1,'downsample',downsamplefactor,...
     'start',scoretime(1),'duration',diff(scoretime));
 Fs = Fs./downsamplefactor;
+%+1 to channel number here to account for 0-indexing vs 1-indexing
 
 %% For each channel, calculate the PC1 and check it
 pc1hists = zeros(numhistbins,numusedchannels);
