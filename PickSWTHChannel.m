@@ -154,8 +154,8 @@ for chanidx = 1:numusedchannels;
     dipTH(chanidx) = hartigansdiptest(sort(thratio));
     
     %% Theta Peak in mean spectrum
-    THmeanspec(:,chanidx) = log10(mean(thFFTspec,2));
-    THmeanspec(:,chanidx) = THmeanspec(:,chanidx)-min(THmeanspec(:,chanidx));
+    THmeanspec(:,chanidx) = (mean(thFFTspec,2));
+    %THmeanspec(:,chanidx) = THmeanspec(:,chanidx)-min(THmeanspec(:,chanidx));
     meanthratio = sum((THmeanspec(thfreqs,chanidx)))./sum((THmeanspec(:,chanidx)));
     peakTH(chanidx) = meanthratio;
 end
