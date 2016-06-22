@@ -27,5 +27,12 @@ if strcmp(whichaxis,'x') || strcmp(whichaxis,'xy')
     set(gca,'XTickLabels',logbase.^[range(1):range(2)])
 end
 
+if strcmp(whichaxis,'z')
+    range = get(gca,'ZLim');
+    range(1) = floor(range(1));range(2) = ceil(range(2));
+    set(gca,'ZTick',[range(1):range(2)])
+    set(gca,'ZTickLabels',logbase.^[range(1):range(2)])
+end
+
 end
 
