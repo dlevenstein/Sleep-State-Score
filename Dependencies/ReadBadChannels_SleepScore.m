@@ -5,7 +5,7 @@ function badout = ReadBadChannels_SleepScore(basepath)
 %
 % Brendon Watson 2016
 
-if ~exist('badbath','var')
+if ~exist('basepath','var')
     basepath = cd;
 end
 if ~exist(fullfile(basepath,'bad_channels.txt'),'file')

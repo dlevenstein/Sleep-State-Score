@@ -5,7 +5,8 @@ function EMGCorr = EMGCorrForSleepscore(basenamepath,scoretime,specialchannels,s
 % on each shank (not using directly adjacent shanks, they must be at least 
 % 2 shanks away.  
 % First channels on "specialshanks" are always used
-% "specialchannels" are also always used
+% "specialchannels" are also always used. 
+% Special channels should be 0-indexed, per neuroscope convention
 % Requires .eeg/lfp and .xml.  Assumes each spikegroup in the .xml
 % represents a "shank"
 % 
@@ -15,20 +16,6 @@ function EMGCorr = EMGCorrForSleepscore(basenamepath,scoretime,specialchannels,s
 
 %% Parameters
 savebool = 0;
-
-%% input handling
-if ~exist('specialchannels','var')
-    specialchannels = [];
-end
-if ~exist('specialshanks','var')
-    specialshanks = [];
-end
-
-rejectchannels = [];
-if exist(fullfile(basenamepath,'bad_channels.txt'),'file')%bad channels is an ascii/text file where all lines below the last blank line are assumed to each have a single entry of a number of a bad channel (base 0)
-    t = ReadBadChannels_SleepScore(fullfile(datasetfolder,recordingname));
-    rejectchannels = cat(1,rejectchannels(:),t(:));
-end
 
 %% get basics about eeg/lfp file
 if strcmp(basenamepath(end-3:end),'.lfp') || strcmp(basenamepath(end-3:end),'.eeg')
@@ -69,9 +56,31 @@ binScootS = 0.5;
 binScootSamps = Fs*binScootS;
 corrChunkSz = 20;%for batch-processed correlations
 
+
+%% input handling: channel selection
+if ~exist('specialchannels','var')
+    specialchannels = [];
+end
+if ~exist('specialshanks','var')
+    specialshanks = [];
+end
+
+[PATHSTR] = fileparts(basenamepath);
+
+rejectchannels = [];
+if exist(fullfile(PATHSTR,'bad_channels.txt'),'file')%bad channels is an ascii/text file where all lines below the last blank line are assumed to each have a single entry of a number of a bad channel (base 0)
+    t = ReadBadChannels_SleepScore(PATHSTR);
+    rejectchannels = cat(1,rejectchannels(:),t(:));
+end
+
+
+
 %% Pick shanks to analyze
 % get spike groups,
 % pick every other one... unless specialshanks, in which case pick non-adjacent
+%This is potentially dangerous in combination with rejectchannels... i.e.
+%what if you pick every other shank but then the ones you pick are all
+%reject because noisy shank.
 spkgrpstouse = 1:2:length(SpkGrps);
 spkgrpstouse = spkgrpstouse(:);
 
@@ -89,15 +98,21 @@ if ~isempty(specialchannels)
     end
 end
 
+%Go through each spike group and add one channel to the list of channels to
+%use for calculating high-f correlation.
 xcorr_chs = [];
 for a = 1:length(spkgrpstouse)
-    [lia,lib]=ismember(specialchannels,SpkGrps(a).Channels+1);
+    %Are any of the channels in this spike group "special channels"?
+    [lia,lib]=ismember(specialchannels,SpkGrps(a).Channels);
     if any(lia)
-        xcorr_chs(end+1) = SpkGrps(a).Channels(lib)+1;
+        xcorr_chs(end+1) = SpkGrps(a).Channels(lib);
     else
-        availchans = SpkGrps(a).Channels+1;%correct for base 0/1 difference
-        availchans = setdiff(availchans,rejectchannels);
-        xcorr_chs(end+1) = availchans(1);
+        availchans = SpkGrps(a).Channels;
+        %Don't add rejectchannels to the list of available channels
+        availchans = setdiff(availchans,rejectchannels); 
+        if length(availchans)>=1
+            xcorr_chs(end+1) = availchans(1); %Pick the first channel
+        end
     end
 end
 
@@ -110,8 +125,10 @@ xcorr_chs = unique(xcorr_chs);
 % correlated LFPs (e.g., theta, delta, SPWs, etc.)
 
 eeg = LoadBinary_Down(eegloc,'frequency',Fs,...
-    'nchannels',nChannels,'channels',xcorr_chs,...
+    'nchannels',nChannels,'channels',xcorr_chs+1,...
     'start',scoretime(1),'duration',diff(scoretime));
+%+1 is applied to channel numbers here for 0 (neuroscope) vs 1 (LoadBinary)
+%indexing.
 
 
 xcorr_freqband = [275 300 600 625]; % Hz

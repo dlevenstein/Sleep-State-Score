@@ -23,6 +23,9 @@ function SleepScoreMaster(datasetfolder,recordingname,varargin)
 %   'savebool'      Default: true
 %   'spindledelta'  Default: false (spindle detector not ready yet...)
 %   'scoretime'     Default: [0 Inf]
+%   'badchannels'   file datasetfolder/recordingname/'bad_channels.txt'
+%                   that lists channels will omit certain channels from EMG
+%                   detection and LFP selection
 %
 %OUTPUT
 %   StateIntervals  structure containing start/end times (seconds) of
