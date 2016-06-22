@@ -1,3 +1,12 @@
 # Sleep-State-Score
 
-This is a readme... put something here to read.
+File Structure
+datasetfolder: the top level folder of your dataset, most likely holds a folder for each of a number of recordings
+recordingname: the name for a given recording.  All output files will be of the form /datasetfolder/recordingname/recordingname_file.ext
+
+Necessary Files
+/datasetfolder/recordingname/recordingname.eeg
+/datasetfolder/recordingname/recordingname.xml
+
+Important Steps:
+Identify any "bad" channels.  For example particularly noisy or very low amplitude channels.  Put these in a .txt document: datasetfolder/recordingname/bad_channels.txt.
