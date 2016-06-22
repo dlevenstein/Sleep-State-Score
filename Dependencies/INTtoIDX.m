@@ -2,9 +2,10 @@ function [ IDX ] = INTtoIDX(INT,len,sf)
 %[IDX] = INTtoIDX(INT,len,sf) Converts state on/offsets to vector of indices
 %
 %INPUT
-%   INT:    {nstates} cell array of intervals - start and end times
+%   INT:    {nstates} cell array of [nintervals x 2] start and end times.
 %                       (optional) can be TSObject intervalSet
 %   len:    length of index vector
+%   sf:     desired sampling frequency of the output vector
 %
 %OUTPUT
 %   IDX:    [len x 1] vector of state indices, where states are identified by
