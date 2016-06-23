@@ -153,6 +153,11 @@ while numpeaks ~=2
     LOCS = sort(LOCS)-1;
     numbins = numbins+1;
     numpeaks = length(LOCS);
+    
+    if numpeaks ==100
+        display('Something is wrong with your EMG')
+        return
+    end
 end
 
 betweenpeaks = EMGhistbins(LOCS(1):LOCS(2));

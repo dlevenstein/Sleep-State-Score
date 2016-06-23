@@ -81,7 +81,9 @@ end
 %This is potentially dangerous in combination with rejectchannels... i.e.
 %what if you pick every other shank but then the ones you pick are all
 %reject because noisy shank.
-spkgrpstouse = 1:2:length(SpkGrps);
+for nn = 1:2  %This loop is part of the crappy fix for that problem
+
+spkgrpstouse = nn:2:length(SpkGrps);
 spkgrpstouse = spkgrpstouse(:);
 
 if ~isempty(specialshanks) 
@@ -117,6 +119,17 @@ for a = 1:length(spkgrpstouse)
 end
 
 xcorr_chs = unique(xcorr_chs);
+
+%This is a crappy catch for the issue of no channels due to too many
+%rejectchannels
+if length(xcorr_chs)>2
+    break
+elseif length(xcorr_chs)<2 && nn==2
+    display('You have no channels for EMG... This is a bug?')
+    return
+end
+end
+    
 
 %% Read and filter channel
 % read channel
