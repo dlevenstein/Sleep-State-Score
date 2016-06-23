@@ -91,6 +91,7 @@ freqlist = logspace(log10(f_all(1)),log10(f_all(2)),100);
 
 [thFFTspec,thFFTfreqs] = spectrogram(thLFP,window,noverlap,freqlist,sf_LFP);
 thFFTspec = (abs(thFFTspec));
+[~,mu_th,sig_th] = zscore(log10(thFFTspec)');
 
 thfreqs = find(thFFTfreqs>=f_theta(1) & thFFTfreqs<=f_theta(2));
 allpower = sum((thFFTspec),1);
@@ -355,7 +356,7 @@ figure
         set(gca,'YTick',(log2([1 2 4 8 16 32 64 128])))
         set(gca,'YTickLabel',{'1','2','4','8','16','32','64','128'})
         %caxis([3.5 6.5])
-        caxis([min(mu)-2.5*max(sig) max(mu)+2.5*max(sig)])
+        caxis([min(mu_th)-2.5*max(sig_th) max(mu_th)+2.5*max(sig_th)])
         xlim(viewwin)
         %colorbar('east')
         ylim([log2(thFFTfreqs(1)) log2(thFFTfreqs(end))+0.2])
