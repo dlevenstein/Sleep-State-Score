@@ -297,10 +297,9 @@ chanfig =figure;
     thFFTspec = abs(thFFTspec);
     [zFFTspec,mu,sig] = zscore(log10(thFFTspec)');
         
-    allpower = sum(log10(thFFTspec),1);
-    %Why log10? Does it matter?  Could not log transform make th stand out?
     thfreqs = find(thFFTfreqs>=f_theta(1) & thFFTfreqs<=f_theta(2));
-    thpower = sum(log10(thFFTspec(thfreqs,:)),1);
+    thpower = sum((thFFTspec(thfreqs,:)),1);
+    allpower = sum((thFFTspec),1);
 
     thratio = thpower./allpower;    %Narrowband Theta
     thratio = smooth(thratio,thsmoothfact);
