@@ -327,6 +327,6 @@ subplot(5,1,5)
         set(gca,'XTick',[]);
         
 saveas(chanfig,[figfolder,recordingname,'_SWTHChannels'],'jpeg')
-saveas(chanfig,[figfolder,recordingname,'_SWTHChannels'],'fig')
+%saveas(chanfig,[figfolder,recordingname,'_SWTHChannels'],'fig')
 end
 
