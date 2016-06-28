@@ -10,3 +10,4 @@ Necessary Files
 
 Important Steps:
 Identify any "bad" channels.  For example particularly noisy or very low amplitude channels.  Put these in a .txt document: datasetfolder/recordingname/bad_channels.txt.
+-If channel noise appears in the middle of the recording, you may need to run the state scoring, identify bad channels, and then run state scoring again.

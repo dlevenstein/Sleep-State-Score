@@ -1,4 +1,4 @@
-function [ INT, IDX, t_IDX,PC1weights,PC1expvar,broadbandSlowWave,thratio,EMG,t_FFT ] = ClusterStates(LFP,thLFP,EMG,sf_LFP,sf_EMG,figloc,recordingname)
+function [ INT, IDX, t_IDX,PC1weights,PC1expvar,broadbandSlowWave,thratio,EMG,t_FFT ] = ClusterStates(swLFP,thLFP,EMG,sf_LFP,sf_EMG,figloc,recordingname)
 %StateID(LFP,thLFP,EMG,sf_LFP,sf_EMG,figloc,WSEpisodes)
 %   Detailed explanation goes here
 %
@@ -31,7 +31,7 @@ else
     display('sf not 1250... if only you made this able to set its own downsample...')
     downsamplefactor = 2;
 end
-LFP = downsample(LFP,downsamplefactor);
+swLFP = downsample(swLFP,downsamplefactor);
 thLFP = downsample(thLFP,downsamplefactor);
 sf_LFP = sf_LFP/downsamplefactor;
 
@@ -50,7 +50,7 @@ window = 10;
 noverlap = 9;
 window = window*sf_LFP;
 noverlap = noverlap*sf_LFP;
-[FFTspec,FFTfreqs,t_FFT] = spectrogram(LFP,window,noverlap,freqlist,sf_LFP);
+[FFTspec,FFTfreqs,t_FFT] = spectrogram(swLFP,window,noverlap,freqlist,sf_LFP);
 FFTspec = abs(FFTspec);
 [zFFTspec,mu,sig] = zscore(log10(FFTspec)');
 
