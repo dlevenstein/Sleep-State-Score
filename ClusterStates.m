@@ -42,7 +42,7 @@ sf_LFP = sf_LFP/downsamplefactor;
 
 
 %% Calculate Spectrogram
-display('FFT Spectrum for Broadband LFP')
+%display('FFT Spectrum for Broadband LFP')
 
 freqlist = logspace(0,2,100);
 %freqlist = linspace(0.5,55.5,111);
@@ -81,7 +81,7 @@ broadbandSlowWave = (broadbandSlowWave-min(broadbandSlowWave))./max(broadbandSlo
 
  
 %% Calculate theta
-display('FFT Spectrum for Theta')
+%display('FFT Spectrum for Theta')
 
 % %NarrowbandTheta
 f_all = [2 20];

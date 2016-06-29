@@ -63,11 +63,7 @@ usechannels = setdiff(spkgroupchannels,rejectchannels);
 numusedchannels = length(usechannels);
 
 %% Load LFP files from .lfp
-%To do here: catch situations where LFP is bigger than RAM and/or
-%downsample within GetLFP
-%allLFP = GetLFP('all');
 
-% Load downsampled LFP
 downsamplefactor = 10;
 allLFP = LoadBinary_Down(rawlfppath,'frequency',Fs,...
     'nchannels',nChannels,'channels',usechannels+1,'downsample',downsamplefactor,...

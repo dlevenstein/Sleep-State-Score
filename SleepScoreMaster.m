@@ -190,13 +190,15 @@ if ~exist(thetalfppath,'file') && ~exist(swlfppath,'file') || overwrite; % if no
     [SWchannum,THchannum,swLFP,thLFP,t_LFP] = PickSWTHChannel(datasetfolder,recordingname,figloc,scoretime);
     
     if savebool
+        %Transfer this into scoremetricspath, predownsampled to what it
+        %needs to be for ClusterStates.
         save(swlfppath,'swLFP','SWchannum','t_LFP','sf_LFP');
         save(thetalfppath,'thLFP','THchannum','t_LFP','sf_LFP');
     end
 else
     display('SW and TH Channels Already Extracted, Loading...')
-    load(swlfppath,'swLFP')
-    load(thetalfppath,'thLFP')
+    load(swlfppath,'swLFP','SWchannum')
+    load(thetalfppath,'thLFP','THchannum')
 end
 
 
@@ -207,7 +209,11 @@ display('Clustering States Based on EMG, SW, and TH LFP channels')
 [stateintervals,~,~,~,~,broadbandSlowWave,thratio,EMG,t_clus] = ClusterStates(swLFP,thLFP,EMG,sf_LFP,sf_EMG,figloc,recordingname);
 
     if savebool
-        save(scoremetricspath,'broadbandSlowWave','thratio','EMG','t_clus');
+        %Should save (downsampled to what's used in clusterstates...)
+        %sw/thLFP in scoremetricspath here!
+        save(scoremetricspath,...
+            'broadbandSlowWave','thratio','EMG','t_clus',...
+            'SWchannum','THchannum');
     end
 
 %% JOIN STATES INTO EPISODES
