@@ -262,6 +262,8 @@ StateIntervals.REMepisode = episodeintervals{3};
 StateIntervals.WAKEeposode = episodeintervals{1};
 StateIntervals.NREMpacket = packetintervals;
 StateIntervals.MAstate = MAntervals;
+StateIntervals.metadata.SWchannum = SWchannum;
+StateIntervals.metadata.THchannum = THchannum;
 
 save(sleepstatepath,'StateIntervals');
 
