@@ -27,9 +27,12 @@ minWAKE = 6;
 
 if sf_LFP == 1250
     downsamplefactor = 5;
+elseif sf_LFP == 250
+    downsamplefactor = 1;
+elseif sf_LFP == 1000
+    downsamplefactor = 4;
 else
-    display('sf not 1250... if only you made this able to set its own downsample...')
-    downsamplefactor = 2;
+    display('sf not recognized... if only you made this able to set its own downsample...')
 end
 swLFP = downsample(swLFP,downsamplefactor);
 thLFP = downsample(thLFP,downsamplefactor);
