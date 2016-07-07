@@ -206,14 +206,14 @@ end
 %% CLUSTER STATES BASED ON SLOW WAVE, THETA, EMG
 
 display('Clustering States Based on EMG, SW, and TH LFP channels')
-[stateintervals,~,~,~,~,broadbandSlowWave,thratio,EMG,t_clus] = ClusterStates(swLFP,thLFP,EMG,sf_LFP,sf_EMG,figloc,recordingname);
+[stateintervals,~,~,~,~,broadbandSlowWave,thratio,EMG,t_clus,badtimes,reclength] = ClusterStates(swLFP,thLFP,EMG,sf_LFP,sf_EMG,figloc,recordingname);
 
     if savebool
         %Should save (downsampled to what's used in clusterstates...)
         %sw/thLFP in scoremetricspath here!
         save(scoremetricspath,...
             'broadbandSlowWave','thratio','EMG','t_clus',...
-            'SWchannum','THchannum');
+            'SWchannum','THchannum','badtimes','reclength');
     end
 
 %% JOIN STATES INTO EPISODES
