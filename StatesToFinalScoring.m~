@@ -1,15 +1,5 @@
-function StateIntervals = StatesToFinalScoring(NREMints,WAKEints,REMints,MAints)
-% Takes a series of state start/stop intervals (each interval is a single
-% row with a start column and a stop column... all in a single nx2 matrix)
-% and finds Microarousals, WAKE and Episodes using hard-coded duraiton
-% max/mins.  
-% * NOTE: if MAints is entered as an input, those will override MAInts as
-% defined here... ie if users want to input after manual review in a way
-% that mantains users having final say over MA.  Also NOTE, even if MA Ints
-% is input, only 
-%   
-% Dan Levenstein and Brendon Watson 2016
-
+function StateIntervals = StatesToFinalScoring(NREMints,WAKEints,REMints,MAInts)
+% takes a series of state start/stop intervals (in seconds
 minPacketDuration = 30;
 maxMicroarousalDuration = 100;
 
@@ -24,13 +14,10 @@ packetintervals = NREMints(SWSlengths>=minPacketDuration,:);
 
 WAKElengths = WAKEints(:,2)-WAKEints(:,1);
 
-if ~exist('MAints','var')
+if ~exist('MAInts','var')
     MAIntervals = WAKEints(WAKElengths<=maxMicroarousalDuration,:);
-    WAKEIntervals = WAKEints(WAKElengths>maxMicroarousalDuration,:);
-else
-    MAIntervals = MAints;
-    WAKEIntervals = WAKEints;
 end
+WAKEIntervals = WAKEints(WAKElengths>maxMicroarousalDuration,:);
 
 [episodeintervals{2}] = IDStateEpisode(NREMints,maxEpisodeDuration,minSWSEpisodeDuration);
 [episodeintervals{1}] = IDStateEpisode(WAKEints,maxEpisodeDuration,minWAKEEpisodeDuration);
