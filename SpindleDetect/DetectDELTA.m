@@ -1,4 +1,4 @@
-function [ deltapeaks,peakheights ] = DetectDELTA( LFP,sf,t_LFP )
+function [ deltapeaks,peakheights ] = DetectDELTA( LFP,sf,t_LFP,NREMints )
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 %
@@ -17,22 +17,22 @@ function [ deltapeaks,peakheights ] = DetectDELTA( LFP,sf,t_LFP )
 
 deltarange = [0.5 4];
 deltaLFP = FiltNPhase(LFP,deltarange,sf);
-deltaLFP = zscore(deltaLFP);
-gammarange = [75 120];
-[~,gammapower] = FiltNPhase(LFP,gammarange,sf);
-gammapower = zscore(gammapower);
-
-deltagamma = deltaLFP.*gammapower;
+deltaLFP = NormToInt(deltaLFP,NREMints,sf,'Z');
+% gammarange = [75 120];
+% [~,gammapower] = FiltNPhase(LFP,gammarange,sf);
+% gammapower = zscore(gammapower);
+% 
+% deltagamma = deltaLFP.*gammapower;
 
 %% Delta peaks
-peakthresh = 1.75;
-peakdist = 0.15;
+peakthresh = 1.5;
+peakdist = 0.1;
 [peakheights,deltapeaks] = findpeaks(deltaLFP,t_LFP,'MinPeakHeight',peakthresh,'MinPeakDistance',peakdist);
 
 %%
 % xwin = [4378 4385];
 % xwin = [1250 1265];
-% xwin = [100 5000];
+% %xwin = [100 5000];
 % figure
 %     subplot(4,1,1)
 %         plot(t_LFP,LFP)
@@ -42,13 +42,13 @@ peakdist = 0.15;
 %     subplot(4,1,2)
 %         plot(t_LFP,deltaLFP)
 %         xlim(xwin)
-%     subplot(4,1,3)
-%         plot(t_LFP,gammapower)
-%         xlim(xwin)
-%     subplot(4,1,4)
-%         plot(t_LFP,deltagamma)
-%         xlim(xwin)
-
+% %     subplot(4,1,3)
+% %         plot(t_LFP,gammapower)
+% %         xlim(xwin)
+% %     subplot(4,1,4)
+% %         plot(t_LFP,deltagamma)
+% %         xlim(xwin)
+% 
 % %%
 % figure
 %     plot(log2(deltapeaks(2:end-1)-deltapeaks(1:end-2)),log2(deltapeaks(3:end)-deltapeaks(2:end-1)),'.')
