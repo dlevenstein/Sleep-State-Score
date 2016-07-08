@@ -222,46 +222,7 @@ NREMints = stateintervals{2};
 REMints = stateintervals{3};
 WAKEints = stateintervals{1};
 
-minPACKdur = 30;
-SWSlengths = NREMints(:,2)-NREMints(:,1);
-packetintervals = NREMints(SWSlengths>=minPACKdur,:);
-
-maxMAdur = 100;
-WAKElengths = WAKEints(:,2)-WAKEints(:,1);
-MAntervals = WAKEints(WAKElengths<=maxMAdur,:);
-WAKEntervals = WAKEints(WAKElengths>maxMAdur,:);
-
-minintdur = 40;
-minSWSdur = 20;
-[episodeintervals{2}] = IDStateEpisode(NREMints,minintdur,minSWSdur);
-
-minintdur = 40;
-minWAKEdur = 20;
-[episodeintervals{1}] = IDStateEpisode(WAKEints,minintdur,minWAKEdur);
-
-minintdur = 40;
-minREMdur = 20;
-[episodeintervals{3}] = IDStateEpisode(REMints,minintdur,minREMdur);
-
-% episodeidx = INTtoIDX(episodeintervals,ceil(t_LFP(end)));
-% episodeintervals=IDXtoINT(episodeidx);
-% episodeintervals = episodeintervals(2:4);
-
-% BW: I added some other code, have to look at this too
-
-%Identify MAs within REM
-%  [MA_REM,REMMAints,~] = RestrictInts(MAntervals,episodeintervals{3});
-%  MAntervals(REMMAints,:) = [];
-
-%% Save
-StateIntervals.NREMstate = NREMints;
-StateIntervals.REMstate = REMints;
-StateIntervals.WAKEstate = WAKEntervals;
-StateIntervals.NREMepisode = episodeintervals{2};
-StateIntervals.REMepisode = episodeintervals{3};
-StateIntervals.WAKEeposode = episodeintervals{1};
-StateIntervals.NREMpacket = packetintervals;
-StateIntervals.MAstate = MAntervals;
+StateIntervals = StatesToFinalScoring(NREMints,WAKEints,REMints);
 StateIntervals.metadata.SWchannum = SWchannum;
 StateIntervals.metadata.THchannum = THchannum;
 
