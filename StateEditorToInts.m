@@ -4,6 +4,11 @@ function StateIntervals = StateEditorToInts(basepath,basename)
 % manual thresholds
 % Brendon Watson July 2016
 
+if ~exist('basepath','var')
+    [~,basename] = fileparts(cd);
+    basepath = cd;
+end
+
 load(fullfile(basepath,[basename '-states.mat']));
 I = IDXtoINT(states);
 
