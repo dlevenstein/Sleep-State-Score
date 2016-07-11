@@ -31,3 +31,11 @@ StateIntervals.WAKEeposode = episodeintervals{1};
 StateIntervals.NREMpacket = packetintervals;
 StateIntervals.MAstate = MAIntervals;
 
+
+
+%% Identify MAs preceeding REM
+% [ ~,~,MA_REM,~ ] = FindIntsNextToInts(StateIntervals.MAstate,StateIntervals.REMstate);
+% realMA = setdiff(1:length(StateIntervals.MAstate(:,1)),MA_REM);
+% StateIntervals.MA_REM = StateIntervals.MAstate(MA_REM,:);
+% StateIntervals.MAstate = StateIntervals.MAstate(realMA,:);
+
