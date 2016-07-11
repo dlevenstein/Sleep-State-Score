@@ -134,6 +134,7 @@ end
 EMGpath = fullfile(savefolder,[recordingname '_EMGCorr.mat']);
 thetalfppath = fullfile(savefolder,[recordingname,'_ThetaLFP.mat']);
 swlfppath = fullfile(savefolder,[recordingname,'_SWLFP.mat']);
+scorelfppath = fullfile(savefolder,[recordingname,'_SleepScoreLFP.mat']);
 %Filenames for State and Event .mat files.
 sleepstatepath = fullfile(savefolder,[recordingname,'_SleepScore.mat']);
 sleepeventpath = fullfile(savefolder,[recordingname,'_SleepEvents.mat']);
@@ -181,24 +182,46 @@ clear EMGCorr
 
 %% DETERMINE BEST SLOW WAVE AND THETA CHANNELS
 
-sf_LFP = 1250;
 sf_EMG = 2;
 
-if ~exist(thetalfppath,'file') && ~exist(swlfppath,'file') || overwrite; % if no lfp file already, load lfp and make lfp file?
+if ((~exist(thetalfppath,'file') && ~exist(swlfppath,'file')) && ~exist(scorelfppath,'file')) || overwrite; % if no lfp file already, load lfp and make lfp file?
 
     display('Picking SW and TH Channels')
-    [SWchannum,THchannum,swLFP,thLFP,t_LFP] = PickSWTHChannel(datasetfolder,recordingname,figloc,scoretime);
+    [SWchannum,THchannum,swLFP,thLFP,t_LFP,sf_LFP] = PickSWTHChannel(datasetfolder,recordingname,figloc,scoretime);
     
     if savebool
-        %Transfer this into scoremetricspath, predownsampled to what it
+        %Transfer this into scoremetricspath? predownsampled to what it
         %needs to be for ClusterStates.
-        save(swlfppath,'swLFP','SWchannum','t_LFP','sf_LFP');
-        save(thetalfppath,'thLFP','THchannum','t_LFP','sf_LFP');
+        save(scorelfppath,'thLFP','swLFP','THchannum','SWchannum','t_LFP','sf_LFP');
     end
 else
     display('SW and TH Channels Already Extracted, Loading...')
-    load(swlfppath,'swLFP','SWchannum')
-    load(thetalfppath,'thLFP','THchannum')
+    
+    %For updating state score LFP storage...
+    if ~exist(scorelfppath,'file')
+        load(swlfppath,'swLFP','SWchannum','sf_LFP')
+        load(thetalfppath,'thLFP','THchannum','sf_LFP')
+        if sf_LFP==1250
+            display('LFP saved as 1250 - downsampling to 250 for save')
+            swLFP = downsample(swLFP,5);
+            thLFP = downsample(thLFP,5);
+            sf_LFP = sf_LFP./5;
+
+            save(scorelfppath,'thLFP','swLFP','THchannum','SWchannum','sf_LFP');
+            delete(swlfppath,thetalfppath)
+        else
+            display('LFP was not saved at 1250... bug?')
+            keyboard
+        end
+    end
+    
+    load(scorelfppath,'swLFP','SWchannum','thLFP','THchannum','sf_LFP')
+    
+        
+    
+
+    
+    
 end
 
 

@@ -1,4 +1,4 @@
-function [SWchannum,THchannum,swLFP,thLFP,t_LFP] = PickSWTHChannel(datasetfolder,recordingname,figfolder,scoretime)
+function [SWchannum,THchannum,swLFP,thLFP,t_LFP,Fs_save] = PickSWTHChannel(datasetfolder,recordingname,figfolder,scoretime)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 %
@@ -167,7 +167,8 @@ goodTHidx = dipsortTH(end);
 SWchannum = usechannels(goodSWidx);
 THchannum = usechannels(goodTHidx);
 
-Fs_save = Par.lfpSampleRate;
+downsample_save = 5;  %Not checked for bugs after adding...
+Fs_save = Par.lfpSampleRate./downsample_save;
 swthLFP = LoadBinary_Down(rawlfppath,'frequency',Fs_save,...
     'nchannels',nChannels,'channels',[SWchannum+1,THchannum+1],...
     'start',scoretime(1),'duration',diff(scoretime));
