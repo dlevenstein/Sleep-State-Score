@@ -30,10 +30,18 @@ if exist(scoreLFPpath,'file')
     load(scoreLFPpath,'SWchannum')
     load(THLFPpath,'THchannum')
     StateIntervals.metadata.SWchannum = SWchannum;
-    StateIntervals.metadata.THchannum = THchannum;
 else
     disp('No _SleepScoreLFP.mat') %will be useful for reminding to change code after file type conversion
 end
+
+
+THLFPpath = fullfile(basepath,[basename '_ThetaLFP.mat']);
+if exist(THLFPpath,'file')
+    load(THLFPpath,'THchannum')
+else
+    disp('No _ThetaLFP.mat') 
+end
+save(fullfile(basepath,[basename '_SleepScoreManualReviewed.mat']),'StateIntervals');
 
 
 % save manualy-set thresholds (and associated histograms) created in
