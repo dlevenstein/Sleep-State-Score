@@ -41,6 +41,8 @@ if exist(THLFPpath,'file')
 else
     disp('No _ThetaLFP.mat') 
 end
+save(fullfile(basepath,[basename '_SleepScoreManualReviewed.mat']),'StateIntervals');
+
 
 % save manualy-set thresholds (and associated histograms) created in
 % StateEditor... if they exist
