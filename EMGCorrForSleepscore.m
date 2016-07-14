@@ -1,4 +1,4 @@
-function EMGCorr = EMGCorrForSleepscore(basenamepath,scoretime,specialchannels,specialshanks)
+function [EMGCorr,sf_EMG] = EMGCorrForSleepscore(basenamepath,scoretime,specialchannels,specialshanks)
 % Based on Erik Schomburg's work and code.  Grabs channels and calculates
 % their correlations in the 300-600Hz band over sliding windows of 0.5sec.
 % Channels are automatically selected and are a combination first channels
@@ -53,6 +53,7 @@ xcorr_halfwindow_s = 0.5;%specified in s
 % downsampleFs = 125;
 % downsampleFactor = round(Fs/downsampleFs);
 binScootS = 0.5;
+sf_EMG = 1/binScootS;
 binScootSamps = Fs*binScootS;
 corrChunkSz = 20;%for batch-processed correlations
 
