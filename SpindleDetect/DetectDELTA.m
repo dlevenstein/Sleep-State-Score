@@ -16,6 +16,7 @@ function [ deltapeaks,peakheights ] = DetectDELTA( LFP,sf,t_LFP,NREMints )
 %t_LFP = (1:length(LFP))./sf;
 
 deltarange = [0.5 4];
+%deltarange = [1 4];
 deltaLFP = FiltNPhase(LFP,deltarange,sf);
 deltaLFP = NormToInt(deltaLFP,NREMints,sf,'Z');
 % gammarange = [75 120];
@@ -26,6 +27,7 @@ deltaLFP = NormToInt(deltaLFP,NREMints,sf,'Z');
 
 %% Delta peaks
 peakthresh = 1.5;
+peakthresh = 1.3;
 peakdist = 0.1;
 [peakheights,deltapeaks] = findpeaks(deltaLFP,t_LFP,'MinPeakHeight',peakthresh,'MinPeakDistance',peakdist);
 
