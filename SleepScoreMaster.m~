@@ -26,6 +26,7 @@ function SleepScoreMaster(datasetfolder,recordingname,varargin)
 %   'badchannels'   file datasetfolder/recordingname/'bad_channels.txt'
 %                   that lists channels will omit certain channels from EMG
 %                   detection and LFP selection
+%   'SWWeightsName' 
 %
 %OUTPUT
 %   StateIntervals  structure containing start/end times (seconds) of
@@ -197,7 +198,7 @@ clear EMGCorr
 if ((~exist(thetalfppath,'file') && ~exist(swlfppath,'file')) && ~exist(scorelfppath,'file')) || overwrite; % if no lfp file already, load lfp and make lfp file?
 
     display('Picking SW and TH Channels')
-    [SWchannum,THchannum,swLFP,thLFP,t_LFP,sf_LFP] = PickSWTHChannel(datasetfolder,recordingname,figloc,scoretime);
+    [SWchannum,THchannum,swLFP,thLFP,t_LFP,sf_LFP] = PickSWTHChannel(datasetfolder,recordingname,figloc,scoretime,SWWeightsName);
     
     if savebool
         %Transfer this into scoremetricspath? predownsampled to what it
@@ -236,7 +237,7 @@ end
 display('Clustering States Based on EMG, SW, and TH LFP channels')
 % [stateintervals,~,~,~,~,broadbandSlowWave,thratio,EMG,t_clus,badtimes,reclength] = ClusterStates(swLFP,thLFP,EMG,sf_LFP,sf_EMG,figloc,recordingname);
 [~,~,broadbandSlowWave,thratio,EMG,t_clus,badtimes,reclength,histsandthreshs] = ClusterStates_GetParams(swLFP,thLFP,EMG,sf_LFP,sf_EMG,figloc,recordingname,MinWinParams);
-[stateintervals,~,~] = ClusterStates_DetermineStates(broadbandSlowWave,thratio,t_clus,EMG,histsandthreshs,MinWinParams);
+[stateintervals,~,~] = ClusterStates_DetermineStates(broadbandSlowWave,thratio,t_clus,EMG,histsandthreshs,MinWinParams,reclength);
 
 if savebool
     %Should save (downsampled to what's used in clusterstates...)

@@ -26,6 +26,9 @@ function SleepScoreMaster(datasetfolder,recordingname,varargin)
 %   'badchannels'   file datasetfolder/recordingname/'bad_channels.txt'
 %                   that lists channels will omit certain channels from EMG
 %                   detection and LFP selection
+%   'SWWeightsName' Name of file in path (in Dependencies folder) 
+%                   containing the weights for the various frequencies to
+%                   be used for SWS detection.  Default is 'SWweights.mat'
 %
 %OUTPUT
 %   StateIntervals  structure containing start/end times (seconds) of
@@ -64,7 +67,10 @@ if ~exist('datasetfolder','var')
     if isequal(DIRECTORYNAME,0);return;end  
     [datasetfolder,recordingname] = fileparts(DIRECTORYNAME); 
 end
-  
+if ~exist('SWWeightsName','var')
+    SWWeightsName = 'SWweights.mat';
+end
+
 %Select from dataset folder
 switch recordingname
     case 'select'
@@ -197,7 +203,7 @@ clear EMGCorr
 if ((~exist(thetalfppath,'file') && ~exist(swlfppath,'file')) && ~exist(scorelfppath,'file')) || overwrite; % if no lfp file already, load lfp and make lfp file?
 
     display('Picking SW and TH Channels')
-    [SWchannum,THchannum,swLFP,thLFP,t_LFP,sf_LFP] = PickSWTHChannel(datasetfolder,recordingname,figloc,scoretime);
+    [SWchannum,THchannum,swLFP,thLFP,t_LFP,sf_LFP] = PickSWTHChannel(datasetfolder,recordingname,figloc,scoretime,SWWeightsName);
     
     if savebool
         %Transfer this into scoremetricspath? predownsampled to what it
