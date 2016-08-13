@@ -118,12 +118,14 @@ defaultSpindledelta = false; %Detect spindles/delta?
 defaultSavedir = datasetfolder;
 
 defaultScoretime = [0 Inf];
+defaultSWWeightsName = 'SWweights.mat';
 
 addParameter(p,'overwrite',defaultOverwrite,@islogical)
 addParameter(p,'savebool',defaultSavebool,@islogical)
 addParameter(p,'spindledelta',defaultSpindledelta,@islogical)
 addParameter(p,'savedir',defaultSavedir)
 addParameter(p,'scoretime',defaultScoretime)
+addParameter(p,'SWWeightsName',defaultScoretime)
 
 
 parse(p,varargin{:})
@@ -133,6 +135,7 @@ savebool = p.Results.savebool;
 spindledelta = p.Results.spindledelta;
 savedir = p.Results.savedir;
 scoretime = p.Results.scoretime;
+SWWeightsName = p.Results.SWWeightsName;
 
 %% Database File Management 
 savefolder = fullfile(savedir,recordingname);
