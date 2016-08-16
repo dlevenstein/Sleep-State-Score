@@ -1,4 +1,4 @@
-function [SWchannum,THchannum,swLFP,thLFP,t_LFP,Fs_save] = PickSWTHChannel(datasetfolder,recordingname,figfolder,scoretime)
+function [SWchannum,THchannum,swLFP,thLFP,t_LFP,Fs_save] = PickSWTHChannel(datasetfolder,recordingname,figfolder,scoretime,SWWeightsName)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 %
@@ -16,6 +16,11 @@ function [SWchannum,THchannum,swLFP,thLFP,t_LFP,Fs_save] = PickSWTHChannel(datas
 
 % datasetfolder = '/Users/dlevenstein/Dropbox/Research/Datasets/GGData/';
 % recname = 'Rat08-20130717';
+
+if ~exist('SWWeightsName','var')
+    l = 'SWweights.mat';
+end
+
 xmlfilename = [datasetfolder,'/',recordingname,'/',recordingname,'.xml'];
 if exist (fullfile(datasetfolder,recordingname,[recordingname,'.lfp']),'file')
     rawlfppath = fullfile(datasetfolder,recordingname,[recordingname,'.lfp']);
@@ -106,7 +111,7 @@ for chanidx = 1:numusedchannels;
    % broadbandSlowWave = SCORE(:,1);
     
 	%% Set Broadband filter weights for Slow Wave
-    load('SWweights.mat')
+    load(SWWeightsName)% 'SWweights.mat' by default
     assert(isequal(freqlist,SWfreqlist), 'spectrogram freqs.  are not what they should be...')
     broadbandSlowWave = zFFTspec*SWweights';
     
