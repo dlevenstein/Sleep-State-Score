@@ -18,7 +18,7 @@ function [SWchannum,THchannum,swLFP,thLFP,t_LFP,Fs_save] = PickSWTHChannel(datas
 % recname = 'Rat08-20130717';
 
 if ~exist('SWWeightsName','var')
-    l = 'SWweights.mat';
+    SWWeightsName = 'SWweights.mat';
 end
 
 xmlfilename = [datasetfolder,'/',recordingname,'/',recordingname,'.xml'];
