@@ -1,4 +1,4 @@
-function [SWchannum,THchannum,swLFP,thLFP,t_LFP,Fs_save] = PickSWTHChannel(datasetfolder,recordingname,figfolder,scoretime,SWWeightsName)
+function [SWchannum,THchannum,swLFP,thLFP,t_LFP,Fs_save,SWfreqlist,SWweights] = PickSWTHChannel(datasetfolder,recordingname,figfolder,scoretime,SWWeightsName,Notch60Hz,NotchUnder3Hz,NotchHVS,NotchTheta)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 %
@@ -18,7 +18,7 @@ function [SWchannum,THchannum,swLFP,thLFP,t_LFP,Fs_save] = PickSWTHChannel(datas
 % recname = 'Rat08-20130717';
 
 if ~exist('SWWeightsName','var')
-    l = 'SWweights.mat';
+    SWWeightsName = 'SWweights.mat';
 end
 
 xmlfilename = [datasetfolder,'/',recordingname,'/',recordingname,'.xml'];
@@ -113,6 +113,22 @@ for chanidx = 1:numusedchannels;
 	%% Set Broadband filter weights for Slow Wave
     load(SWWeightsName)% 'SWweights.mat' by default
     assert(isequal(freqlist,SWfreqlist), 'spectrogram freqs.  are not what they should be...')
+    
+    %% Alter the filter weights if requested by the user
+    if Notch60Hz
+        SWweights(SWfreqlist<=62.5 & SWfreqlist>=57.5) = 0;
+    end
+    if NotchUnder3Hz
+        SWweights(SWfreqlist<=3) = 0;
+    end
+    if NotchHVS
+        SWweights(SWfreqlist<=18 & SWfreqlist>=12) = 0;
+    end
+    if NotchTheta
+        SWweights(SWfreqlist<=10 & SWfreqlist>=4) = 0;
+    end
+    
+    %% Calculate 
     broadbandSlowWave = zFFTspec*SWweights';
     
     %% Smooth and 0-1 normalize

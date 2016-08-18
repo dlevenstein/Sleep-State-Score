@@ -29,6 +29,21 @@ function SleepScoreMaster(datasetfolder,recordingname,varargin)
 %   'SWWeightsName' Name of file in path (in Dependencies folder) 
 %                   containing the weights for the various frequencies to
 %                   be used for SWS detection.  Default is 'SWweights.mat'
+%   'Notch60Hz'     Boolean 0 or 1.  Value of 1 will notch out the 57.5-62.5 Hz
+%                   band, default is 0, no notch.  This can be necessary if
+%                   electrical noise.
+%   'NotchUnder3Hz' Boolean 0 or 1.  Value of 1 will notch out the 0-3 Hz
+%                   band, default is 0, no notch.  This can be necessary
+%                   due to poor grounding and low freq movement transients
+%   'NotchHVS'      Boolean 0 or 1.  Value of 1 will notch the 12-18 Hz
+%                   band, default is 0, no notch.  This can be useful in
+%                   recordings with prominent high voltage spindles which
+%                   have prominent ~16hz harmonics
+%   'NotchTheta'    Boolean 0 or 1.  Value of 1 will notch the 4-10 Hz
+%                   band, default is 0, no notch.  This can be useful to
+%                   transform the cortical spectrum to approximately
+%                   hippocampal, may also be necessary with High Voltage
+%                   Spindles
 %
 %OUTPUT
 %   StateIntervals  structure containing start/end times (seconds) of
@@ -119,14 +134,21 @@ defaultSavedir = datasetfolder;
 
 defaultScoretime = [0 Inf];
 defaultSWWeightsName = 'SWweights.mat';
+defaultNotch60Hz = 0;
+defaultNotchUnder3Hz = 0;
+defaultNotchHVS = 0;
+defaultNotchTheta = 0;
 
 addParameter(p,'overwrite',defaultOverwrite,@islogical)
 addParameter(p,'savebool',defaultSavebool,@islogical)
 addParameter(p,'spindledelta',defaultSpindledelta,@islogical)
 addParameter(p,'savedir',defaultSavedir)
 addParameter(p,'scoretime',defaultScoretime)
-addParameter(p,'SWWeightsName',defaultScoretime)
-
+addParameter(p,'SWWeightsName',defaultSWWeightsName)
+addParameter(p,'Notch60Hz',defaultNotch60Hz)
+addParameter(p,'NotchUnder3Hz',defaultNotchUnder3Hz)
+addParameter(p,'NotchHVS',defaultNotchHVS)
+addParameter(p,'NotchTheta',defaultNotchTheta)
 
 parse(p,varargin{:})
 %Clean up this junk...
@@ -136,6 +158,12 @@ spindledelta = p.Results.spindledelta;
 savedir = p.Results.savedir;
 scoretime = p.Results.scoretime;
 SWWeightsName = p.Results.SWWeightsName;
+Notch60Hz = p.Results.Notch60Hz;
+NotchUnder3Hz = p.Results.NotchUnder3Hz;
+NotchHVS = p.Results.NotchHVS;
+NotchTheta = p.Results.NotchTheta;
+
+
 
 %% Database File Management 
 savefolder = fullfile(savedir,recordingname);
@@ -206,8 +234,7 @@ clear EMGCorr
 if ((~exist(thetalfppath,'file') && ~exist(swlfppath,'file')) && ~exist(scorelfppath,'file')) || overwrite; % if no lfp file already, load lfp and make lfp file?
 
     display('Picking SW and TH Channels')
-    [SWchannum,THchannum,swLFP,thLFP,t_LFP,sf_LFP] = PickSWTHChannel(datasetfolder,recordingname,figloc,scoretime,SWWeightsName);
-    
+    [SWchannum,THchannum,swLFP,thLFP,t_LFP,sf_LFP,SWfreqlist,SWweight] = PickSWTHChannel(datasetfolder,recordingname,figloc,scoretime,SWWeightsName,Notch60Hz,NotchUnder3Hz,NotchHVS,NotchTheta);
     if savebool
         %Transfer this into scoremetricspath? predownsampled to what it
         %needs to be for ClusterStates.
@@ -252,7 +279,8 @@ if savebool
     %sw/thLFP in scoremetricspath here!
     save(scoremetricspath,...
         'broadbandSlowWave','thratio','EMG','t_clus',...
-        'SWchannum','THchannum','badtimes','reclength','histsandthreshs');
+        'SWchannum','THchannum','badtimes','reclength','histsandthreshs',...
+        'SWfreqlist','SWweights');
 end
 
 %% JOIN STATES INTO EPISODES
