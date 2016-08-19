@@ -145,10 +145,14 @@ addParameter(p,'spindledelta',defaultSpindledelta,@islogical)
 addParameter(p,'savedir',defaultSavedir)
 addParameter(p,'scoretime',defaultScoretime)
 addParameter(p,'SWWeightsName',defaultSWWeightsName)
+<<<<<<< HEAD
 addParameter(p,'Notch60Hz',defaultNotch60Hz)
 addParameter(p,'NotchUnder3Hz',defaultNotchUnder3Hz)
 addParameter(p,'NotchHVS',defaultNotchHVS)
 addParameter(p,'NotchTheta',defaultNotchTheta)
+=======
+
+>>>>>>> master
 
 parse(p,varargin{:})
 %Clean up this junk...
@@ -272,7 +276,7 @@ end
 display('Clustering States Based on EMG, SW, and TH LFP channels')
 % [stateintervals,~,~,~,~,broadbandSlowWave,thratio,EMG,t_clus,badtimes,reclength] = ClusterStates(swLFP,thLFP,EMG,sf_LFP,sf_EMG,figloc,recordingname);
 [~,~,broadbandSlowWave,thratio,EMG,t_clus,badtimes,reclength,histsandthreshs] = ClusterStates_GetParams(swLFP,thLFP,EMG,sf_LFP,sf_EMG,figloc,recordingname,MinWinParams);
-[stateintervals,~,~] = ClusterStates_DetermineStates(broadbandSlowWave,thratio,t_clus,EMG,histsandthreshs,MinWinParams,reclength);
+[stateintervals,~,~] = ClusterStates_DetermineStates(broadbandSlowWave,thratio,t_clus,EMG,histsandthreshs,MinWinParams,reclength,figloc);
 
 if savebool
     %Should save (downsampled to what's used in clusterstates...)

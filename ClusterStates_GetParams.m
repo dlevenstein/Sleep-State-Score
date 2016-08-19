@@ -37,8 +37,8 @@ sf_LFP = sf_LFP/downsamplefactor;
 
 freqlist = logspace(0,2,100);
 %freqlist = linspace(0.5,55.5,111);
-window = 10;
-noverlap = 9;
+window = 10;   %s
+noverlap = 9;  %s
 window = window*sf_LFP;
 noverlap = noverlap*sf_LFP;
 [FFTspec,FFTfreqs,t_FFT] = spectrogram(swLFP,window,noverlap,freqlist,sf_LFP);
