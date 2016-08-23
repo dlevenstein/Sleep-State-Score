@@ -29,6 +29,8 @@ function SleepScoreMaster(datasetfolder,recordingname,varargin)
 %   'SWWeightsName' Name of file in path (in Dependencies folder) 
 %                   containing the weights for the various frequencies to
 %                   be used for SWS detection.  Default is 'SWweights.mat'
+%                     - For hippocampus-only recordings, enter
+%                     'SWWeightsHPC.mat' for this
 %   'Notch60Hz'     Boolean 0 or 1.  Value of 1 will notch out the 57.5-62.5 Hz
 %                   band, default is 0, no notch.  This can be necessary if
 %                   electrical noise.

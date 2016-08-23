@@ -29,7 +29,7 @@ function SleepScoreMaster(datasetfolder,recordingname,varargin)
 %   'SWWeightsName' Name of file in path (in Dependencies folder) 
 %                   containing the weights for the various frequencies to
 %                   be used for SWS detection.  Default is 'SWweights.mat'
-<<<<<<< HEAD
+%                     - For hippocampu
 %   'Notch60Hz'     Boolean 0 or 1.  Value of 1 will notch out the 57.5-62.5 Hz
 %                   band, default is 0, no notch.  This can be necessary if
 %                   electrical noise.
@@ -45,8 +45,6 @@ function SleepScoreMaster(datasetfolder,recordingname,varargin)
 %                   transform the cortical spectrum to approximately
 %                   hippocampal, may also be necessary with High Voltage
 %                   Spindles
-=======
->>>>>>> master
 %
 %OUTPUT
 %   StateIntervals  structure containing start/end times (seconds) of
@@ -137,13 +135,10 @@ defaultSavedir = datasetfolder;
 
 defaultScoretime = [0 Inf];
 defaultSWWeightsName = 'SWweights.mat';
-<<<<<<< HEAD
 defaultNotch60Hz = 0;
 defaultNotchUnder3Hz = 0;
 defaultNotchHVS = 0;
 defaultNotchTheta = 0;
-=======
->>>>>>> master
 
 addParameter(p,'overwrite',defaultOverwrite,@islogical)
 addParameter(p,'savebool',defaultSavebool,@islogical)
@@ -168,15 +163,12 @@ spindledelta = p.Results.spindledelta;
 savedir = p.Results.savedir;
 scoretime = p.Results.scoretime;
 SWWeightsName = p.Results.SWWeightsName;
-<<<<<<< HEAD
 Notch60Hz = p.Results.Notch60Hz;
 NotchUnder3Hz = p.Results.NotchUnder3Hz;
 NotchHVS = p.Results.NotchHVS;
 NotchTheta = p.Results.NotchTheta;
 
 
-=======
->>>>>>> master
 
 %% Database File Management 
 savefolder = fullfile(savedir,recordingname);
@@ -285,7 +277,7 @@ end
 display('Clustering States Based on EMG, SW, and TH LFP channels')
 % [stateintervals,~,~,~,~,broadbandSlowWave,thratio,EMG,t_clus,badtimes,reclength] = ClusterStates(swLFP,thLFP,EMG,sf_LFP,sf_EMG,figloc,recordingname);
 [~,~,broadbandSlowWave,thratio,EMG,t_clus,badtimes,reclength,histsandthreshs] = ClusterStates_GetParams(swLFP,thLFP,EMG,sf_LFP,sf_EMG,figloc,recordingname,MinWinParams);
-[stateintervals,~,~] = ClusterStates_DetermineStates(broadbandSlowWave,thratio,t_clus,EMG,histsandthreshs,MinWinParams,reclength);
+[stateintervals,~,~] = ClusterStates_DetermineStates(broadbandSlowWave,thratio,t_clus,EMG,histsandthreshs,MinWinParams,reclength,figloc);
 
 if savebool
     %Should save (downsampled to what's used in clusterstates...)
@@ -293,7 +285,7 @@ if savebool
     save(scoremetricspath,...
         'broadbandSlowWave','thratio','EMG','t_clus',...
         'SWchannum','THchannum','badtimes','reclength','histsandthreshs',...
-        SWfreqlist,SWweights);
+        'SWfreqlist','SWweights');
 end
 
 %% JOIN STATES INTO EPISODES
