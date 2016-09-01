@@ -146,7 +146,7 @@ for chanidx = 1:numusedchannels;
     pc1hists(:,chanidx) = pcahist;
     pc1coeff(:,chanidx) = COEFF(:,1);
     
-    dipSW(chanidx) = m(sort(broadbandSlowWave));
+    dipSW(chanidx) = hartigansdiptest_ss(sort(broadbandSlowWave));
     
     
     %% Calculate theta
