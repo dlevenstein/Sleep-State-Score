@@ -111,7 +111,7 @@ figure
         plot(log10(IPIs_pos(1:end-1)),log10(IPIs_pos(2:end)),'.','color',poscolor,'MarkerSize',0.1)
         hold on
         plot(log10(IPIs_neg(1:end-1)),log10(IPIs_neg(2:end)),'.','color',negcolor,'MarkerSize',0.1)
-       LogScale('xy',10)
+       LogScale_ss('xy',10)
        text(0.1,1,['# Peaks: ',num2str(numpeaks)])
        xlabel('Inter-Peak Interval n (s)');
        ylabel('Inter-Peak Interval n+1 (s)');
@@ -124,7 +124,7 @@ figure
         b(1).FaceColor = poscolor;
         b(2).FaceColor = negcolor;
             xlim([-1.3 1.2]);
-            LogScale('x',10)
+            LogScale_ss('x',10)
             legend('Positive Peaks','Negative Peaks')
         
       fmin = 6;
@@ -137,7 +137,7 @@ figure
         plot(1./(IPIs_neg(1:end-1)),1./(IPIs_neg(2:end)),'.','color',negcolor,'MarkerSize',8)
         axis xy
          xlim([fmin fmax])
-       %LogScale('xy',10)
+       %LogScale_ss('xy',10)
        xlabel('1/Inter-Peak Interval n (Hz)');
        %colorbar
       % caxis([0 100])

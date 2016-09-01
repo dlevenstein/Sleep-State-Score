@@ -94,7 +94,7 @@ figure
         plot(log2(freqlist),PC1weights(sortexpvar,:)','LineWidth',1)
         plot(log2(freqlist),SWweights,'k','LineWidth',2)
         plot(get(gca,'xlim'),[0 0],'k--')
-        LogScale('x',2)
+        LogScale_ss('x',2)
         xlim(log2(freqlist([1 end])))
         title('PC1 Weights')
         ylabel('Weight');xlabel('f (Hz)')

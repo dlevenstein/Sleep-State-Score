@@ -1,13 +1,13 @@
-function z = xmltools( arg, out_file, varargin)
-% XMLTOOLS - tools for managing xml data sets
+function z = xmltools_ss( arg, out_file, varargin)
+% xmltools_ss - tools for managing xml data sets
 %      - if arg is a string : arg is an XML file to convert into MATLAB struct
 %      - if arg is a variable : it is a MATLAB struct to write into XML, to stdout if out_file is not given
 % use :
-%  z = xmltools('filename.xml'); read an xml file and store it into z
-%  xmltools(z,'filename.xml'); write z into the file
-%  xmltools(z,'get','tag-name'); returns only subset of z child which name is tag-name
-%  xmltools(z,'get-attrib', 'attrib-name')
-%  xmltools(z,'get','tag-name', 'attribs'|'value'|'child');
+%  z = xmltools_ss('filename.xml'); read an xml file and store it into z
+%  xmltools_ss(z,'filename.xml'); write z into the file
+%  xmltools_ss(z,'get','tag-name'); returns only subset of z child which name is tag-name
+%  xmltools_ss(z,'get-attrib', 'attrib-name')
+%  xmltools_ss(z,'get','tag-name', 'attribs'|'value'|'child');
 %
 % project 'File parsing'
 % title    'XML parsing'
@@ -48,7 +48,7 @@ end
 if ~isstr(arg)
 
   %<* SELECT A SUBSET OF z CHILD
-  if length(varargin) >= 1 %& ~FileExists(arg)
+  if length(varargin) >= 1 %& ~FileExists_ss(arg)
     
     cmode = upper( out_file);
     z     = arg;
@@ -61,7 +61,7 @@ if ~isstr(arg)
       next = 'child';
     
       if ~isfield(z, next)
-        error('XMLTOOLS:GET', 'For child selection, structured first argument is needed');
+        error('xmltools_ss:GET', 'For child selection, structured first argument is needed');
       end
       tag_name = (varargin{1});
       
@@ -69,7 +69,7 @@ if ~isstr(arg)
       %>
       
       %< get values
-      % xmltools( z, 'get', 'tag-name', 'attribs'|'value'|'child')
+      % xmltools_ss( z, 'get', 'tag-name', 'attribs'|'value'|'child')
       if length(varargin) == 2
         switch upper( varargin{2})
          case 'VALUE'
@@ -79,14 +79,14 @@ if ~isstr(arg)
          case 'CHILD'
           z = [z.child];
          otherwise
-          error('XMLTOOLS:GET', 'get mode <%s> is not defined, use one of <attribs>|<value>|<child>', upper(varargin{2}));
+          error('xmltools_ss:GET', 'get mode <%s> is not defined, use one of <attribs>|<value>|<child>', upper(varargin{2}));
         end
       end
       %>
       
      case 'GET-ATTRIB'
       %< get attrib
-      % xmltools(z, 'get-attrib', 'attrib-name')
+      % xmltools_ss(z, 'get-attrib', 'attrib-name')
       s = z.attribs;
       for i=1:length(s)
         if strcmp((s(i).name), ( varargin{1}) )
@@ -94,7 +94,7 @@ if ~isstr(arg)
           return
         end
       end
-      error('XMLTOOLS:GET-ATTRIB', 'no attribute found'); %, varargin{1});
+      error('xmltools_ss:GET-ATTRIB', 'no attribute found'); %, varargin{1});
       %>
       
     end
@@ -152,7 +152,7 @@ while ~eot & ~isempty(udeblank(deblank(str)))
   if isempty(f_end) & isempty(f_beg)
     
     if ~strcmp(lower(current_tag), '?xml') & ~isempty(current_tag)
-      error('xmltools:parse_xml', 'malformed xml string (current [%s])', current_tag);
+      error('xmltools_ss:parse_xml', 'malformed xml string (current [%s])', current_tag);
     else
       fprintf('end parsing at level %d\n',idx);
       eot = 1;
@@ -178,13 +178,13 @@ while ~eot & ~isempty(udeblank(deblank(str)))
     str_t   = str(1:f_end-1);
     f_end = strfind(new_tag,'>');
     if isempty(f_end)
-      error('xmltools:parse_xml', 'malformed xml string : never ending tag [%s] encountered', current_tag);
+      error('xmltools_ss:parse_xml', 'malformed xml string : never ending tag [%s] encountered', current_tag);
     end
     f_end = f_end(1);
     str     = new_tag(f_end+1:end); % reste
     new_tag = new_tag(1:f_end-1);
     if ~strcmp((new_tag), (current_tag))
-      error('xmltools:parse_xml', 'malformed xml string : [%s] not properly closed (closing [%s] encountered)', current_tag, new_tag);
+      error('xmltools_ss:parse_xml', 'malformed xml string : [%s] not properly closed (closing [%s] encountered)', current_tag, new_tag);
     end
     if Verbose
        fprintf('%sclose [%s]\n', repmat(' ', 2*(idx-1),1), current_tag);
@@ -201,7 +201,7 @@ while ~eot & ~isempty(udeblank(deblank(str)))
     new_tag   = str(f_beg+1:end);
     f_end = strfind(new_tag,'>');
     if isempty(f_end)
-      error('xmltools:parse_xml', 'malformed xml string : never ending tag encountered');
+      error('xmltools_ss:parse_xml', 'malformed xml string : never ending tag encountered');
     end
     f_end   = f_end(1);
     str_t   = new_tag(f_end+1:end);
@@ -330,7 +330,7 @@ if isfield(xml_struct, 'tag')
   fprintf(fid, '%s<%s', margin, xml_struct.tag);
   %< Ecriture des attributs
   if ~isfield(xml_struct, 'attribs')
-    error('xmltools:write_xml', 'malformed MATLAB xml structure : tag without attribs');
+    error('xmltools_ss:write_xml', 'malformed MATLAB xml structure : tag without attribs');
   end
   for i=1:length(xml_struct.attribs)
     if ~isempty(xml_struct.attribs(i).name)
@@ -346,10 +346,10 @@ if isfield(xml_struct, 'tag')
   %< Gestion des Auto closed tags
   % Si le tag n'est pas auto ferm�, alors |closed_tag| est � z�ro
   if ~isfield(xml_struct, next)
-    error('xmltools:write_xml', 'malformed MATLAB xml structure : tag without %s', next);
+    error('xmltools_ss:write_xml', 'malformed MATLAB xml structure : tag without %s', next);
   end
   if ~isfield(xml_struct, 'value')
-    error('xmltools:write_xml', 'malformed MATLAB xml structure : tag without value');
+    error('xmltools_ss:write_xml', 'malformed MATLAB xml structure : tag without value');
   end
   if xml_struct.tag(1) == '?'
     fprintf(fid, '?>\n');
@@ -377,7 +377,7 @@ end
 
 %< Ecriture des enfants
 if ~isfield(xml_struct, next)
-  error('xmltools:write_xml', 'malformed MATLAB xml structure : tag without %s', next);
+  error('xmltools_ss:write_xml', 'malformed MATLAB xml structure : tag without %s', next);
 end
 those_children = getfield(xml_struct, next);
 %those_children = xml_struct.(next);
@@ -419,7 +419,7 @@ if ~isstruct( zo)
   else
     tn = 'root?';
   end
-  error('XMLTOOLS:GET-TEG', 'problem in finding tag <%s> under one <%s>', tag_name, tn);
+  error('xmltools_ss:GET-TEG', 'problem in finding tag <%s> under one <%s>', tag_name, tn);
 end
 z = [ zo.anext ];
 %>*

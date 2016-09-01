@@ -1,4 +1,4 @@
-function [ INT ] = IDXtoINT( IDX ,numstates)
+function [ INT ] = IDXtoINT_ss( IDX ,numstates)
 %IDXtoINT(IDX) Converts state indices to state on/offsets
 %
 %INPUT

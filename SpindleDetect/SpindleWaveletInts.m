@@ -107,7 +107,7 @@ subplot(2,2,ss)
     ylim([0 20])
     caxis([0 3])
     axis xy
-   % LogScale('y',2)
+   % LogScale_ss('y',2)
     plot(pSpindleInts(spnum,:),3*[1 1],'r')
     xlim(pSpindleInts(spnum,:)+[-1 1])
 end

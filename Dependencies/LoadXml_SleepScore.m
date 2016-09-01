@@ -1,5 +1,5 @@
 %function [xml, rxml] = LoadXml_SleepScore(FileBase)
-%loads the xml file using xmltools (have to have it in the path)
+%loads the xml file using xmltools_ss (have to have it in the path)
 % rxml returns it's original layout - very messy structure but contains all
 % the xml file contents.
 % xml - is the ouput structure which is backwards compatible to LoadPar
@@ -31,7 +31,7 @@ xmli = strfind(fbasename,'.xml');
 if ~isempty(xmli)
     fbasename = fbasename(1:xmli-1);
 end
-rxml = xmltools([fbasename '.xml']);
+rxml = xmltools_ss([fbasename '.xml']);
 
 rxml = rxml.child(2);
 

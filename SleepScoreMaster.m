@@ -29,18 +29,22 @@ function SleepScoreMaster(datasetfolder,recordingname,varargin)
 %   'SWWeightsName' Name of file in path (in Dependencies folder) 
 %                   containing the weights for the various frequencies to
 %                   be used for SWS detection.  Default is 'SWweights.mat'
+%                     - For hippocampus-only recordings, enter
+%                     'SWWeightsHPC.mat' for this
 %   'Notch60Hz'     Boolean 0 or 1.  Value of 1 will notch out the 57.5-62.5 Hz
 %                   band, default is 0, no notch.  This can be necessary if
 %                   electrical noise.
 %   'NotchUnder3Hz' Boolean 0 or 1.  Value of 1 will notch out the 0-3 Hz
 %                   band, default is 0, no notch.  This can be necessary
 %                   due to poor grounding and low freq movement transients
-%   'NotchHVS'      Boolean 0 or 1.  Value of 1 will notch the 12-18 Hz
-%                   band, default is 0, no notch.  This can be useful in
+%   'NotchHVS'      Boolean 0 or 1.  Value of 1 will notch the 4-10 and 
+%                   12-18 Hz bands for SW detection, default is 0, no 
+%                   notch.  This can be useful in
 %                   recordings with prominent high voltage spindles which
 %                   have prominent ~16hz harmonics
 %   'NotchTheta'    Boolean 0 or 1.  Value of 1 will notch the 4-10 Hz
-%                   band, default is 0, no notch.  This can be useful to
+%                   band for SW detection, default is 0, no notch.  This 
+%                   can be useful to
 %                   transform the cortical spectrum to approximately
 %                   hippocampal, may also be necessary with High Voltage
 %                   Spindles
@@ -139,20 +143,16 @@ defaultNotchUnder3Hz = 0;
 defaultNotchHVS = 0;
 defaultNotchTheta = 0;
 
-addParameter(p,'overwrite',defaultOverwrite,@islogical)
+addParameter(p,'overwrite',defaultOverwrite)
 addParameter(p,'savebool',defaultSavebool,@islogical)
 addParameter(p,'spindledelta',defaultSpindledelta,@islogical)
 addParameter(p,'savedir',defaultSavedir)
 addParameter(p,'scoretime',defaultScoretime)
 addParameter(p,'SWWeightsName',defaultSWWeightsName)
-<<<<<<< HEAD
 addParameter(p,'Notch60Hz',defaultNotch60Hz)
 addParameter(p,'NotchUnder3Hz',defaultNotchUnder3Hz)
 addParameter(p,'NotchHVS',defaultNotchHVS)
 addParameter(p,'NotchTheta',defaultNotchTheta)
-=======
-
->>>>>>> master
 
 parse(p,varargin{:})
 %Clean up this junk...
@@ -238,45 +238,52 @@ clear EMGCorr
 if ((~exist(thetalfppath,'file') && ~exist(swlfppath,'file')) && ~exist(scorelfppath,'file')) || overwrite; % if no lfp file already, load lfp and make lfp file?
 
     display('Picking SW and TH Channels')
-    [SWchannum,THchannum,swLFP,thLFP,t_LFP,sf_LFP,SWfreqlist,SWweight] = PickSWTHChannel(datasetfolder,recordingname,figloc,scoretime,SWWeightsName,Notch60Hz,NotchUnder3Hz,NotchHVS,NotchTheta);
+    [SWchannum,THchannum,swLFP,thLFP,t_LFP,sf_LFP,SWfreqlist,SWweights] = PickSWTHChannel(datasetfolder,recordingname,figloc,scoretime,SWWeightsName,Notch60Hz,NotchUnder3Hz,NotchHVS,NotchTheta);
     if savebool
         %Transfer this into scoremetricspath? predownsampled to what it
         %needs to be for ClusterStates.
-        save(scorelfppath,'thLFP','swLFP','THchannum','SWchannum','t_LFP','sf_LFP');
+        save(scorelfppath,'thLFP','swLFP','THchannum','SWchannum','t_LFP','sf_LFP','SWfreqlist','SWweights');
     end
 else
     display('SW and TH Channels Already Extracted, Loading...')
     
     %For updating state score LFP storage...
-    if ~exist(scorelfppath,'file')
+    if ~exist(scorelfppath,'file')%... if old-fashioned scoring was done, open and convert to newer style
         load(swlfppath,'swLFP','SWchannum','sf_LFP')
         load(thetalfppath,'thLFP','THchannum','sf_LFP')
+
+        load(SWWeightsName)%load default weights which would have been used for these older scorings... so they can be saved
+        
         if sf_LFP==1250
             display('LFP saved as 1250 - downsampling to 250 for save')
             swLFP = downsample(swLFP,5);
             thLFP = downsample(thLFP,5);
             sf_LFP = sf_LFP./5;
 
-            save(scorelfppath,'thLFP','swLFP','THchannum','SWchannum','sf_LFP');
             delete(swlfppath,thetalfppath)
         else
             display('LFP was not saved at 1250... bug?')
             keyboard
         end
+        
+        %save in newer format for compatibility.
+        save(scorelfppath,'thLFP','swLFP','THchannum','SWchannum','sf_LFP','SWfreqlist','SWweights');
     end
     
-    load(scorelfppath,'swLFP','SWchannum','thLFP','THchannum','sf_LFP')
-
+    load(scorelfppath,'swLFP','SWchannum','thLFP','THchannum','sf_LFP','SWfreqlist','SWweights')
 end
-
+if ~exist('SWfreqlist','var')
+        load(SWWeightsName)%load default weights which would have been used for these older scorings... so they can be saved
+end
 
 
 %% CLUSTER STATES BASED ON SLOW WAVE, THETA, EMG
 
 display('Clustering States Based on EMG, SW, and TH LFP channels')
 % [stateintervals,~,~,~,~,broadbandSlowWave,thratio,EMG,t_clus,badtimes,reclength] = ClusterStates(swLFP,thLFP,EMG,sf_LFP,sf_EMG,figloc,recordingname);
-[~,~,broadbandSlowWave,thratio,EMG,t_clus,badtimes,reclength,histsandthreshs] = ClusterStates_GetParams(swLFP,thLFP,EMG,sf_LFP,sf_EMG,figloc,recordingname,MinWinParams);
-[stateintervals,~,~] = ClusterStates_DetermineStates(broadbandSlowWave,thratio,t_clus,EMG,histsandthreshs,MinWinParams,reclength,figloc);
+[~,~,broadbandSlowWave,thratio,EMG,t_EMG,t_clus,badtimes,reclength,histsandthreshs,FFTfreqs,FFTspec,thFFTfreqs,thFFTspec] = ClusterStates_GetParams(swLFP,thLFP,EMG,sf_LFP,sf_EMG,figloc,recordingname,MinWinParams);
+[stateintervals,stateIDX,~] = ClusterStates_DetermineStates(broadbandSlowWave,thratio,t_clus,EMG,histsandthreshs,MinWinParams,reclength,figloc);
+ClusterStates_MakeFigure(stateintervals,stateIDX,figloc,FFTfreqs,FFTspec,thFFTfreqs,thFFTspec,t_clus,recordingname,broadbandSlowWave,thratio,EMG,t_EMG);
 
 if savebool
     %Should save (downsampled to what's used in clusterstates...)
@@ -284,7 +291,9 @@ if savebool
     save(scoremetricspath,...
         'broadbandSlowWave','thratio','EMG','t_clus',...
         'SWchannum','THchannum','badtimes','reclength','histsandthreshs',...
-        'SWfreqlist','SWweights');
+        'SWfreqlist','SWweights','SWWeightsName','Notch60Hz',...
+        'NotchUnder3Hz','NotchHVS','NotchTheta')
+    
 end
 
 %% JOIN STATES INTO EPISODES

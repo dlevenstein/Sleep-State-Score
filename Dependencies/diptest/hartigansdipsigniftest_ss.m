@@ -1,5 +1,5 @@
 
-function		[dip, p_value, xlow,xup]=hartigansdipsigniftest(xpdf,nboot)
+function		[dip, p_value, xlow,xup]=hartigansdipsigniftest_ss(xpdf,nboot)
 
 %  function		[dip,p_value,xlow,xup]=HartigansDipSignifTest(xpdf,nboot)
 %

@@ -1,4 +1,4 @@
-function varargout = DefaultArgs(Args, DefArgs)
+function varargout = DefaultArgs_ss(Args, DefArgs)
 % auxillary function to replace argument check in the beginning and def. args assigment
 % sets the absent or empty values of the Args (cell array, usually varargin)
 % to their default values from the cell array DefArgs. 

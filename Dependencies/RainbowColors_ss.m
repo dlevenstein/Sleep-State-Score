@@ -1,4 +1,4 @@
-function colors = RainbowColors(numcolors)
+function colors = RainbowColors_ss(numcolors)
 % Generates RGB Triplets based on the idealized colors below:
 % 0. red    [1 0 0]
 % 1. orange [1 .5 0]

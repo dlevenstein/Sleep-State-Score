@@ -2,7 +2,7 @@
 %
 % returns 1 if the file exists, 0 otherwise
 
-function exists = FileExists(FileName)
+function exists = FileExists_ss(FileName)
 
 fp = fopen(FileName, 'r');
 

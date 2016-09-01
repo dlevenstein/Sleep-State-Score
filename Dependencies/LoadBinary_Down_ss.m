@@ -1,4 +1,4 @@
-function data = LoadBinary_Down(filename,varargin)
+function data = LoadBinary_Down_ss(filename,varargin)
 
 %LoadBinary - Load data from a multiplexed binary file.
 %

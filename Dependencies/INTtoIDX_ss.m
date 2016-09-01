@@ -1,4 +1,4 @@
-function [ IDX ] = INTtoIDX(INT,len,sf)
+function [ IDX ] = INTtoIDX_ss(INT,len,sf)
 %[IDX] = INTtoIDX(INT,len,sf) Converts state on/offsets to vector of indices
 %
 %INPUT

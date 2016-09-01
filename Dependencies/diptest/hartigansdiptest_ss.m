@@ -1,4 +1,4 @@
-function	[dip,xl,xu, ifault, gcm, lcm, mn, mj] = hartigansdiptest(xpdf)
+function	[dip,xl,xu, ifault, gcm, lcm, mn, mj] = hartigansdiptest_ss(xpdf)
 
 % function	[dip,xl,xu, ifault, gcm, lcm, mn, mj]=HartigansDipTest(xpdf)
 %

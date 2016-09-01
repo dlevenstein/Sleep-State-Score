@@ -1,4 +1,4 @@
-function [] = LogScale( whichaxis,logbase)
+function [] = LogScale_ss( whichaxis,logbase)
 %LogScale(whichaxis,logbase) renames the tick labels on your axes for a
 %logarithmically scaled variable.
 %

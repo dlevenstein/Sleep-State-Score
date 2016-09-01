@@ -12,7 +12,7 @@ function Par = LoadPar_SleepScore(FileName, varargin)
 %                    e.g. if .ElectrodeGroup{3} = [2 3 4 5], electrode 3
 %                    is a tetrode for channels 2 3 4 and 5. 
 % channel numbers here are from 0. be carefull.
-[SpecInfo] = DefaultArgs(varargin,{1});
+[SpecInfo] = DefaultArgs_ss(varargin,{1});
 
 if ~isempty(strfind(FileName,'.par'))
     FileBase = FileName(1:strfind(FileName,'.par')-1);
@@ -23,10 +23,10 @@ else
 end
 
 
-if FileExists([FileBase '.xml']) %& ~isempty(strfind(FileName,'.xml'))
+if FileExists_ss([FileBase '.xml']) %& ~isempty(strfind(FileName,'.xml'))
     Par = LoadXml_SleepScore(FileBase);
     %Par = loadxml(FileBase);
-elseif FileExists([FileBase '.par'])
+elseif FileExists_ss([FileBase '.par'])
 
 
     % open file
@@ -67,7 +67,7 @@ else
 end
 
 if SpecInfo
-    if FileExists([FileBase '.eeg.par'])
+    if FileExists_ss([FileBase '.eeg.par'])
         if ~isfield(Par,'nElecGps')
             ParTmp = LoadPar([FileBase '.par']);
         else

@@ -134,11 +134,11 @@ end
 
 %% Read and filter channel
 % read channel
-%eeg = readmulti(eegloc, nChannels, xcorr_chs); %read and convert to mV    
+%eeg = readmulti_ss(eegloc, nChannels, xcorr_chs); %read and convert to mV    
 % Filter first in high frequency band to remove low-freq physiologically
 % correlated LFPs (e.g., theta, delta, SPWs, etc.)
 
-eeg = LoadBinary_Down(eegloc,'frequency',Fs,...
+eeg = LoadBinary_Down_ss(eegloc,'frequency',Fs,...
     'nchannels',nChannels,'channels',xcorr_chs+1,...
     'start',scoretime(1),'duration',diff(scoretime));
 %+1 is applied to channel numbers here for 0 (neuroscope) vs 1 (LoadBinary)

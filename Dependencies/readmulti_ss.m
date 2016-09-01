@@ -3,7 +3,7 @@
 % last argument is optional (if omitted, it will read all the 
 % channels
 
-function [eeg] = readmulti(fname,numchannel,chselect)
+function [eeg] = readmulti_ss(fname,numchannel,chselect)
 
 if nargin == 2
   datafile = fopen(fname,'r');

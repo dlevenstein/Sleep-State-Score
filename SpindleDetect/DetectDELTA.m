@@ -54,6 +54,6 @@ peakdist = 0.1;
 % %%
 % figure
 %     plot(log2(deltapeaks(2:end-1)-deltapeaks(1:end-2)),log2(deltapeaks(3:end)-deltapeaks(2:end-1)),'.')
-%     LogScale('xy',2)
+%     LogScale_ss('xy',2)
 end
 

@@ -100,7 +100,7 @@ ctxchannels = [spikegroups{probegroups{1}}];
 %     imagesc(log2(freqs),log2(freqs),powercorr)
 %     axis xy
 %     ColorbarWithAxis([0.25 1],'Corr.')
-%     LogScale('xy',2)
+%     LogScale_ss('xy',2)
 %     xlabel('f (Hz)');ylabel('f (Hz)')
 %     title('Power-Power Correlation')
 
@@ -235,7 +235,7 @@ subplot(2,1,1)
     bar(histbins,[troughhist' peakhist'],'stacked')
     hold on
    % bar(histbins,troughhist,'r')
-    LogScale('x',2)
+    LogScale_ss('x',2)
     xlabel('Inter-Peak Interval (s)')
     ylabel('Number of Peaks/Troughs')
     title('Inter-Peak Intervals: identified peaks/troughs on the same shank')
@@ -244,7 +244,7 @@ subplot(2,1,1)
 axes('Position',[.55 .715 .3 .15])
 box on
     hist((IPIs_same(IPIs_same>0.02 &IPIs_same<0.25)),250)
-   % LogScale('x',10)
+   % LogScale_ss('x',10)
     xlabel('Inter-Peak Interval (s)')
     %ylabel('Number of Peaks/Troughs')
     title('Linear Scale for <250ms')
@@ -256,7 +256,7 @@ box on
     bar(histbins,[troughhist' peakhist'],'stacked')
     hold on
    % bar(histbins,troughhist,'r')
-    %LogScale('x',2)
+    %LogScale_ss('x',2)
     xlabel('1/Inter-Peak Interval (Hz)')
     ylabel('Number of Peaks/Troughs')
     title({'Spindle-Peaks/Troughs from all sites,', 'Instantaneous Frequency'})
@@ -269,7 +269,7 @@ saveas(gcf,[figloc,recname,'_IPIs'],'jpeg')
 figure
     subplot(3,2,[1,3])
         plot(log10(IPIs_same(1:end-1)),log10(IPIs_same(2:end)),'k.','MarkerSize',0.1)
-       LogScale('xy',10)
+       LogScale_ss('xy',10)
        xlabel('Inter-Peak Interval n (s)');
        ylabel('Inter-Peak Interval n+1 (s)');
         xlim([-1.5 1.5]);ylim([-1.5 2.5])
@@ -282,7 +282,7 @@ figure
 %   isimax = 0.16;    
 %     subplot(2,3,2)
 %         plot(log2(IPIs_same(1:end-1)),log2(IPIs_same(2:end)),'k.','MarkerSize',8)
-%       LogScale('xy',2)
+%       LogScale_ss('xy',2)
 %        xlabel('Inter-Peak Interval n (s)');
 %        ylabel('Inter-Peak Interval n+1 (s)');
 %         xlim(log2([isimin isimax]));ylim(log2([isimin ((isimax-isimin)./log2(3))+isimax]))
@@ -300,7 +300,7 @@ subplot(3,2,[2 4])
 plot(1./(IPIs_same(1:end-1)),1./(IPIs_same(2:end)),'k.','MarkerSize',8)
     axis xy
      xlim([fmin fmax])
-   %LogScale('xy',10)
+   %LogScale_ss('xy',10)
    xlabel('1/Inter-Peak Interval n (Hz)');
    %colorbar
   % caxis([0 100])
@@ -319,7 +319,7 @@ plot(1./(IPIs_same(1:end-1)),1./(IPIs_same(2:end)),'k.','MarkerSize',8)
 figure
 % subplot(2,2,1)
 %     plot(1./(IPIs_same(1:end-1)),1./(IPIs_same(2:end)),'.')
-%    %LogScale('xy',10)
+%    %LogScale_ss('xy',10)
 %    xlabel('1/Inter-Peak Interval n (Hz)');
 %    ylabel('1/Inter-Peak Interval n+1 (Hz)');
 % %   xlim([-3 1]);ylim([-3 1])
@@ -329,14 +329,14 @@ subplot(2,2,4)
     imagesc(freqbins(freqbins>6&freqbins<19),freqbins(freqbins>6&freqbins<19),log10(N_freq(freqbins>6&freqbins<19,freqbins>6&freqbins<19)))
     axis xy
     %   xlim([-3 1]);ylim([-3 1])
-   %LogScale('xy',10)
+   %LogScale_ss('xy',10)
    xlabel('1/Inter-Peak Interval n (Hz)');
    %colorbar
   % caxis([0 100])
    ylabel('1/Inter-Peak Interval n+1 (Hz)');
 subplot(2,2,1)
     plot(log10(IPIs_same(1:end-1)),log10(IPIs_same(2:end)),'.','MarkerSize',0.1)
-   LogScale('xy',10)
+   LogScale_ss('xy',10)
    xlabel('Inter-Peak Interval n (s)');
    ylabel('Inter-Peak Interval n+1 (s)');
       xlim([-1.5 2]);ylim([-1.5 2])
@@ -346,7 +346,7 @@ subplot(2,2,3)
     imagesc(bins,bins,log10(N_same))
     axis xy
        xlim([-1.5 2]);ylim([-1.5 2])
-   LogScale('xy',10)
+   LogScale_ss('xy',10)
    xlabel('Inter-Peak Interval n (s)');
    ylabel('Inter-Peak Interval n+1 (s)');
    
@@ -354,7 +354,7 @@ subplot(2,2,2)
     imagesc(bins./log10(2),bins./log10(2),log10(N_same))
     axis xy
        xlim(log2([0.05 0.16]));ylim(log2([0.05 0.16]))
-   LogScale('xy',2)
+   LogScale_ss('xy',2)
    xlabel('Inter-Peak Interval n (s)');
    ylabel('Inter-Peak Interval n+1 (s)');
 
@@ -399,14 +399,14 @@ figure
         hist(log10(ISpI),25)
         xlabel('Inter-pSpindle Interval');
         ylabel('# pSpindles')
-        LogScale('x',10)
+        LogScale_ss('x',10)
         xlim([-1 2])
     subplot(2,2,3)
         plot(log10(ISpI(1:end-1)),log10(ISpI(2:end)),'.')
         xlabel('Inter-pSpindle Interval n')
         ylabel('Inter-pSpindle Interval n+1')
         %title('Iterative Map: InterSpindle Intervals')
-        LogScale('xy',10)
+        LogScale_ss('xy',10)
         xlim([-1 2]);ylim([-1 2])
     subplot(2,2,4)
         plot(log10(IspeakI_pos(1:end-1)),log10(IspeakI_pos(2:end)),'k.')
@@ -414,7 +414,7 @@ figure
         plot(log10(IspeakI_neg(1:end-1)),log10(IspeakI_neg(2:end)),'k.')
         xlabel('Inter-Peak Interval n')
         ylabel('Inter-Peak Interval n+1')
-        LogScale('xy',10)
+        LogScale_ss('xy',10)
         xlim([-1.5 2]);ylim([-1.5 2])
         title('Iterative Map: Within-Spindle Peaks')
     subplot(4,2,2)
@@ -462,7 +462,7 @@ figure
         caxis([min(mu)-2.5*max(sig) max(mu)+2.5*max(sig)])
        xlim([zoomwin])
        box(gca,'off')
-       LogScale('y',2)
+       LogScale_ss('y',2)
 
 
     subplot(4,1,2)
@@ -487,7 +487,7 @@ figure
         caxis([min(mu)-2.5*max(sig) max(mu)+2.5*max(sig)])
        xlim([zoomwin])
        box(gca,'off')
-       LogScale('y',2)
+       LogScale_ss('y',2)
 
 
     subplot(4,1,2)
@@ -512,7 +512,7 @@ figure
         caxis([min(mu)-2.5*max(sig) max(mu)+2.5*max(sig)])
        xlim([zoomwin])
        box(gca,'off')
-       LogScale('y',2)
+       LogScale_ss('y',2)
 
 
     subplot(3,1,2)
@@ -633,7 +633,7 @@ subplot(2,3,1:2)
     bar(histbins,[troughhist' peakhist'],'stacked')
     hold on
    % bar(histbins,troughhist,'r')
-    LogScale('x',2)
+    LogScale_ss('x',2)
     xlim([-4.5 3])
     xlabel('Inter-Peak Interval (s)')
     ylabel('Number of Peaks/Troughs')
@@ -643,7 +643,7 @@ subplot(2,3,1:2)
 axes('Position',[.3 .715 .3 .15])
 box on
     hist([IPIs_pos(IPIs_pos<0.3); IPIs_neg(IPIs_neg<0.3)],50)
-   % LogScale('x',10)
+   % LogScale_ss('x',10)
     xlabel('Inter-Peak Interval (s)')
     %ylabel('Number of Peaks/Troughs')
     title('Linear Scale for <250ms')
@@ -657,7 +657,7 @@ box on
     bar(histbins,[troughhist' peakhist'],'stacked')
     hold on
    % bar(histbins,troughhist,'r')
-    %LogScale('x',2)
+    %LogScale_ss('x',2)
     xlabel('1/Inter-Peak Interval (Hz)')
     ylabel('Number of Peaks/Troughs')
     title({'Spindle Peaks/Troughs: Instantaneous Frequency'})
@@ -677,7 +677,7 @@ N_same = hist3([log10([IPIs_pos(1:end-1);IPIs_neg(1:end-1)]),log10([IPIs_pos(2:e
 figure
 % subplot(2,2,1)
 %     plot(1./(IPIs_same(1:end-1)),1./(IPIs_same(2:end)),'.')
-%    %LogScale('xy',10)
+%    %LogScale_ss('xy',10)
 %    xlabel('1/Inter-Peak Interval n (Hz)');
 %    ylabel('1/Inter-Peak Interval n+1 (Hz)');
 % %   xlim([-3 1]);ylim([-3 1])
@@ -687,7 +687,7 @@ subplot(2,2,4)
     imagesc(freqbins(freqbins>6&freqbins<19),freqbins(freqbins>6&freqbins<19),log10(N_freq(freqbins>6&freqbins<19,freqbins>6&freqbins<19)))
     axis xy
     %   xlim([-3 1]);ylim([-3 1])
-   %LogScale('xy',10)
+   %LogScale_ss('xy',10)
    xlabel('1/Inter-Peak Interval n (Hz)');
    %colorbar
   % caxis([0 100])
@@ -696,7 +696,7 @@ subplot(2,2,1)
     plot(log10(IPIs_pos(1:end-1)),log10(IPIs_pos(2:end)),'k.','MarkerSize',0.1)
     hold on
     plot(log10(IPIs_neg(1:end-1)),log10(IPIs_neg(2:end)),'k.','MarkerSize',0.1)
-   LogScale('xy',10)
+   LogScale_ss('xy',10)
    xlabel('Inter-Peak Interval n (s)');
    ylabel('Inter-Peak Interval n+1 (s)');
       xlim([-1.5 2]);ylim([-1.5 2])
@@ -706,7 +706,7 @@ subplot(2,2,3)
     imagesc(bins,bins,log10(N_same))
     axis xy
        xlim([-1.5 2]);ylim([-1.5 2])
-   LogScale('xy',10)
+   LogScale_ss('xy',10)
    xlabel('Inter-Peak Interval n (s)');
    ylabel('Inter-Peak Interval n+1 (s)');
    xlim([-1.25 1]);ylim([-1.25 1])
@@ -715,7 +715,7 @@ subplot(2,2,2)
     imagesc(bins./log10(2),bins./log10(2),log10(N_same))
     axis xy
        xlim(log2([0.05 0.16]));ylim(log2([0.05 0.16]))
-   LogScale('xy',2)
+   LogScale_ss('xy',2)
    xlabel('Inter-Peak Interval n (s)');
    ylabel('Inter-Peak Interval n+1 (s)');
 
@@ -741,7 +741,7 @@ saveas(gcf,[figloc,recname,'_IPIspeakmag'],'jpeg')
 figure
     subplot(2,1,1)
         hist(log10(IPIs_joined),150)
-        LogScale('x',10)
+        LogScale_ss('x',10)
         xlim([-1.7 1])
         ylabel('Number of Peaks/Toughs')
         xlabel('Inter-Peak/Trough Interval (s)')
@@ -751,7 +751,7 @@ figure
   axes('Position',[.35 .7 .5 .15])
 box on
         hist(log2(IPIs_joined),150)
-        LogScale('x',2)
+        LogScale_ss('x',2)
         xlim([-6 4])
         %ylabel('Number of Peaks/Toughs')
         set(gca,'ytick',[])
@@ -767,13 +767,13 @@ saveas(gcf,[figloc,recname,'_IPIjoinhist'],'jpeg')
         xlabel('Inter-Peak/Trough Interval (s)')
         ylabel('Number of Peaks/Toughs')
         title('Linear Scale')
-    %LogScale('x',10)
+    %LogScale_ss('x',10)
     %xlim([0 0.1])
     
     axes('Position',[.3 .25 .3 .15])
 box on
     hist((IPIs_joined(IPIs_joined<0.4)),60)
-   % LogScale('x',10)
+   % LogScale_ss('x',10)
     xlabel('Inter-Peak/Trough Interval (s)')
     
     %ylabel('Number of Peaks/Troughs')
@@ -833,7 +833,7 @@ figure
         plot(log10([2 2]),get(gca,'ylim'),'r')
         xlabel('Putative Spindle Duration (s)');
         ylabel('Proportion of Spindles');
-        LogScale('x',10)
+        LogScale_ss('x',10)
         xlim([-2.1 0.5])
 
     subplot(2,2,4)
@@ -841,7 +841,7 @@ figure
         xlabel('Inter-pSpindle Interval (s)');
         ylabel('Proportion of Spindles');
         axis xy
-        LogScale('x',10)
+        LogScale_ss('x',10)
         xlim([-1 2])
     subplot(2,2,1)
         imagesc(mindists,durbins,(durhist)')
@@ -850,7 +850,7 @@ figure
         axis xy
         ylabel('Putative Spindle Duration (s)');
         xlabel('Minimum Spindle Separation');
-        LogScale('y',10)
+        LogScale_ss('y',10)
         %colorbar
         caxis([0 0.15])
     subplot(2,2,2)
@@ -860,7 +860,7 @@ figure
         ylabel('Inter-pSpindle Interval (s)');
         xlabel('Minimum Spindle Separation');
         axis xy
-        LogScale('y',10)
+        LogScale_ss('y',10)
 
         saveas(gcf,[figloc,recname,'_joiningspindles'],'jpeg')   
 %% Join Peaks/Troughs to Spindles
@@ -896,20 +896,20 @@ figure
         hist(log10(ISpI),20)
         xlabel('Inter-pSpindle Interval');
         ylabel('# pSpindles')
-        LogScale('x',10)
+        LogScale_ss('x',10)
     subplot(2,2,3)
         plot(log10(ISpI(1:end-1)),log10(ISpI(2:end)),'.')
         xlabel('Inter-pSpindle Interval n')
         ylabel('Inter-pSpindle Interval n+1')
         title('Iterative Map: InterSpindle Intervals')
-        LogScale('xy',10)
+        LogScale_ss('xy',10)
     subplot(2,2,4)
         plot(log10(IspeakI_pos(1:end-1)),log10(IspeakI_pos(2:end)),'k.')
         hold on
         plot(log10(IspeakI_neg(1:end-1)),log10(IspeakI_neg(2:end)),'k.')
         xlabel('Inter-Peak Interval n')
         ylabel('Inter-Peak Interval n+1')
-        LogScale('xy',10)
+        LogScale_ss('xy',10)
         title('Iterative Map: Within-Spindle Peaks')
 saveas(gcf,[figloc,recname,'_pspindlestats'],'jpeg')
 
@@ -926,7 +926,7 @@ figure
         caxis([min(mu)-2.5*max(sig) max(mu)+2.5*max(sig)])
        xlim([zoomwin])
        box(gca,'off')
-       LogScale('y',2)
+       LogScale_ss('y',2)
 
 
     subplot(4,1,2)
@@ -953,7 +953,7 @@ figure
         caxis([min(mu)-2.5*max(sig) max(mu)+2.5*max(sig)])
        xlim([zoomwin])
        box(gca,'off')
-       LogScale('y',2)
+       LogScale_ss('y',2)
 
 
     subplot(3,1,2)

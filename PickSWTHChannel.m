@@ -3,7 +3,7 @@ function [SWchannum,THchannum,swLFP,thLFP,t_LFP,Fs_save,SWfreqlist,SWweights] = 
 %   Detailed explanation goes here
 %
 %TO DO
-%   -Change from GetLFP to LoadBinary or readmulti
+%   -Change from GetLFP to LoadBinary or readmulti_ss
 %% DEV
 %datasetfolder = '/Users/dlevenstein/Dropbox/Research/Datasets/DTData/';
 %recordingname = 'DT2_rPPC_rCCG_362um_218um_20160209_160209_183610';
@@ -70,7 +70,7 @@ numusedchannels = length(usechannels);
 %% Load LFP files from .lfp
 
 downsamplefactor = 10;
-allLFP = LoadBinary_Down(rawlfppath,'frequency',Fs,...
+allLFP = LoadBinary_Down_ss(rawlfppath,'frequency',Fs,...
     'nchannels',nChannels,'channels',usechannels+1,'downsample',downsamplefactor,...
     'start',scoretime(1),'duration',diff(scoretime));
 Fs = Fs./downsamplefactor;
@@ -123,6 +123,7 @@ for chanidx = 1:numusedchannels;
     end
     if NotchHVS
         SWweights(SWfreqlist<=18 & SWfreqlist>=12) = 0;
+        SWweights(SWfreqlist<=10 & SWfreqlist>=4) = 0;
     end
     if NotchTheta
         SWweights(SWfreqlist<=10 & SWfreqlist>=4) = 0;
@@ -145,7 +146,7 @@ for chanidx = 1:numusedchannels;
     pc1hists(:,chanidx) = pcahist;
     pc1coeff(:,chanidx) = COEFF(:,1);
     
-    dipSW(chanidx) = hartigansdiptest(sort(broadbandSlowWave));
+    dipSW(chanidx) = m(sort(broadbandSlowWave));
     
     
     %% Calculate theta
@@ -169,7 +170,7 @@ for chanidx = 1:numusedchannels;
     
     %% Histogram and diptest of Theta
     THhist(:,chanidx) = hist(thratio,histbins);
-    dipTH(chanidx) = hartigansdiptest(sort(thratio));
+    dipTH(chanidx) = hartigansdiptest_ss(sort(thratio));
     
     %% Theta Peak in mean spectrum
     THmeanspec(:,chanidx) = (mean(thFFTspec,2));
@@ -190,7 +191,7 @@ THchannum = usechannels(goodTHidx);
 
 downsample_save = 5;  %Not checked for bugs after adding...
 Fs_save = Par.lfpSampleRate./downsample_save;
-swthLFP = LoadBinary_Down(rawlfppath,'frequency',Fs,...
+swthLFP = LoadBinary_Down_ss(rawlfppath,'frequency',Fs,...
     'downsample',downsample_save,...
     'nchannels',nChannels,'channels',[SWchannum+1,THchannum+1],...
     'start',scoretime(1),'duration',diff(scoretime));
@@ -216,7 +217,7 @@ swfig = figure;
     subplot(2,2,1)
         imagesc(log2(FFTfreqs),1:numusedchannels,pc1coeff(:,dipsortSW)')
         ylabel('Channel #');xlabel('f (Hz)')
-        LogScale('x',2)
+        LogScale_ss('x',2)
         axis xy
         title('PC1 Frequency Coefficients: All Channels') 
     subplot(2,2,2)
@@ -231,7 +232,7 @@ swfig = figure;
         plot(log2(FFTfreqs),pc1coeff(:,goodSWidx)','k','LineWidth',1)
         plot(log2(FFTfreqs([1 end])),[0 0],'k')
         ylabel('PC1 Coefficient');xlabel('f (Hz)')
-        LogScale('x',2)
+        LogScale_ss('x',2)
         title('PC1 Frequency Coefficients: All Channels')
     subplot(2,2,4)
         set(gca,'ColorOrder',RainbowColors(length(dipsortSW)))
@@ -249,7 +250,7 @@ thfig = figure;
     subplot(2,2,1)
         imagesc(log2(thFFTfreqs),1:numusedchannels,THmeanspec(:,dipsortTH)')
         ylabel('Channel #');xlabel('f (Hz)')
-        LogScale('x',2)
+        LogScale_ss('x',2)
         axis xy
         title('Spectrum: All Channels') 
     subplot(2,2,2)
@@ -266,7 +267,7 @@ thfig = figure;
         plot(log2(f_theta(2))*[1 1],get(gca,'ylim'),'k')
         ylabel('Power');xlabel('f (Hz)')
         xlim(log2(thFFTfreqs([1 end])))
-        LogScale('x',2)
+        LogScale_ss('x',2)
         title('Spectrum: All Channels')
     subplot(2,2,4)
         set(gca,'ColorOrder',RainbowColors(length(dipsortTH)))
@@ -299,7 +300,7 @@ chanfig =figure;
 	subplot(5,1,1:2)
         imagesc(t_FFT,log2(FFTfreqs),log10(FFTspec))
         axis xy
-        LogScale('y',2)
+        LogScale_ss('y',2)
         caxis([min(mu)-2.5*max(sig) max(mu)+2.5*max(sig)])
         ylim([log2(FFTfreqs(1)) log2(FFTfreqs(end))+0.2])
         xlim(t_FFT([1,end]))
@@ -332,7 +333,7 @@ subplot(5,1,4)
         plot(t_FFT([1,end]),log2(f_theta([1,1])),'w')
         plot(t_FFT([1,end]),log2(f_theta([2,2])),'w')
         axis xy
-        LogScale('y',2)
+        LogScale_ss('y',2)
         caxis([min(mu)-2.5*max(sig) max(mu)+2.5*max(sig)])
         ylim([log2(thFFTfreqs(1)) log2(thFFTfreqs(end))+0.2])
         ylabel({'LFP - FFT','f (Hz)'})
