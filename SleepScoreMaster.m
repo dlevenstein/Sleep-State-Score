@@ -308,6 +308,7 @@ StateIntervals.metadata.THchannum = THchannum;
 
 save(sleepstatepath,'StateIntervals');
 
+display(['Sleep Score ',recordingname,': Complete!']);
 
 %% Find Slow Waves and Spindle Times
 if spindledelta
