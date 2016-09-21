@@ -105,14 +105,17 @@ end
 %use for calculating high-f correlation.
 xcorr_chs = [];
 for a = 1:length(spkgrpstouse)
+    spkgroup = spkgrpstouse(a);
     %Are any of the channels in this spike group "special channels"?
-    [lia,lib]=ismember(specialchannels,SpkGrps(a).Channels);
+    [lia,lib]=ismember(specialchannels,SpkGrps(spkgroup).Channels);
     if any(lia)
-        xcorr_chs(end+1) = SpkGrps(a).Channels(lib);
+        xcorr_chs(end+1) = SpkGrps(spkgroup).Channels(lib);
     else
-        availchans = SpkGrps(a).Channels;
+        availchans = SpkGrps(spkgroup).Channels;
         %Don't add rejectchannels to the list of available channels
         availchans = setdiff(availchans,rejectchannels); 
+
+        
         if length(availchans)>=1
             xcorr_chs(end+1) = availchans(1); %Pick the first channel
         end
@@ -123,7 +126,7 @@ xcorr_chs = unique(xcorr_chs);
 
 %This is a crappy catch for the issue of no channels due to too many
 %rejectchannels
-if length(xcorr_chs)>2
+if length(xcorr_chs)>=2
     break
 elseif length(xcorr_chs)<2 && nn==2
     display('You have no channels for EMG... This is a bug?')
@@ -134,11 +137,11 @@ end
 
 %% Read and filter channel
 % read channel
-%eeg = readmulti_ss(eegloc, nChannels, xcorr_chs); %read and convert to mV    
+%eeg = readmulti(eegloc, nChannels, xcorr_chs); %read and convert to mV    
 % Filter first in high frequency band to remove low-freq physiologically
 % correlated LFPs (e.g., theta, delta, SPWs, etc.)
 
-eeg = LoadBinary_Down_ss(eegloc,'frequency',Fs,...
+eeg = LoadBinary_Down(eegloc,'frequency',Fs,...
     'nchannels',nChannels,'channels',xcorr_chs+1,...
     'start',scoretime(1),'duration',diff(scoretime));
 %+1 is applied to channel numbers here for 0 (neuroscope) vs 1 (LoadBinary)
