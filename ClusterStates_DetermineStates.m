@@ -13,7 +13,7 @@ else%defaults as follows:
     minWAKE = 6;
 end
 
-v2struct_SleepScore(histsandthreshs)%Expand and get values out of these fields
+v2struct_ss(histsandthreshs)%Expand and get values out of these fields
 
 %% Re-Do this code (should be same as in ClusterStates_GetParams.m) to see if theta is bimodal
 NREMtimes = (broadbandSlowWave >swthresh);
