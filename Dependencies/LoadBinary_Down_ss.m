@@ -65,58 +65,58 @@ for i = 1:2:length(varargin),
 	switch(lower(varargin{i})),
 		case 'frequency',
 			frequency = varargin{i+1};
-			if ~isdscalar(frequency,'>0'),
+			if ~isdscalar_ss(frequency,'>0'),
 				error('Incorrect value for property ''frequency'' (type ''help <a href="matlab:help LoadBinary">LoadBinary</a>'' for details).');
 			end
 		case 'start',
 			start = varargin{i+1};
-			if ~isdscalar(start),
+			if ~isdscalar_ss(start),
 				error('Incorrect value for property ''start'' (type ''help <a href="matlab:help LoadBinary">LoadBinary</a>'' for details).');
 			end
 			if start < 0, start = 0; end
 			time = true;
 		case 'duration',
 			duration = varargin{i+1};
-			if ~isdscalar(duration,'>=0'),
+			if ~isdscalar_ss(duration,'>=0'),
 				error('Incorrect value for property ''duration'' (type ''help <a href="matlab:help LoadBinary">LoadBinary</a>'' for details).');
 			end
 			time = true;
 		case 'offset',
 			offset = varargin{i+1};
-			if ~isiscalar(offset),
+			if ~isiscalar_ss(offset),
 				error('Incorrect value for property ''offset'' (type ''help <a href="matlab:help LoadBinary">LoadBinary</a>'' for details).');
 			end
 			if offset < 0, offset = 0; end
 			samples = true;
 		case 'samples',
 			nSamplesPerChannel = varargin{i+1};
-			if ~isdscalar(nSamplesPerChannel,'>=0'),
+			if ~isdscalar_ss(nSamplesPerChannel,'>=0'),
 				error('Incorrect value for property ''samples'' (type ''help <a href="matlab:help LoadBinary">LoadBinary</a>'' for details).');
 			end
 			samples = true;
 		case 'nchannels',
 			nChannels = varargin{i+1};
-			if ~isiscalar(nChannels,'>0'),
+			if ~isiscalar_ss(nChannels,'>0'),
 				error('Incorrect value for property ''nChannels'' (type ''help <a href="matlab:help LoadBinary">LoadBinary</a>'' for details).');
 			end
 		case 'channels',
 			channels = varargin{i+1};
-			if ~isivector(channels,'>0'),
+			if ~isivector_ss(channels,'>0'),
 				error('Incorrect value for property ''channels'' (type ''help <a href="matlab:help LoadBinary">LoadBinary</a>'' for details).');
 			end
 		case 'precision',
 			precision = varargin{i+1};
-			if ~isstring(precision),
+			if ~isstring_ss(precision),
 				error('Incorrect value for property ''precision'' (type ''help <a href="matlab:help LoadBinary">LoadBinary</a>'' for details).');
 			end
 		case 'skip',
 			skip = varargin{i+1};
-			if ~isiscalar(skip,'>=0'),
+			if ~isiscalar_ss(skip,'>=0'),
 				error('Incorrect value for property ''skip'' (type ''help <a href="matlab:help LoadBinary">LoadBinary</a>'' for details).');
             end
 		case 'downsample',
 			downsamplefactor = varargin{i+1};
-			if ~isiscalar(downsamplefactor,'>=0'),
+			if ~isiscalar_ss(downsamplefactor,'>=0'),
 				error('Incorrect value for property ''downsample'' (type ''help <a href="matlab:help LoadBinary">LoadBinary</a>'' for details).');
 			end
 		otherwise,

@@ -60,7 +60,7 @@ spkgroupchannels = [SpkGrps.Channels];
 %Add reject channels here...
 rejectchannels = [];
 if exist(fullfile(datasetfolder,recordingname,'bad_channels.txt'),'file')%bad channels is an ascii/text file where all lines below the last blank line are assumed to each have a single entry of a number of a bad channel (base 0)
-    t = ReadBadChannels_SleepScore(fullfile(datasetfolder,recordingname));
+    t = ReadBadChannels_ss(fullfile(datasetfolder,recordingname));
     rejectchannels = cat(1,rejectchannels(:),t(:));
 end
 
