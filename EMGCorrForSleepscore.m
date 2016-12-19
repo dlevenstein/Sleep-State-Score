@@ -70,7 +70,7 @@ end
 
 rejectchannels = [];
 if exist(fullfile(PATHSTR,'bad_channels.txt'),'file')%bad channels is an ascii/text file where all lines below the last blank line are assumed to each have a single entry of a number of a bad channel (base 0)
-    t = ReadBadChannels_SleepScore(PATHSTR);
+    t = ReadBadChannels_ss(PATHSTR);
     rejectchannels = cat(1,rejectchannels(:),t(:));
 end
 
