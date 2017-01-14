@@ -218,7 +218,7 @@ ChannelsCompared = xcorr_chs;
 EMGCorrData = v2struct_ss(EMGCorr,ChannelsCompared);
 if savebool
     % save...
-    save(saveloc,'EMGCorrData','EMGCorr');
+    save(saveloc,'EMGCorrData','EMGCorr','sf_EMG');
 end
 
 function [filt_sig, Filt] = filtsig_in(sig, Fs, filtband_or_Filt)
