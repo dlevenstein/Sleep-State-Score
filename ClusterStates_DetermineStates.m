@@ -4,6 +4,7 @@ function [INT, IDX, t_IDX] = ClusterStates_DetermineStates(broadbandSlowWave,thr
 % Min Win Parameters (s)
 if exist('MinWinParams','var')
 %     v2struct(MinWinParams)
+	fn = fieldnames(MinWinParams);
     for a = 1:length(fn);
         eval([fn{a} '=MinWinParams.' fn{a} ';']);
     end
