@@ -72,24 +72,13 @@ if exist (fullfile(datasetfolder,recname,[recname,'_GoodSleepInterval.mat']),'fi
 end
 
 
-%% Step 2b: Identidy Spindle Intervals by amplitude envelope peak.
-chanavg = true;
-%broadspband = [7 18]; %gardner
-broadspband = [8 18]; 
-%broadspband = [10 15]; %peyrache
-[pSpindleInts_env] = SpindleEnvelopeInts(ctxchannels,NREMint,broadspband,chanavg,figfolder,recname);
+%% Identidy Spindles
 
-
-%% Step 2c: Wavelet Method
-%random site from each shank.
-%ctxprobechannel = cellfun(@(X) datasample(X,1),spikegroups(probegroups{1}));
-%[pSpindleInts_wav] = SpindleWaveletInts(ctxprobechannel,NREMint,figloc,recname);
+[Spindles,ChannelProperties] = DetectSPINDLES(rawlfppath,ctxchannels,NREMints,'best',figfolder);
 
 
 %% Adjust Start End Time to peaks, return spindle cycle normalized time
-frange = [8 18];
-[pSpindleInts,cycletimemap] = SetSpindleIntTime(pSpindleInts_env,frange,ctxchannels);
-
+%Put this into DetectSPINDLES
 
 %% Delta Peak Times
 [deltapeaks] = DeltaPeakTimes(ctxchannels,NREMint,figfolder,recname);
