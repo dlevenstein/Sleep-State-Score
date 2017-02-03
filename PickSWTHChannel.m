@@ -1,4 +1,4 @@
-function [SWchannum,THchannum,swLFP,thLFP,t_LFP,Fs_save,SWfreqlist,SWweights] = PickSWTHChannel(datasetfolder,recordingname,figfolder,scoretime,SWWeightsName,Notch60Hz,NotchUnder3Hz,NotchHVS,NotchTheta)
+function [SWchannum,THchannum,swLFP,thLFP,t_LFP,Fs_save,SWfreqlist,SWweights] = PickSWTHChannel(datasetfolder,recordingname,figfolder,scoretime,SWWeightsName,Notch60Hz,NotchUnder3Hz,NotchHVS,NotchTheta,SWChannels,ThetaChannels);
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 %
@@ -52,6 +52,11 @@ end
 %% Hist/Freqs Parms
 numhistbins = 21;
 numfreqs = 100;
+freqlist = logspace(0,2,numfreqs);
+window = 10;
+noverlap = 9;
+window = window*Fs;
+noverlap = noverlap*Fs;
 
 
 %% Pick channels to use
@@ -61,14 +66,34 @@ spkgroupchannels = [SpkGrps.Channels];
 rejectchannels = [];
 if exist(fullfile(datasetfolder,recordingname,'bad_channels.txt'),'file')%bad channels is an ascii/text file where all lines below the last blank line are assumed to each have a single entry of a number of a bad channel (base 0)
     t = ReadBadChannels_ss(fullfile(datasetfolder,recordingname));
+    t = t+1;%account for offset
     rejectchannels = cat(1,rejectchannels(:),t(:));
+end
+if sum(SWChannels)>0 && sum(ThetaChannels)>0%use all channels unless SWChannels and ThetaChannels are specified... if both specified then we know those are the only good ones
+    goodchannels = union(SWChannels,ThetaChannels);
+    badchannels = setdiff(spkgroupchannels,goodchannels);
+    rejectchannels = union(rejectchannels,badchannels);
 end
 
 usechannels = setdiff(spkgroupchannels,rejectchannels);
 numusedchannels = length(usechannels);
 
-%% Load LFP files from .lfp
+%% Handle specific candidacy of certain channels for SW vs Theta
+if sum(SWChannels)==0
+    SWChannels = usechannels;
+else
+    SWChannels = setdiff(SWChannels,rejectchannels);
+end
+numSWChannels = length(SWChannels);
 
+if sum(ThetaChannels)==0
+    ThetaChannels = usechannels;
+else
+    ThetaChannels = setdiff(ThetaChannels,rejectchannels);
+end
+numThetaChannels = length(ThetaChannels);
+
+%% Load LFP files from .lfp
 downsamplefactor = 10;
 allLFP = LoadBinary_Down_ss(rawlfppath,'frequency',Fs,...
     'nchannels',nChannels,'channels',usechannels+1,'downsample',downsamplefactor,...
@@ -77,39 +102,39 @@ Fs = Fs./downsamplefactor;
 %+1 to channel number here to account for 0-indexing vs 1-indexing
 
 %% For each channel, calculate the PC1 and check it
-pc1hists = zeros(numhistbins,numusedchannels);
-THhist = zeros(numhistbins,numusedchannels);
-pc1coeff = zeros(numfreqs,numusedchannels);
-THmeanspec = zeros(numfreqs,numusedchannels);
-dipSW = zeros(numusedchannels,1);
-peakTH = zeros(numusedchannels,1);
-%%
-for chanidx = 1:numusedchannels;
+swhists = zeros(numhistbins,numSWChannels);
+% pc1coeff = zeros(numfreqs,numusedchannels);
+dipSW = zeros(numSWChannels,1);
+
+THhist = zeros(numhistbins,numThetaChannels);
+THmeanspec = zeros(numfreqs,numThetaChannels);
+peakTH = zeros(numThetaChannels,1);
+
+%% Get info to allow to pick SW channel
+for idx = 1:numSWChannels;
 %channum = 1;
-    if mod(chanidx,10) == 1
-        display(['Channel ',num2str(chanidx),' of ',num2str(numusedchannels)])
+    if mod(idx,10) == 1
+        display(['Characterizing SW candidate channel ',num2str(idx),' of ',num2str(numSWChannels)])
     end
 
+    tchanidx = SWChannels(idx);
+    chanidx = find(usechannels==tchanidx);
+
+    %% Get spectrogram
     %Calcualte Z-scored Spectrogram
-    freqlist = logspace(0,2,numfreqs);
-    window = 10;
-    noverlap = 9;
-    window = window*Fs;
-    noverlap = noverlap*Fs;
     [FFTspec,FFTfreqs,t_FFT] = spectrogram(allLFP(:,chanidx),window,noverlap,freqlist,Fs);
     FFTspec = abs(FFTspec);
     [zFFTspec,mu,sig] = zscore(log10(FFTspec)');
-
-    %% Remove transients before calculating SW histogram
+    % Remove transients before calculating SW histogram
     %this should be it's own whole section - removing/detecting transients
     totz = zscore(abs(sum(zFFTspec')));
     badtimes = find(totz>5);
     zFFTspec(badtimes,:) = 0;
     
     %% PCA for Broadband Slow Wave
-    [COEFF, SCORE, LATENT] = pca(zFFTspec);
-   % broadbandSlowWave = SCORE(:,1);
-    
+%     [COEFF, SCORE, LATENT] = pca(zFFTspec);
+%    % broadbandSlowWave = SCORE(:,1);
+%     
 	%% Set Broadband filter weights for Slow Wave
     load(SWWeightsName)% 'SWweights.mat' by default
     assert(isequal(freqlist,SWfreqlist), 'spectrogram freqs.  are not what they should be...')
@@ -129,7 +154,7 @@ for chanidx = 1:numusedchannels;
         SWweights(SWfreqlist<=10 & SWfreqlist>=4) = 0;
     end
     
-    %% Calculate 
+    %% Calculate per-bin projections
     broadbandSlowWave = zFFTspec*SWweights';
     
     %% Smooth and 0-1 normalize
@@ -141,16 +166,25 @@ for chanidx = 1:numusedchannels;
 
     %% Histogram and diptest of PC1
     histbins = linspace(0,1,numhistbins);
-    [pcahist]= hist(broadbandSlowWave,histbins);
+    [swhist]= hist(broadbandSlowWave,histbins);
 
-    pc1hists(:,chanidx) = pcahist;
-    pc1coeff(:,chanidx) = COEFF(:,1);
+    swhists(:,idx) = swhist;
+%     pc1coeff(:,chanidx) = COEFF(:,1);
+    dipSW(idx) = hartigansdiptest_ss(sort(broadbandSlowWave));
     
-    dipSW(chanidx) = hartigansdiptest_ss(sort(broadbandSlowWave));
-    
-    
-    %% Calculate theta
+end
 
+%% Get info to allow to pick Theta channel
+for idx = 1:numThetaChannels;
+%channum = 1;
+    if mod(idx,10) == 1
+        display(['Characterizing theta candidate channel ',num2str(idx),' of ',num2str(numSWChannels)])
+    end
+
+    tchanidx = ThetaChannels(idx);
+    chanidx = find(usechannels==tchanidx);
+
+    %% Get spectrogram
     %NarrowbandTheta
     %f_all = [3 16];
     f_all = [2 20];
@@ -173,10 +207,10 @@ for chanidx = 1:numusedchannels;
     dipTH(chanidx) = hartigansdiptest_ss(sort(thratio));
     
     %% Theta Peak in mean spectrum
-    THmeanspec(:,chanidx) = (mean(thFFTspec,2));
+    THmeanspec(:,idx) = (mean(thFFTspec,2));
     %THmeanspec(:,chanidx) = THmeanspec(:,chanidx)-min(THmeanspec(:,chanidx));
-    meanthratio = sum((THmeanspec(thfreqs,chanidx)))./sum((THmeanspec(:,chanidx)));
-    peakTH(chanidx) = meanthratio;
+    meanthratio = sum((THmeanspec(thfreqs,idx)))./sum((THmeanspec(:,idx)));
+    peakTH(idx) = meanthratio;
 end
 
 %% Sort by dip and pick channels
@@ -186,8 +220,8 @@ end
 goodSWidx = dipsortSW(end);
 goodTHidx = dipsortTH(end);
 
-SWchannum = usechannels(goodSWidx);
-THchannum = usechannels(goodTHidx);
+SWchannum = SWChannels(goodSWidx);
+THchannum = ThetaChannels(goodTHidx);
 
 downsample_save = 5;  %Not checked for bugs after adding...
 Fs_save = Par.lfpSampleRate./downsample_save;
@@ -201,9 +235,9 @@ thLFP = swthLFP(:,2);
 t_LFP = [1:length(swLFP)]./Fs_save;
 
 %% Find Inverted PC1s and flip them for plot
-invpc1 = mean(pc1coeff(freqlist<4,:))<0 & mean(pc1coeff(freqlist>50,:))>0;
-pc1coeff(:,invpc1) = -pc1coeff(:,invpc1);
-pc1hists(:,invpc1) = flipud(pc1hists(:,invpc1));
+% invpc1 = mean(pc1coeff(freqlist<4,:))<0 & mean(pc1coeff(freqlist>50,:))>0;
+% pc1coeff(:,invpc1) = -pc1coeff(:,invpc1);
+% swhists(:,invpc1) = flipud(swhists(:,invpc1));
 %% Test
 %PC1 coefficients for NREM match
 %Theta spectrum for isolated peak?
@@ -214,33 +248,33 @@ pc1hists(:,invpc1) = flipud(pc1hists(:,invpc1));
 
 
 swfig = figure;
-    subplot(2,2,1)
-        imagesc(log2(FFTfreqs),1:numusedchannels,pc1coeff(:,dipsortSW)')
-        ylabel('Channel #');xlabel('f (Hz)')
-        LogScale_ss('x',2)
-        axis xy
-        title('PC1 Frequency Coefficients: All Channels') 
+%     subplot(2,2,1)
+%         imagesc(log2(FFTfreqs),1:numusedchannels,pc1coeff(:,dipsortSW)')
+%         ylabel('Channel #');xlabel('f (Hz)')
+%         LogScale_ss('x',2)
+%         axis xy
+%         title('PC1 Frequency Coefficients: All Channels') 
     subplot(2,2,2)
-        imagesc(histbins,1:numusedchannels,pc1hists(:,dipsortSW)')
-        ylabel('Channel #');xlabel('PC1 projection weight')
-        title('PC1 Projection Histogram: All Channels')
+        imagesc(histbins,1:numusedchannels,swhists(:,dipsortSW)')
+        ylabel('Channel #');xlabel('SW Band projection weight')
+        title('SW Band Projection Histogram: All Channels')
         axis xy
-    subplot(2,2,3)
-        set(gca,'ColorOrder',RainbowColors_ss(length(dipsortSW)))
-        hold all
-        plot(log2(FFTfreqs),pc1coeff')  
-        plot(log2(FFTfreqs),pc1coeff(:,goodSWidx)','k','LineWidth',1)
-        plot(log2(FFTfreqs([1 end])),[0 0],'k')
-        ylabel('PC1 Coefficient');xlabel('f (Hz)')
-        LogScale_ss('x',2)
-        title('PC1 Frequency Coefficients: All Channels')
+%     subplot(2,2,3)
+%         set(gca,'ColorOrder',RainbowColors_ss(length(dipsortSW)))
+%         hold all
+%         plot(log2(FFTfreqs),pc1coeff')  
+%         plot(log2(FFTfreqs),pc1coeff(:,goodSWidx)','k','LineWidth',1)
+%         plot(log2(FFTfreqs([1 end])),[0 0],'k')
+%         ylabel('PC1 Coefficient');xlabel('f (Hz)')
+%         LogScale_ss('x',2)
+%         title('PC1 Frequency Coefficients: All Channels')
     subplot(2,2,4)
         set(gca,'ColorOrder',RainbowColors_ss(length(dipsortSW)))
         hold all
-        plot(histbins,pc1hists')
-        plot(histbins,pc1hists(:,goodSWidx)','k','LineWidth',1)
-        ylabel('hist');xlabel('PC1 projection weight')
-        title('PC1 Projection Histogram: All Channels')
+        plot(histbins,swhists')
+        plot(histbins,swhists(:,goodSWidx)','k','LineWidth',1)
+        ylabel('hist');xlabel('SW Band projection weight')
+        title('SW Band Projection Histogram: All Channels')
         
 saveas(swfig,[figfolder,recordingname,'_FindBestSW'],'jpeg')
 
@@ -255,7 +289,7 @@ thfig = figure;
         title('Spectrum: All Channels') 
     subplot(2,2,2)
         imagesc(histbins,1:numusedchannels,THhist(:,dipsortTH)')
-        ylabel('Channel #');xlabel('PC1 projection weight')
+        ylabel('Channel #');xlabel('Theta projection weight')
         title('Theta Ratio Histogram: All Channels')
         axis xy
     subplot(2,2,3)
@@ -274,7 +308,7 @@ thfig = figure;
         hold all
         plot(histbins,THhist')
         plot(histbins,THhist(:,goodTHidx)','k','LineWidth',1)
-        ylabel('hist');xlabel('PC1 projection weight')
+        ylabel('hist');xlabel('Theta projection weight')
         title('Theta Ratio Histogram: All Channels') 
         
 saveas(thfig,[figfolder,recordingname,'_FindBestTH'],'jpeg')
@@ -294,7 +328,7 @@ saveas(thfig,[figfolder,recordingname,'_FindBestTH'],'jpeg')
     %broadbandSlowWave = SCORE(:,1);
      broadbandSlowWave = zFFTspec*SWweights';
      broadbandSlowWave = smooth(broadbandSlowWave,smoothfact);
-    broadbandSlowWave = (broadbandSlowWave-min(broadbandSlowWave))./max(broadbandSlowWave-min(broadbandSlowWave));
+     broadbandSlowWave = (broadbandSlowWave-min(broadbandSlowWave))./max(broadbandSlowWave-min(broadbandSlowWave));
 
 chanfig =figure;
 	subplot(5,1,1:2)

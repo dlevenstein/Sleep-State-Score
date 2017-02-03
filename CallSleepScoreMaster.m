@@ -13,7 +13,7 @@ if ~exist('basepath','var')
     [~,basename] = fileparts(cd);
 end
 
-if ~exist(fullfile(basepath,[basename '_SleepScore.mat']))
+% if ~exist(fullfile(basepath,[basename '_SleepScore.mat']))
 %     upperpath = fileparts(basepath);
     s = strfind(basepath,filesep);
     s(s==length(basepath)) = [];
@@ -30,6 +30,6 @@ if ~exist(fullfile(basepath,[basename '_SleepScore.mat']))
 
         eval(['SleepScoreMaster(upperpath,basename' arginstring ');'])
     end
-else
-    disp([basename ' already SleepScored.  Rename _SleepScore.mat file if you want this to execute.'])
-end
+% else
+%     disp([basename ' already SleepScored.  Rename _SleepScore.mat file if you want this to execute.'])
+% end

@@ -48,6 +48,10 @@ function SleepScoreMaster(datasetfolder,recordingname,varargin)
 %                   transform the cortical spectrum to approximately
 %                   hippocampal, may also be necessary with High Voltage
 %                   Spindles
+%   'SWChannels'    A vector list of channels that may be chosen for SW
+%                   signal
+%   'ThetaChannels' A vector list of channels that may be chosen for Theta
+%                   signal
 %
 %OUTPUT
 %   StateIntervals  structure containing start/end times (seconds) of
@@ -142,6 +146,8 @@ defaultNotch60Hz = 0;
 defaultNotchUnder3Hz = 0;
 defaultNotchHVS = 0;
 defaultNotchTheta = 0;
+defaultSWChannels = 0;
+defaultThetaChannels = 0;
 
 addParameter(p,'overwrite',defaultOverwrite)
 addParameter(p,'savebool',defaultSavebool,@islogical)
@@ -153,6 +159,8 @@ addParameter(p,'Notch60Hz',defaultNotch60Hz)
 addParameter(p,'NotchUnder3Hz',defaultNotchUnder3Hz)
 addParameter(p,'NotchHVS',defaultNotchHVS)
 addParameter(p,'NotchTheta',defaultNotchTheta)
+addParameter(p,'SWChannels',defaultNotchTheta)
+addParameter(p,'ThetaChannels',defaultNotchTheta)
 
 parse(p,varargin{:})
 %Clean up this junk...
@@ -166,8 +174,8 @@ Notch60Hz = p.Results.Notch60Hz;
 NotchUnder3Hz = p.Results.NotchUnder3Hz;
 NotchHVS = p.Results.NotchHVS;
 NotchTheta = p.Results.NotchTheta;
-
-
+SWChannels = p.Results.SWChannels;
+ThetaChannels = p.Results.ThetaChannels;
 
 %% Database File Management 
 savefolder = fullfile(savedir,recordingname);
@@ -238,7 +246,7 @@ clear EMGCorr
 if ((~exist(thetalfppath,'file') && ~exist(swlfppath,'file')) && ~exist(scorelfppath,'file')) || overwrite; % if no lfp file already, load lfp and make lfp file?
 
     display('Picking SW and TH Channels')
-    [SWchannum,THchannum,swLFP,thLFP,t_LFP,sf_LFP,SWfreqlist,SWweights] = PickSWTHChannel(datasetfolder,recordingname,figloc,scoretime,SWWeightsName,Notch60Hz,NotchUnder3Hz,NotchHVS,NotchTheta);
+    [SWchannum,THchannum,swLFP,thLFP,t_LFP,sf_LFP,SWfreqlist,SWweights] = PickSWTHChannel(datasetfolder,recordingname,figloc,scoretime,SWWeightsName,Notch60Hz,NotchUnder3Hz,NotchHVS,NotchTheta,SWChannels,ThetaChannels);
     if savebool
         %Transfer this into scoremetricspath? predownsampled to what it
         %needs to be for ClusterStates.
